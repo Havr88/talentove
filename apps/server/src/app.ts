@@ -2,7 +2,7 @@ import express from 'express';
 import type { Express, Request, Response } from 'express';
 import nunjucks from 'nunjucks';
 import cookieParser from 'cookie-parser';
-import { readFileSync } from 'node:fs';
+import { existsSync, readFileSync } from 'node:fs';
 import { fileURLToPath } from 'node:url';
 import { dirname, join } from 'node:path';
 import { randomBytes } from 'node:crypto';
@@ -64,7 +64,12 @@ export function createApp(repos: Repositories, env: Env): Express {
   });
 
   // Cargar catálogo de identificadores de personas
-  const catalogPath = join(__dirname, '../../../data/ve/identificadores.json');
+  const candidates = [
+    join(__dirname, '../../../data/ve/identificadores.json'),
+    join(__dirname, '../../../../data/ve/identificadores.json'),
+    join(process.cwd(), 'data/ve/identificadores.json'),
+  ];
+  const catalogPath = candidates.find((p) => existsSync(p)) || candidates[0]!;
   const idCatalog = parseIdCatalog(JSON.parse(readFileSync(catalogPath, 'utf8')));
 
   // Guard de instalación: redirigir a /install si la instancia no está configurada

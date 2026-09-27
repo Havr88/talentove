@@ -13,5 +13,6 @@
     "test": "pnpm -r test",
     "test:coverage": "pnpm --filter @talento-ve/domain test:coverage",
     "typecheck": "pnpm -r typecheck"
-  }
+  },
+  "devDependencies": {}
 }

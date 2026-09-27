@@ -671,7 +671,7 @@ describe('TalentoVe Server - M0 Integration Tests', () => {
       // Crear un departamento para la prueba
       const orgUnit = await repos.orgUnits.create({
         name: 'Departamento de Informática',
-        code: 'INFO-01',
+        typeId: 4,
       });
 
       // Asignar el empleado a este departamento en su contrato
@@ -685,7 +685,7 @@ describe('TalentoVe Server - M0 Integration Tests', () => {
         .post('/asistencia')
         .set('Cookie', [cookie])
         .send({
-          _csrf: csrfToken,
+          _csrf: csrfToken ?? '',
           departmentId: orgUnit.id,
           startDate: '2026-09-28',
           endDate: '2026-10-04',
@@ -696,16 +696,16 @@ describe('TalentoVe Server - M0 Integration Tests', () => {
       expect(createRes.status).toBe(302);
       const sheetRedirectUrl = createRes.header.location;
       expect(sheetRedirectUrl).toContain('/asistencia/');
-      const sheetId = sheetRedirectUrl.split('/').pop();
+      const sheetId = sheetRedirectUrl!.split('/').pop()!;
 
       // Verificar en repositorio
-      const createdSheet = await repos.attendance.findSheetById(sheetId!);
+      const createdSheet = await repos.attendance.findSheetById(sheetId);
       expect(createdSheet).toBeDefined();
       expect(createdSheet?.coordinatorName).toBe('Lcdo. Roberto Gómez');
       expect(createdSheet?.status).toBe('borrador');
 
       // Verificar que se crearon los registros para cada día de la semana
-      const initialRecords = await repos.attendance.listRecordsBySheetId(sheetId!);
+      const initialRecords = await repos.attendance.listRecordsBySheetId(sheetId);
       expect(initialRecords.length).toBe(7); // 7 días (Lunes a Domingo)
 
       // 4. Visualizar cuadrícula de la planilla
@@ -722,7 +722,7 @@ describe('TalentoVe Server - M0 Integration Tests', () => {
       // Modificamos el primer registro: entra a las 14:00 y sale a las 23:00 (9 horas de trabajo)
       const firstRecord = initialRecords[0]!;
       const savePayload: Record<string, string> = {
-        _csrf: csrfToken,
+        _csrf: csrfToken ?? '',
         recordIds: firstRecord.id,
       };
       savePayload[`timeIn_${firstRecord.id}`] = '14:00';

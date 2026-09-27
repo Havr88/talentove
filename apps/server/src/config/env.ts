@@ -12,8 +12,8 @@ export const envSchema = z.object({
   TZ: z.literal('America/Caracas').default('America/Caracas'),
   INSTANCE_NAME: z.string().min(1).default('TalentoVe'),
 
-  // PostgreSQL
-  DATABASE_URL: z.string().url().default('postgres://talento:talento@localhost:5432/talento'),
+  // Base de datos (SQLite embebido o PostgreSQL empresarial)
+  DATABASE_URL: z.string().min(1).default('file:talento.db'),
   DATABASE_POOL_MAX: z.coerce.number().int().positive().default(10),
   DATABASE_POOL_IDLE_TIMEOUT_MS: z.coerce.number().int().positive().default(30000),
 

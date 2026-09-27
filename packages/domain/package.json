@@ -5,7 +5,10 @@
   "type": "module",
   "description": "Dominio puro de TalentoVe: dinero, fechas e identificadores (sin I/O, sin framework)",
   "exports": {
-    ".": "./src/index.ts"
+    ".": {
+      "types": "./src/index.ts",
+      "default": "./dist/src/index.js"
+    }
   },
   "scripts": {
     "test": "vitest run",
