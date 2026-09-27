@@ -2,22 +2,30 @@
 
 {% block content %}
 <div style="margin-bottom: 1.5rem;">
-  <div style="display: flex; justify-content: space-between; align-items: flex-start;">
+  <div style="margin-bottom: 0.5rem;">
+    <a href="/trabajadores" style="color: var(--text-muted); text-decoration: none; font-size: 0.875rem;">&larr; Volver al Listado</a>
+  </div>
+  <div style="display: flex; justify-content: space-between; align-items: flex-start; flex-wrap: wrap; gap: 1rem;">
     <div>
-      <a href="/trabajadores" style="color: var(--text-muted); text-decoration: none; font-size: 0.9rem;">&larr; Volver al Listado</a>
-      <h1 style="font-size: 1.85rem; color: var(--primary-color); margin-top: 0.4rem;">
-        {{ employee.nombres }} {{ employee.apellidos }}
-      </h1>
-      <p style="color: var(--text-muted); font-size: 0.95rem;">
-        Cédula: <strong>{{ employee.cedulaTipo }}-{{ employee.cedulaNumero }}</strong>
+      <div style="display: flex; align-items: center; gap: 0.75rem; flex-wrap: wrap;">
+        <h1 style="font-size: 1.85rem; font-weight: 800; color: var(--text-color); letter-spacing: -0.02em; margin: 0;">
+          {{ employee.nombres }} {{ employee.apellidos }}
+        </h1>
+        {% if employee.status == 'activo' %}
+          <span class="badge badge-success"><span class="badge-dot"></span> ACTIVO</span>
+        {% else %}
+          <span class="badge badge-neutral"><span class="badge-dot"></span> {{ employee.status | upper }}</span>
+        {% endif %}
+      </div>
+      <p style="color: var(--text-muted); font-size: 0.95rem; margin-top: 0.35rem;">
+        Cédula: <strong style="color: var(--primary-color);">{{ employee.cedulaTipo }}-{{ employee.cedulaNumero }}</strong>
         {% if employee.rif %} &bull; RIF: <strong>{{ employee.rif }}</strong>{% endif %}
-        &bull; Estatus: <span style="font-weight: 600; color: #2e7d32;">{{ employee.status | upper }}</span>
       </p>
     </div>
     <div style="display: flex; gap: 0.6rem; flex-wrap: wrap;">
-      <a href="/trabajadores/{{ employee.id }}/editar" class="btn" style="background-color: #455a64;">✏️ Editar Datos</a>
-      <a href="/trabajadores/{{ employee.id }}/constancia/pdf" target="_blank" class="btn" style="background-color: #0288d1;">📄 Constancia PDF</a>
-      <a href="/solicitudes/nueva?employeeId={{ employee.id }}" class="btn" style="background-color: #2e7d32;">📝 Nueva Solicitud</a>
+      <a href="/trabajadores/{{ employee.id }}/editar" class="btn btn-outline">✏️ Editar Datos</a>
+      <a href="/trabajadores/{{ employee.id }}/constancia/pdf" target="_blank" class="btn btn-accent">📄 Constancia PDF</a>
+      <a href="/solicitudes/nueva?employeeId={{ employee.id }}" class="btn btn-primary">📝 Nueva Solicitud</a>
     </div>
   </div>
 </div>

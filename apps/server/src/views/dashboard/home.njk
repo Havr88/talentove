@@ -2,40 +2,130 @@
 
 {% block content %}
 <div>
-  <div style="margin-bottom: 2rem;">
-    <h1 style="font-size: 1.75rem; color: var(--primary-color);">Bienvenido, {{ currentUser.fullName }}</h1>
-    <p style="color: var(--text-muted);">{{ settings.companyName }} &bull; RIF: {{ settings.nativeId }}</p>
-  </div>
-
-  <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); gap: 1.5rem; margin-bottom: 2rem;">
-    <div class="card">
-      <h3 style="font-size: 0.9rem; text-transform: uppercase; color: var(--text-muted); margin-bottom: 0.5rem;">Trabajadores</h3>
-      <p style="font-size: 2rem; font-weight: 700; color: var(--primary-color);">{{ workerCount | default(0) }}</p>
-      <small style="color: var(--text-muted);">Total plantilla activa</small>
+  <!-- Header de Bienvenida -->
+  <div style="display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 2rem; flex-wrap: wrap; gap: 1rem;">
+    <div>
+      <h1 style="font-size: 1.85rem; font-weight: 800; color: var(--text-color); letter-spacing: -0.02em; margin-bottom: 0.25rem;">
+        Bienvenido, {{ currentUser.fullName }}
+      </h1>
+      <p style="color: var(--text-muted); font-size: 0.95rem; display: flex; align-items: center; gap: 0.5rem; flex-wrap: wrap;">
+        <span style="font-weight: 600; color: var(--text-color);">{{ settings.companyName | default("Empresa Venezolana") }}</span>
+        <span>&bull;</span>
+        <span>RIF: {{ settings.nativeId | default("J-00000000-0") }}</span>
+        <span>&bull;</span>
+        <span class="badge badge-success"><span class="badge-dot"></span> Sistema Operativo</span>
+      </p>
     </div>
-
-    <div class="card">
-      <h3 style="font-size: 0.9rem; text-transform: uppercase; color: var(--text-muted); margin-bottom: 0.5rem;">Tasa Oficial BCV</h3>
-      <p style="font-size: 1.5rem; font-weight: 700; color: #2e7d32;">{{ bcvRate | default("No sincronizada") }}</p>
-      <small style="color: var(--text-muted);">Bs. / USD</small>
-    </div>
-
-    <div class="card">
-      <h3 style="font-size: 0.9rem; text-transform: uppercase; color: var(--text-muted); margin-bottom: 0.5rem;">Próxima Nómina</h3>
-      <p style="font-size: 1.25rem; font-weight: 600;">1ra Quincena</p>
-      <small style="color: var(--text-muted);">Periodo regular</small>
+    <div style="display: flex; gap: 0.75rem;">
+      <a href="/trabajadores/nuevo" class="btn btn-primary">➕ Nuevo Trabajador</a>
+      <a href="/asistencia/nueva" class="btn btn-outline">⏱️ Nueva Planilla</a>
     </div>
   </div>
 
-  <div class="card">
-    <h2 style="font-size: 1.25rem; margin-bottom: 1rem;">Módulos del Sistema</h2>
-    <p style="color: var(--text-muted); margin-bottom: 1.5rem;">
-      TalentoVe está en fase de desarrollo (M0). El núcleo de dominio, las tasas de cambio y el sistema de instalación y autenticación están operativos.
-    </p>
-    <div style="display: flex; gap: 1rem; flex-wrap: wrap;">
-      <a href="/trabajadores" class="btn">Expediente de Personal (M1a)</a>
-      <a href="/solicitudes" class="btn" style="background-color: #455a64;">Portal de Solicitudes (M1b)</a>
-      <a href="/nomina" class="btn" style="background-color: #37474f;">Nómina Venezolana (M2a)</a>
+  <!-- Métricas KPI -->
+  <div class="kpi-grid">
+    <div class="kpi-card">
+      <div class="kpi-label">Plantilla Activa</div>
+      <div class="kpi-value" style="color: var(--primary-color);">{{ workerCount | default(0) }}</div>
+      <div class="kpi-subtext">
+        <span>👥 Trabajadores en nómina</span>
+      </div>
+    </div>
+
+    <div class="kpi-card kpi-success">
+      <div class="kpi-label">Tasa Oficial BCV</div>
+      <div class="kpi-value" style="color: #16a34a; font-size: 1.6rem;">{{ bcvRate | default("No sincronizada") }}</div>
+      <div class="kpi-subtext">
+        <span>🏦 Bs. / USD oficial</span>
+      </div>
+    </div>
+
+    <div class="kpi-card kpi-warning">
+      <div class="kpi-label">Control Asistencia</div>
+      <div class="kpi-value" style="font-size: 1.6rem; color: #d97706;">Semanal</div>
+      <div class="kpi-subtext">
+        <span>⏱️ Planillas por departamento</span>
+      </div>
+    </div>
+
+    <div class="kpi-card kpi-accent">
+      <div class="kpi-label">Próxima Nómina</div>
+      <div class="kpi-value" style="font-size: 1.5rem;">1ra Quincena</div>
+      <div class="kpi-subtext">
+        <span>💵 Conforme a la LOTTT</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- Panel de Accesos Rápidos y Módulos -->
+  <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(320px, 1fr)); gap: 1.5rem; margin-bottom: 2rem;">
+    <!-- Tarjeta Módulos -->
+    <div class="card" style="margin-bottom: 0;">
+      <div class="card-header">
+        <h2 class="card-title">Módulos de Gestión</h2>
+        <span class="badge badge-info">Talento Humano</span>
+      </div>
+      <p style="color: var(--text-muted); font-size: 0.9rem; margin-bottom: 1.25rem; line-height: 1.5;">
+        Acceso directo a los expedientes de personal, registro de asistencia semanal, trámites de constancias laborales y nómina.
+      </p>
+      <div style="display: flex; flex-direction: column; gap: 0.75rem;">
+        <a href="/trabajadores" class="btn btn-outline" style="justify-content: flex-start; padding: 0.75rem 1rem;">
+          <span style="font-size: 1.25rem;">👥</span>
+          <div style="text-align: left;">
+            <div style="font-weight: 600;">Expediente de Personal</div>
+            <small style="color: var(--text-muted);">Fichas individuales, cargas familiares y movimientos</small>
+          </div>
+        </a>
+        <a href="/asistencia" class="btn btn-outline" style="justify-content: flex-start; padding: 0.75rem 1rem;">
+          <span style="font-size: 1.25rem;">⏱️</span>
+          <div style="text-align: left;">
+            <div style="font-weight: 600;">Asistencia y Horas Extras LOTTT</div>
+            <small style="color: var(--text-muted);">Planillas semanales por departamento y certificación</small>
+          </div>
+        </a>
+        <a href="/solicitudes" class="btn btn-outline" style="justify-content: flex-start; padding: 0.75rem 1rem;">
+          <span style="font-size: 1.25rem;">📝</span>
+          <div style="text-align: left;">
+            <div style="font-weight: 600;">Solicitudes y Constancias de Trabajo</div>
+            <small style="color: var(--text-muted);">Emisión oficial en PDF con QR y verificación digital</small>
+          </div>
+        </a>
+      </div>
+    </div>
+
+    <!-- Tarjeta de Estado Normativo y Técnico -->
+    <div class="card" style="margin-bottom: 0;">
+      <div class="card-header">
+        <h2 class="card-title">Parámetros Laborales y Legales</h2>
+        <span class="badge badge-success"><span class="badge-dot"></span> LOTTT Vigente</span>
+      </div>
+      <div style="display: flex; flex-direction: column; gap: 0.85rem; font-size: 0.88rem;">
+        <div style="display: flex; justify-content: space-between; padding-bottom: 0.65rem; border-bottom: 1px solid var(--border-color);">
+          <span style="color: var(--text-muted);">Jornada Diurna Máxima:</span>
+          <strong>8h diarias / 40h semanales (Art. 173)</strong>
+        </div>
+        <div style="display: flex; justify-content: space-between; padding-bottom: 0.65rem; border-bottom: 1px solid var(--border-color);">
+          <span style="color: var(--text-muted);">Recargo Horas Extras:</span>
+          <strong style="color: #16a34a;">+50% sobre salario hora (Art. 118)</strong>
+        </div>
+        <div style="display: flex; justify-content: space-between; padding-bottom: 0.65rem; border-bottom: 1px solid var(--border-color);">
+          <span style="color: var(--text-muted);">Bono Nocturno:</span>
+          <strong style="color: #1e40af;">+30% jornada 7pm-5am (Art. 117)</strong>
+        </div>
+        <div style="display: flex; justify-content: space-between; padding-bottom: 0.65rem; border-bottom: 1px solid var(--border-color);">
+          <span style="color: var(--text-muted);">Motor de Base de Datos:</span>
+          <strong>SQLite (WAL) + Drizzle ORM</strong>
+        </div>
+        <div style="display: flex; justify-content: space-between;">
+          <span style="color: var(--text-muted);">Importador Masivo:</span>
+          <strong>Soporte nativo Excel (.xlsx) y CSV</strong>
+        </div>
+      </div>
+      <div style="margin-top: 1.5rem;">
+        <a href="/trabajadores/importar" class="btn btn-secondary" style="width: 100%;">
+          📥 Carga Masiva de Trabajadores (Excel / CSV)
+        </a>
+      </div>
     </div>
   </div>
 </div>

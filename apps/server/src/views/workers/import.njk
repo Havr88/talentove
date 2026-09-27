@@ -38,11 +38,11 @@
 V-12345678,,Juan,Perez,1990-05-15,M,soltero,Caracas,juan@empresa.ve,Analista,Tecnología,indeterminado,privado,2026-01-15,1200.00,USD">{{ csvData | default('') }}</textarea>
       </div>
 
-      <div style="display: flex; gap: 1rem; align-items: center; margin-top: 1.5rem;">
-        <button type="submit" name="mode" value="dryrun" class="btn" style="background-color: #455a64;">
+      <div style="display: flex; gap: 0.75rem; align-items: center; margin-top: 1.5rem; flex-wrap: wrap;">
+        <button type="submit" name="mode" value="dryrun" class="btn btn-secondary">
           🔍 Validar Archivo (Modo Simulación / Dry-Run)
         </button>
-        <button type="submit" name="mode" value="execute" class="btn">
+        <button type="submit" name="mode" value="execute" class="btn btn-primary">
           🚀 Importar y Guardar en la Base de Datos
         </button>
       </div>

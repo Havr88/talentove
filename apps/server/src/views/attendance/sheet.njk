@@ -1,27 +1,56 @@
 {% extends "layouts/base.njk" %}
 
 {% block content %}
+<!-- Calcular totales de horas -->
+{% set totReg = 0 %}
+{% set totExtD = 0 %}
+{% set totExtN = 0 %}
+{% set totBonoN = 0 %}
+{% for r in records %}
+  {% set totReg = totReg + (r.regularHours or 0) %}
+  {% set totExtD = totExtD + (r.overtimeDayHours or 0) %}
+  {% set totExtN = totExtN + (r.overtimeNightHours or 0) %}
+  {% set totBonoN = totBonoN + (r.nightBonusHours or 0) %}
+{% endfor %}
+
 <div style="margin-bottom: 1.5rem;">
-  <a href="/asistencia" style="color: var(--text-muted); text-decoration: none; font-size: 0.9rem;">&larr; Volver a planillas</a>
-  <div style="display: flex; justify-content: space-between; align-items: flex-start; margin-top: 0.5rem; flex-wrap: wrap; gap: 1rem;">
+  <div style="margin-bottom: 0.75rem;">
+    <a href="/asistencia" style="color: var(--text-muted); font-size: 0.875rem; display: inline-flex; align-items: center; gap: 0.35rem;">
+      &larr; Volver al listado de planillas
+    </a>
+  </div>
+
+  <div style="display: flex; justify-content: space-between; align-items: flex-start; flex-wrap: wrap; gap: 1rem;">
     <div>
-      <h2 style="margin: 0; color: var(--primary-color);">Planilla Semanal: Semana {{ sheet.weekNumber }} ({{ sheet.year }})</h2>
-      <p style="color: var(--text-muted); margin-top: 0.25rem;">
+      <div style="display: flex; align-items: center; gap: 0.75rem; flex-wrap: wrap;">
+        <h1 style="margin: 0; font-size: 1.75rem; font-weight: 800; color: var(--text-color); letter-spacing: -0.02em;">
+          Planilla Semanal: Semana {{ sheet.weekNumber }} ({{ sheet.year }})
+        </h1>
+        {% if sheet.status == "verificada" or sheet.status == "cerrada" %}
+          <span class="badge badge-success"><span class="badge-dot"></span> Verificada RRHH</span>
+        {% elif sheet.status == "cargada" %}
+          <span class="badge badge-info"><span class="badge-dot"></span> Cargada (Pendiente Verificación)</span>
+        {% else %}
+          <span class="badge badge-warning"><span class="badge-dot"></span> Borrador en Digitación</span>
+        {% endif %}
+      </div>
+      <p style="color: var(--text-muted); margin-top: 0.35rem; font-size: 0.95rem;">
         <strong>Departamento:</strong> {{ sheet.departmentName | default("General") }} &bull;
         <strong>Período:</strong> {{ sheet.startDate }} al {{ sheet.endDate }} &bull;
         <strong>Coordinador:</strong> {{ sheet.coordinatorName }}
       </p>
     </div>
-    <div style="display: flex; gap: 0.75rem; align-items: center;">
-      <a href="/asistencia/{{ sheet.id }}/pdf" target="_blank" class="btn btn-accent" style="display: flex; align-items: center; gap: 0.4rem;">
+
+    <div style="display: flex; gap: 0.75rem; align-items: center; flex-wrap: wrap;">
+      <a href="/asistencia/{{ sheet.id }}/pdf" target="_blank" class="btn btn-accent" style="box-shadow: var(--shadow-sm);">
         <span>📄</span> Descargar Planilla Oficial (PDF)
       </a>
 
       {% if sheet.status != "cerrada" and currentUser.role in ["superadmin", "admin", "rrhh"] %}
         <form action="/asistencia/{{ sheet.id }}/verificar" method="POST" style="margin: 0;">
           {% if csrfToken %}<input type="hidden" name="_csrf" value="{{ csrfToken }}">{% endif %}
-          <button type="submit" class="btn" style="background: #2e7d32;" onclick="return confirm('¿Confirma la verificación técnica de esta planilla para cómputo de nómina?')">
-            ✓ Certificar y Aprobar RRHH
+          <button type="submit" class="btn btn-success" onclick="return confirm('¿Confirma la certificación y verificación técnica de esta planilla para cómputo de nómina?')">
+            <span>✓</span> Certificar y Aprobar RRHH
           </button>
         </form>
       {% endif %}
@@ -30,119 +59,164 @@
 </div>
 
 {% if query.saved %}
-  <div class="alert-success">Registros guardados y recalculados exitosamente según LOTTT.</div>
+  <div class="alert-success">
+    <span>✓</span>
+    <span>Registros diarios guardados y recalculados exitosamente conforme a la LOTTT (Arts. 117, 118, 173).</span>
+  </div>
 {% endif %}
 {% if query.verified %}
-  <div class="alert-success">Planilla verificada y certificada exitosamente por Talento Humano.</div>
+  <div class="alert-success">
+    <span>✓</span>
+    <span>Planilla verificada y certificada exitosamente por Talento Humano para su procesamiento en nómina.</span>
+  </div>
 {% endif %}
 {% if error %}
-  <div class="alert-error">{{ error }}</div>
+  <div class="alert-error">
+    <span>⚠️</span>
+    <span>{{ error }}</span>
+  </div>
 {% endif %}
 
-<!-- Estado y Metadatos -->
-<div class="card" style="display: flex; gap: 2rem; flex-wrap: wrap; background: #fafafa; padding: 1rem 1.5rem;">
-  <div>
-    <span style="font-size: 0.8rem; color: var(--text-muted); text-transform: uppercase;">Estado de Planilla:</span><br>
-    {% if sheet.status == "verificada" or sheet.status == "cerrada" %}
-      <strong style="color: #2e7d32;">● VERIFICADA POR TALENTO HUMANO</strong>
-    {% elif sheet.status == "cargada" %}
-      <strong style="color: #1565c0;">● CARGADA (PENDIENTE VERIFICACIÓN)</strong>
-    {% else %}
-      <strong style="color: #ef6c00;">● BORRADOR EN DIGITACIÓN</strong>
-    {% endif %}
+<!-- Ficha de Resumen de Horas LOTTT -->
+<div class="kpi-grid" style="grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); margin-bottom: 1.5rem;">
+  <div class="kpi-card">
+    <div class="kpi-label">Horas Ordinarias</div>
+    <div class="kpi-value" style="color: var(--primary-color);">{{ totReg }}h</div>
+    <div class="kpi-subtext">Base semanal regular</div>
   </div>
-  <div>
-    <span style="font-size: 0.8rem; color: var(--text-muted); text-transform: uppercase;">Firma de Coordinador:</span><br>
-    <strong>{{ "FIRMADO CONFORME" if sheet.coordinatorSigned else "PENDIENTE POR FIRMA" }}</strong>
+
+  <div class="kpi-card kpi-success">
+    <div class="kpi-label">Horas Extras Diurnas (+50%)</div>
+    <div class="kpi-value" style="color: #16a34a;">{{ totExtD }}h</div>
+    <div class="kpi-subtext">Art. 118 LOTTT</div>
   </div>
-  <div>
-    <span style="font-size: 0.8rem; color: var(--text-muted); text-transform: uppercase;">Analista Verificador:</span><br>
-    <strong>{{ sheet.verifiedByName | default("Pendiente de verificación") }}</strong>
-    {% if sheet.verifiedAt %}<small style="color: var(--text-muted);">({{ sheet.verifiedAt | truncate(10, true, "") }})</small>{% endif %}
+
+  <div class="kpi-card kpi-accent">
+    <div class="kpi-label">Horas Extras Nocturnas (+80%)</div>
+    <div class="kpi-value" style="color: #dc2626;">{{ totExtN }}h</div>
+    <div class="kpi-subtext">Recargo nocturno + extra</div>
   </div>
-  <div>
-    <span style="font-size: 0.8rem; color: var(--text-muted); text-transform: uppercase;">Total Registros:</span><br>
-    <strong>{{ records.length }} turnos asignados</strong>
+
+  <div class="kpi-card kpi-warning">
+    <div class="kpi-label">Bono Nocturno (+30%)</div>
+    <div class="kpi-value" style="color: #d97706;">{{ totBonoN }}h</div>
+    <div class="kpi-subtext">Art. 117 LOTTT (7pm - 5am)</div>
+  </div>
+</div>
+
+<!-- Metadatos de Validación -->
+<div class="card" style="padding: 1rem 1.5rem; background: var(--surface-alt); margin-bottom: 1.5rem;">
+  <div style="display: flex; gap: 2.5rem; flex-wrap: wrap; font-size: 0.875rem;">
+    <div>
+      <span style="color: var(--text-muted); font-size: 0.75rem; text-transform: uppercase; font-weight: 700;">Firma de Coordinador:</span><br>
+      {% if sheet.coordinatorSigned %}
+        <strong style="color: #16a34a;">✓ Firmado Conforme</strong>
+      {% else %}
+        <strong style="color: #d97706;">⏳ Pendiente de Firma</strong>
+      {% endif %}
+    </div>
+    <div>
+      <span style="color: var(--text-muted); font-size: 0.75rem; text-transform: uppercase; font-weight: 700;">Analista RRHH Verificador:</span><br>
+      <strong>{{ sheet.verifiedByName | default("Pendiente de verificación") }}</strong>
+      {% if sheet.verifiedAt %}<small style="color: var(--text-muted);">({{ sheet.verifiedAt | truncate(10, true, "") }})</small>{% endif %}
+    </div>
+    <div>
+      <span style="color: var(--text-muted); font-size: 0.75rem; text-transform: uppercase; font-weight: 700;">Total Registros en Planilla:</span><br>
+      <strong>{{ records.length }} turnos diarios</strong>
+    </div>
   </div>
 </div>
 
 <!-- Formulario de Registros Diarios -->
-<div class="card">
+<div class="card" style="padding: 0; overflow: hidden;">
   <form action="/asistencia/{{ sheet.id }}/guardar" method="POST">
     {% if csrfToken %}<input type="hidden" name="_csrf" value="{{ csrfToken }}">{% endif %}
 
-    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1rem;">
-      <h3 style="margin: 0; font-size: 1.1rem; color: var(--primary-color);">Carga y Verificación Diaria de Asistencia</h3>
+    <div style="display: flex; justify-content: space-between; align-items: center; padding: 1.25rem 1.5rem; border-bottom: 1px solid var(--border-color); background: var(--card-bg);">
+      <div>
+        <h2 style="margin: 0; font-size: 1.15rem; font-weight: 700; color: var(--text-color);">Carga y Verificación Diaria de Asistencia</h2>
+        <small style="color: var(--text-muted);">Ingresa horas en formato 24h (ej. 08:00, 17:00). El recálculo LOTTT es automático.</small>
+      </div>
       {% if sheet.status != "cerrada" %}
-        <button type="submit" class="btn" style="font-size: 0.9rem; padding: 0.4rem 1rem;">💾 Guardar y Recalcular Horas</button>
+        <button type="submit" class="btn btn-primary btn-sm">💾 Guardar y Recalcular Horas</button>
       {% endif %}
     </div>
 
     {% if records.length === 0 %}
-      <p style="color: var(--text-muted); padding: 1.5rem; text-align: center;">
+      <p style="color: var(--text-muted); padding: 3rem; text-align: center;">
         No hay registros cargados para esta planilla semanal.
       </p>
     {% else %}
       <div style="overflow-x: auto;">
-        <table style="width: 100%; border-collapse: collapse; font-size: 0.88rem;">
+        <table class="data-table">
           <thead>
-            <tr style="border-bottom: 2px solid var(--border-color); background: #f0f4f8; text-align: left;">
-              <th style="padding: 0.6rem 0.5rem;">Fecha</th>
-              <th style="padding: 0.6rem 0.5rem;">Cédula y Trabajador</th>
-              <th style="padding: 0.6rem 0.5rem; width: 100px;">Entrada</th>
-              <th style="padding: 0.6rem 0.5rem; width: 100px;">Salida</th>
-              <th style="padding: 0.6rem 0.5rem; text-align: center; width: 70px;">Firma</th>
-              <th style="padding: 0.6rem 0.5rem; width: 60px; text-align: center;">Ord.</th>
-              <th style="padding: 0.6rem 0.5rem; width: 60px; text-align: center;">Ext.D</th>
-              <th style="padding: 0.6rem 0.5rem; width: 60px; text-align: center;">Ext.N</th>
-              <th style="padding: 0.6rem 0.5rem; width: 60px; text-align: center;">Bono.N</th>
-              <th style="padding: 0.6rem 0.5rem;">Observaciones</th>
+            <tr>
+              <th style="width: 110px;">Fecha</th>
+              <th>Cédula y Trabajador</th>
+              <th style="width: 105px;">Entrada</th>
+              <th style="width: 105px;">Salida</th>
+              <th style="width: 80px; text-align: center;">Firma</th>
+              <th style="width: 70px; text-align: center;">Ord.</th>
+              <th style="width: 70px; text-align: center;">Ext.D</th>
+              <th style="width: 70px; text-align: center;">Ext.N</th>
+              <th style="width: 70px; text-align: center;">Bono.N</th>
+              <th>Observaciones</th>
             </tr>
           </thead>
           <tbody>
             {% for r in records %}
-              <tr style="border-bottom: 1px solid var(--border-color);">
-                <td style="padding: 0.5rem; white-space: nowrap; font-weight: 500;">
+              <tr>
+                <td style="white-space: nowrap; font-weight: 600; color: var(--text-muted);">
                   {{ r.workDate }}
                   <input type="hidden" name="recordIds" value="{{ r.id }}">
                 </td>
-                <td style="padding: 0.5rem;">
-                  <strong>{{ r.workerIdDoc }}</strong><br>
-                  <small style="color: var(--text-muted);">{{ r.workerName }}</small>
+                <td>
+                  <strong style="color: var(--primary-color);">{{ r.workerIdDoc }}</strong><br>
+                  <span style="font-size: 0.85rem; color: var(--text-color);">{{ r.workerName }}</span>
                 </td>
-                <td style="padding: 0.5rem;">
-                  <input type="text" name="timeIn_{{ r.id }}" value="{{ r.timeIn | default('') }}" placeholder="08:00" class="form-control" style="padding: 0.3rem 0.4rem; font-size: 0.85rem;" {% if sheet.status == 'cerrada' %}disabled{% endif %}>
+                <td>
+                  <input type="text" name="timeIn_{{ r.id }}" value="{{ r.timeIn | default('') }}" placeholder="08:00" class="form-control" style="padding: 0.35rem 0.5rem; font-size: 0.85rem; text-align: center;" {% if sheet.status == 'cerrada' %}disabled{% endif %}>
                 </td>
-                <td style="padding: 0.5rem;">
-                  <input type="text" name="timeOut_{{ r.id }}" value="{{ r.timeOut | default('') }}" placeholder="17:00" class="form-control" style="padding: 0.3rem 0.4rem; font-size: 0.85rem;" {% if sheet.status == 'cerrada' %}disabled{% endif %}>
+                <td>
+                  <input type="text" name="timeOut_{{ r.id }}" value="{{ r.timeOut | default('') }}" placeholder="17:00" class="form-control" style="padding: 0.35rem 0.5rem; font-size: 0.85rem; text-align: center;" {% if sheet.status == 'cerrada' %}disabled{% endif %}>
                 </td>
-                <td style="padding: 0.5rem; text-align: center;">
-                  <input type="checkbox" name="signature_{{ r.id }}" value="1" {% if r.workerSignature %}checked{% endif %} {% if sheet.status == 'cerrada' %}disabled{% endif %}>
+                <td style="text-align: center;">
+                  <input type="checkbox" name="signature_{{ r.id }}" value="1" style="transform: scale(1.2); cursor: pointer;" {% if r.workerSignature %}checked{% endif %} {% if sheet.status == 'cerrada' %}disabled{% endif %}>
                 </td>
-                <td style="padding: 0.5rem; text-align: center; font-weight: 600; color: #1565c0;">
+                <td style="text-align: center; font-weight: 700; color: var(--primary-color);">
                   {{ r.regularHours | default(0) }}h
                 </td>
-                <td style="padding: 0.5rem; text-align: center; font-weight: 600; color: #2e7d32;">
+                <td style="text-align: center; font-weight: 700; color: #16a34a;">
                   {{ r.overtimeDayHours | default(0) }}h
                 </td>
-                <td style="padding: 0.5rem; text-align: center; font-weight: 600; color: #c62828;">
+                <td style="text-align: center; font-weight: 700; color: #dc2626;">
                   {{ r.overtimeNightHours | default(0) }}h
                 </td>
-                <td style="padding: 0.5rem; text-align: center; font-weight: 600; color: #6a1b9a;">
+                <td style="text-align: center; font-weight: 700; color: #d97706;">
                   {{ r.nightBonusHours | default(0) }}h
                 </td>
-                <td style="padding: 0.5rem;">
-                  <input type="text" name="notes_{{ r.id }}" value="{{ r.notes | default('') }}" placeholder="Sin novedades" class="form-control" style="padding: 0.3rem 0.4rem; font-size: 0.85rem;" {% if sheet.status == 'cerrada' %}disabled{% endif %}>
+                <td>
+                  <input type="text" name="notes_{{ r.id }}" value="{{ r.notes | default('') }}" placeholder="Sin observaciones" class="form-control" style="padding: 0.35rem 0.5rem; font-size: 0.85rem;" {% if sheet.status == 'cerrada' %}disabled{% endif %}>
                 </td>
               </tr>
             {% endfor %}
           </tbody>
+          <tfoot>
+            <tr style="background: var(--surface-alt); font-weight: 700; border-top: 2px solid var(--border-color);">
+              <td colspan="5" style="text-align: right; padding: 0.75rem 1rem; text-transform: uppercase; font-size: 0.8rem; color: var(--text-muted);">Totales Acumulados:</td>
+              <td style="text-align: center; color: var(--primary-color); padding: 0.75rem 0.5rem;">{{ totReg }}h</td>
+              <td style="text-align: center; color: #16a34a; padding: 0.75rem 0.5rem;">{{ totExtD }}h</td>
+              <td style="text-align: center; color: #dc2626; padding: 0.75rem 0.5rem;">{{ totExtN }}h</td>
+              <td style="text-align: center; color: #d97706; padding: 0.75rem 0.5rem;">{{ totBonoN }}h</td>
+              <td></td>
+            </tr>
+          </tfoot>
         </table>
       </div>
 
       {% if sheet.status != "cerrada" %}
-        <div style="margin-top: 1.5rem; display: flex; justify-content: flex-end;">
-          <button type="submit" class="btn">💾 Guardar y Recalcular Horas</button>
+        <div style="padding: 1.25rem 1.5rem; background: var(--surface-alt); display: flex; justify-content: flex-end; border-top: 1px solid var(--border-color);">
+          <button type="submit" class="btn btn-primary">💾 Guardar y Recalcular Horas</button>
         </div>
       {% endif %}
     {% endif %}
