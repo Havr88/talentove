@@ -37,7 +37,7 @@
 | `financial_institutions` | Instituciones financieras (seed del dataset `data/ve/bancos.json`) | `codigo` (4 dígitos, PK natural), `nombre`, `rif`, `sector`, `activa` |
 | `users` | Accesos al sistema | `employee_id?` (null para admin externo), `email`, `password_hash (argon2id)`, `totp_secret?`, `ultimo_acceso` |
 | `roles` / `user_roles` | RBAC | `role ('superadmin','admin_rrhh','aprobador','empleado','auditor')` |
-| `sessions` | Sesiones activas | `user_id`, `expires_at`, `ip`, `user_agent` |
+| `sessions` | Sesiones activas. Solo el **hash SHA-256** del token (ADR-0007) | `user_id`, `token_hash`, `expires_at`, `last_seen_at`, `ip`, `user_agent` |
 | `onboarding_tokens` | Incorporación self-service por token (patrón "por Hash" de Patria) | `token_hash`, `propósito`, `expira_el`, `usado_el` |
 
 ## Motor de solicitudes del trabajador (M1b)
@@ -70,9 +70,9 @@
 | Tabla | Propósito |
 |---|---|
 | `payroll_periods` | Períodos (quincenal/mensual) con cierre: `estado ('abierto','calculado','cerrado')` |
-| `payroll_concepts` | Catálogo configurable: asignaciones y deducciones (fórmula referida a `packages/domain`, params) + **flags de incidencia**: `incide_prestaciones`, `incide_utilidades`, `incide_bono_vacacional`, `incide_parafiscales` — críticos en sector público, donde bonos como el de Guerra/Alimentación **no inciden** en prestaciones |
+| `payroll_concepts` | Catálogo configurable: asignaciones y deducciones. La fórmula se referencia por **`formula_key` cerrado en el código + `params jsonb` validado con zod**, nunca por expresión ejecutable (ADR-0009) + **flags de incidencia**: `incide_prestaciones`, `incide_utilidades`, `incide_bono_vacacional`, `incide_parafiscales` — críticos en sector público, donde bonos como el de Guerra/Alimentación **no inciden** en prestaciones |
 | `payroll_runs` | Corrida por período/companía + snapshot de tasas usadas |
-| `payroll_items` | Renglones por empleado/concepto del período |
+| `payroll_items` | Renglones por empleado/concepto del período, con `formula_key`+`formula_version`+`params`+`applied_rule_ids`+`fx_rate` usados: el recibo es reproducible (ADR-0009) |
 | `payroll_accumulators` | Acumuladores para utilidades, prestaciones (garantía + complemento), intereses, utilidades pagadas (base INCES 0,5%) |
 | `anticipos` | Anticipos de salario con límite paramétrico (patrón "Adelanto de Fondos": % del promedio de N meses) y saldo negativo en consolidado |
 | `settlements` | Liquidación de beneficios al retiro (detalle completo) |
@@ -120,5 +120,5 @@
 | `banners` | Slots de comunicación del rail (marca blanca) |
 | `surveys` + `survey_responses` | Encuestas internas de un clic (siempre POST) |
 | `settings` | Branding, terminología, módulos activados, SMTP de la instalación (key/value jsonb) |
-| `files` | Metadatos de documentos subidos (hash, tamaño, ruta/driver) |
+| `files` | Metadatos de documentos subidos: `key` opaca, `original_name`, `content_type_detectado`, `size`, `sha256`, `subido_por` (ADR-0008) |
 | `audit_log` | Append-only: `user_id`, `accion`, `tabla`, `registro_id`, `antes jsonb`, `después jsonb` |

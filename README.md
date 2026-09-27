@@ -41,7 +41,7 @@ Razones y alternativas descartadas en [`docs/decisiones/0001-stack-nucleo.md`](d
 | [`docs/marca-blanca.md`](docs/marca-blanca.md) | Mecanismo de marca blanca y theming |
 | [`docs/seguridad.md`](docs/seguridad.md) | Modelo de amenazas por superficie, controles obligatorios y lista de verificación pre-release |
 | [`docs/instalacion.md`](docs/instalacion.md) | Guía de instalación (borrador, se completa en M0) |
-| [`docs/decisiones/`](docs/decisiones/) | Decisiones de arquitectura (ADRs) |
+| [`docs/decisiones/`](docs/decisiones/) | Decisiones de arquitectura (ADRs), con [índice y estado](docs/decisiones/README.md) |
 | [`docs/activos-reutilizables.md`](docs/activos-reutilizables.md) | Inventario de activos aprovechables de los proyectos locales |
 | [`docs/datasets.md`](docs/datasets.md) | Datasets de referencia versionados (bancos VE, territorio, feriados) |
 | [`AGENTS.md`](AGENTS.md) | Convenciones para desarrollo (humanos y asistentes IA) |

@@ -46,7 +46,7 @@ Reglas estructurales (ver `AGENTS.md`): archivos ≤400 líneas, feature-first (
 - **Patrón repositorio**: la lógica de negocio nunca consulta SQL directo; repos por feature con `find/findById/create/update/delete`.
 - **pg-boss** para colas sobre la misma PostgreSQL (ADR-0004): corrida de nómina, recordatorios, alertas de vencimiento de documentos, correos. Sin Redis.
 - **pdfmake** para recibos de pago, constancias y comprobantes (PDF puro en Node, sin Chromium — clave para instalaciones ligeras).
-- **Archivos/documentos**: driver de almacenamiento configurable — disco local por defecto; S3/MinIO opcional. Nunca en la BD.
+- **Archivos/documentos**: driver de almacenamiento configurable — disco local por defecto; S3/MinIO opcional. Nunca en la BD. Se accede por **clave opaca generada** y la descarga pasa siempre por un endpoint autenticado (ADR-0008).
 - **Migraciones**: node-pg-migrate, SQL versionado en el repo.
 - **Dinero**: PostgreSQL `numeric(20,2)`; tasas de cambio `numeric(20,8)`. Jamás float.
 
@@ -63,9 +63,9 @@ Reglas estructurales (ver `AGENTS.md`): archivos ≤400 líneas, feature-first (
 
 ## 5. Autenticación y autorización
 
-- Sesiones cookie `httpOnly`/`SameSite=Lax` con store en PostgreSQL.
+- Sesiones cookie `httpOnly`/`SameSite=Lax` con store en PostgreSQL: token opaco de 256 bits **guardado como hash**, un solo secreto maestro del que se derivan por HKDF el firmador de sesión y el de CSRF (ADR-0007).
 - Contraseñas **argon2id**; 2FA TOTP opcional por usuario.
-- **RBAC**: roles de instalación: `superadmin` (dueño de la instalación), `admin_rrhh`, `aprobador` (jefaturas), `empleado`, `auditor` (solo lectura de reportes/audit).
+- **RBAC**: roles de instalación: `superadmin` (dueño de la instalación), `admin_rrhh`, `aprobador` (jefaturas), `empleado`, `auditor` (solo lectura de reportes/audit). Los códigos de rol y permiso viven en el código; la asignación es dato (ADR-0007).
 - Empleado se autoidentifica por cédula en la UI (patrón Patria).
 - Auditoría **append-only** (`audit_log`): quién, qué, cuándo, antes/después — para acciones sensibles (nómina, expediente, configuración).
 - Soft-delete (`deleted_at`) en entidades sensibles; nunca borrado físico de nómina.

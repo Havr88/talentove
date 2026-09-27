@@ -33,15 +33,16 @@ laborales y de salud). Consecuencia: acceso por rol siempre, exportación regist
 - **Política de contraseña**: longitud mínima 12, sin reglas de composición arbitraria; verificación
   contra listas de contraseñas filtradas; intervalo mínimo entre cambios.
 - **2FA TOTP** opcional por usuario y **obligatorio** para `superadmin` cuando el rol existe
-  fuera de la red local. **El secreto TOTP se cifra en reposo** con una clave derivada de
-  `SESSION_SECRET`; nunca en claro.
+  fuera de la red local. **El secreto TOTP se cifra en reposo** (AES-256-GCM) con una clave
+  derivada por HKDF de `SESSION_SECRET`; nunca en claro (ADR-0007).
 - **Un solo secreto maestro**: `SESSION_SECRET` es el único secreto que se configura; de él se
   derivan por HKDF, con contextos separados, el firmador de cookies y el de los tokens CSRF.
   El esquema zod de arranque **rechaza los valores de ejemplo** (`CAMBIAR`, `changeme`,
   `secret`, `password`) y exige ≥32 bytes hex: un placeholder que pasara la validación
   firmaría las sesiones de toda instalación que compartiera ese valor con una clave conocida,
   y el fallo sería silencioso.
-- **Sesiones**: store en PostgreSQL, identificador opaco en cookie; rotación del identificador
+- **Sesiones**: store en PostgreSQL, token opaco de 256 bits en la cookie **guardado solo como
+  hash** — una filtración de la tabla no permite secuestrar sesiones (ADR-0007); rotación del identificador
   en cada elevación de privilegios (login, TOTP); revocación server-side inmediata
   (logout, cambio de password, suspensión del usuario). `audit_log` registra los accesos,
   incluidos los fallidos.
@@ -54,7 +55,7 @@ laborales y de salud). Consecuencia: acceso por rol siempre, exportación regist
 
 ## 3. Autorización
 
-- **RBAC** con los roles de instalación (`arquitectura.md` §5). Cada endpoint declara el rol
+- **RBAC** con los roles de instalación (`arquitectura.md` §5, ADR-0007). Cada endpoint declara el rol
   requerido; la ausencia de declaración es **denegada por defecto** (fail closed).
 - **La autorización se comprueba en el repositorio/servicio, no solo en la ruta**: un endpoint
   que devuelva datos de un empleado debe comprobar que el usuario tiene relación con él
