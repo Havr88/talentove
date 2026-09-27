@@ -1,0 +1,59 @@
+# Dependencias
+node_modules/
+# Puede contener token de registro de npm
+.npmrc
+
+# Build
+dist/
+build/
+*.tsbuildinfo
+
+# Entorno y secretos
+.env
+.env.local
+.env*.local
+
+# Claves y material criptográfico (nunca deben estar en el repo)
+*.pem
+*.key
+*.p12
+*.pfx
+id_rsa*
+id_ed25519*
+
+# Datos locales de la instalación (expedientes, documentos, colas)
+# NOTA: `data/` NO se ignora — los datasets de referencia versionados
+# (bancos, cargos, tipos de personal) viven en data/ve/ y son parte del
+# repo; los seeds se generan a partir de ellos (ver docs/datasets.md).
+uploads/
+data/local/
+data/tmp/
+*.sqlite
+*.sqlite3
+
+# Dumps y respaldos de base de datos (cualquier formato: contienen todos
+# los datos personales de la instalación)
+*.dump
+*.sql
+*.sql.gz
+*.sql.bz2
+*.tar.gz
+backups/
+*.bak
+
+# Importaciones masivas de empleados (contienen datos personales reales;
+# el bulk loader de M1a las trabaja fuera del repo)
+imports/
+*.import.csv
+
+# Cobertura y reportes
+coverage/
+.vitest/
+playwright-report/
+test-results/
+
+# Sistema
+.DS_Store
+Thumbs.db
+*.log
+tmp/

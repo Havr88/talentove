@@ -1,0 +1,115 @@
+# Módulos y hitos — especificación (v2)
+
+> Estado: **v2.1 — aprobado por el sponsor 2026-09-26**, con decisiones abiertas registradas (2026-09-27) (estructura M1a/M1b/M2/M3/M4). Referencias "(Patria)" = patrón copiado de `analisis-patria.md`; "(activo local)" = recurso de `activos-reutilizables.md`. Los módulos se abren como issues al iniciar su hito.
+
+## M0 — Fundación
+
+**Entregables:** entorno verificado (Node ≥20, PostgreSQL 16; Docker en servidor de pruebas — no hay Docker local), repo con CI (lint+typecheck+tests+audit; plantilla base `geo/.github`), esqueleto `apps/server` (Express+Nunjucks+HTMX+Materialize+DataTables) y `packages/domain`, migraciones, auth+RBAC con sesiones en PG, **wizard de primera instalación**, theming por CSS variables, shell UI completo estilo Patria (navbar+acordeón+rail+footer+PWA), docker-compose, guía de instalación en español, y portación del primer módulo de dominio testado: **tasas Bs/USD** (de `sistema_caja_bimoneda`, activo local).
+
+**Criterios de aceptación:** instalación limpia en <15 min; wizard genera superadmin+empresa+branding; login/logout/2FA-TOTP opcional; tema cambia en vivo; CI en verde; suite de tasas con cobertura ≥95%.
+
+## M1a — Expediente + Estructura organizacional + carga masiva
+
+**Expediente del trabajador:**
+- Datos personales con validadores VE (cédula, RIF con dígito verificador, teléfonos, correos, dirección con estados/municipios/parroquias)
+- Contratos (tipo, ingreso, salario Bs/USD, jornada, cargo, sede, **tipo de personal** — catálogo de 30 tipos: obrero/administrativo/profesional fijo o contratado, Alto Nivel, LNR, docente, LOTTT por duración, becas/honorarios — con flag `relacion_laboral` que excluye a no laborales de prestaciones/parafiscales), cuentas bancarias (PAGO_MOVIL/ZELLE…)
+- **Contratación legal:** redacción de contratos a tiempo determinado/indeterminado, **firma por duplicado** (una copia para el trabajador — Art. 59 LOTTT) con registro de entrega, y **libros legales digitales** generados de los datos reales (libro de contratos de trabajo, registro de ingreso de trabajadores, **libro de vacaciones**, libro de reclamaciones) con numeración correlativa, historial de emisiones y versión imprimible/firmable
+- **Documentos con metadatos específicos por tipo** — catálogo `document_types` con campos propios (fecha de emisión, fecha de vencimiento y específicos: **título obtenido, nivel académico, año de graduación, nombre del curso, horas, institución, médico/clínica, clase de licencia**…), estados pendiente/aprobado/rechazado (Patria: tablas de workflow), **requisitos obligatorios por ley** (LOTTT/LOPCYMAT/IVSS — catálogo en `regionalizacion-venezuela.md` §8) y **alertas de vencimiento**
+- **Cargas familiares y beneficiarios** (CRUD + confirmación en 2 pasos — Patria: Familia)
+- **Incorporación por token** (Patria: "Agregar por Hash")
+- **Checklist de completitud** (Patria: "Protegido") con capacidades desbloqueables
+
+**Estructura organizacional (módulo A):**
+- Unidades con **tipo configurable** (Dirección/Gerencia/Coordinación/Departamento/Unidad/Almacén), jerarquía, sede, responsable
+- **Asignaciones con vigencia** (empleado↔unidad+cargo+flag responsable); organigrama en árbol (componente Lit); vista "empleados a cargo" por coordinador
+- **Gestión del catálogo de cargos (totalmente editable):** CRUD de `positions` (crear/editar/activar-desactivar), seed inicial de 66 denominaciones comunes venezolanas (`data/ve/cargos.json`, taxonomía ISCO-08) con política de re-seed sin sobrescritura, importación masiva y búsqueda para asignación rápida
+- Terminología orgánica editable por instalación (marca blanca)
+
+**Carga masiva (módulo J):** importación de empleados, estructura y salarios desde Excel/CSV con validación zod, previsualización, reporte de errores por fila, modo dry-run.
+
+**Búsqueda global** de trabajadores por cédula/nombre/cargo.
+
+**Criterios de aceptación:** organigrama navegable y editable; importación de 100 empleados sintéticos sin errores y con reporte de errores legible; token de incorporación genera expediente pre-cargado; checklist de completitud del expediente basado en los requisitos legales del catálogo de documentos, con alerta al vencerse un documento.
+
+## M1b — Portal del trabajador + Motor de solicitudes + Portal del coordinador
+
+**Motor de solicitudes (módulo B):**
+- Catálogo de tipos **configurable por instalación**: formulario JSON → formularios HTMX dinámicos, cadena de aprobación con resolutores (jefe directo desde la org, coordinador de unidad, rol RRHH, usuario fijo), SLA, adjuntos, flag de incidencia en nómina
+- Tipos M1b:
+  - **Vacaciones:** solicitud de días con **cálculo automático de disfrute** (saldo disponible según LOTTT 15+1→30, contados en días hábiles contra el calendario de feriados, periodo propuesto y advertencias de solapamiento con el equipo) y flujo **solicitud → aprobación del jefe directo → RRHH**
+  - **Horas extra y días feriados laborados:** el trabajador **solicita/notifica/indica** las horas extra y los días feriados o de descanso trabajados (o el coordinador los registra por él), con aprobación del jefe directo; los recargos LOTTT paramétricos (extra diurna +50%, nocturno +30%, feriado/descanso — verificar Art. 190 en Gaceta) se calculan y pagan en nómina desde M2
+  - **Permisos:** remunerados/no remunerados (personal, estudio, sindical, nacimiento de hijo, matrimonio, fallecimiento de familiar) con duraciones paramétricas
+  - **Reposos médicos avalados por el IVSS:** registro con adjunto/referencia del reposo y su **aval IVSS**; los días de incapacidad no cuentan como ausencia y quedan disponibles para las reglas de subsidio IVSS (patrono vs IVSS — paramétricas, a verificar)
+  - **Licencias:** maternidad (18 semanas: 6 antes + 12 después), paternidad, luto — duraciones paramétricas según LOTTT (Arts. 213 y ss.)
+  - **Constancias** (auto-servicio PDF), **actualización de datos** (cambios al expediente requieren aprobación), **reclamos/peticiones**, **pases/movimientos** (sin efecto salarial en M1b)
+- Estados: borrador → enviada → en revisión → aprobada/rechazada/devuelta/cancelada → completada; **vistas por estado estilo Patria** (tablas pending/waiting/rejected)
+- Bandeja del coordinador: aprobar/rechazar/devolver con comentario; **delegados** en vacaciones; reasignación automática al cambiar responsable de unidad
+- **Calendario de feriados VE paramétrico** (nacionales + locales) para días hábiles
+- Notificaciones: rail derecho estilo Patria + correo; timeline por solicitud
+
+**Portal del trabajador:** panel con comunicados (scroll infinito HTMX), rail de notificaciones/pendientes, historial de accesos, perfil por secciones, carnet digital con QR.
+
+**Portal del coordinador (módulo K):** dashboard de pendientes de aprobación, equipo a cargo, vacaciones del equipo, asistencia del día, aprobaciones rápidas desde el rail.
+
+**Criterios de aceptación:** flujo completo empleado→jefe→RRHH de una solicitud de vacaciones con saldo correcto y cálculo de disfrute; reposo médico registrado con aval IVSS que no penaliza asistencia; reporte de horas extra/feriado laborado aprobado por el jefe y visible para nómina; delegación funcional; constancia PDF generada; E2E Playwright del flujo.
+
+## M2 — Nómina venezolana + Asistencia extendida + Integraciones
+
+**Nómina** (como v1): conceptos configurables con **flags de incidencia**, fórmulas LOTTT (vacaciones, bono vacacional, utilidades, prestaciones garantía+complemento+intereses, liquidación), parafiscales paramétricos (IVSS/RPE/FAOV/INCES), dualidad Bs/USD con histórico, períodos con cierre y confirmación en 2 pasos, **anticipos con límite paramétrico** (Patria: Adelanto de Fondos), recibos PDF, tabla mensual histórica (Patria: Estadísticas). Incluye: cestaticket/beneficio de alimentación (frecuencia configurable — mensual o fraccionada), **calendario de registro mensual y depósito trimestral de la Garantía de Prestaciones Sociales (Art. 142 LOTTT)**, horas extras/recargos nocturnos/feriados laborados calculados desde el cierre de asistencia, y control del libro de vacaciones con pago oportuno del bono vacacional.
+
+**Movimientos con efecto salarial:** transferencias/cambios de cargo con fecha efectiva que generan el cambio de salario en nómina; historial inmutable.
+
+**Asistencia extendida (módulo C):** cuadrantes semanal/mensual por unidad (turnos rotativos, cruces de medianoche, TZ Caracas), **intercambio de turnos** con aprobación, marcaciones multi-fuente (web, QR, **importación de relojes biométricos tipo ZKTeco**), horas extra con aprobación previa, cierre mensual con revisiones que alimenta nómina.
+
+**Integraciones (módulo I, núcleo):** archivos bancarios de pago de nómina (adaptador paramétrico por banco), archivos de cotización IVSS/FAOV-BANAVIH/INCES, export contable (asientos dual Bs/USD, referencia: doble entrada de `sistema_caja_bimoneda`).
+
+**Reportes básicos (módulo H):** headcount, ausentismo, costo de nómina y patronal; exportaciones CSV/Excel/PDF.
+
+**Criterios de aceptación:** quincena de prueba completa con recibos consistentes y auditoría; archivo bancario generado y validado con el banco del pilot; asistencia biométrica importada y reflejada en el cierre; calibración de fórmulas con contador (≥95% cobertura en domain).
+
+## M3 — Talento: ATS, ciclo de vida, SST, activos
+
+- **ATS:** vacantes (interna + link público), postulaciones con token, pipeline kanban, **entrevistas con máquina de estados** (Reservada→Confirmada→Atendida→Cancelada — referencia: docs de `appointments_analysis`)
+- **Onboarding (F):** checklist de ingreso por cargo (documentos, unidad, equipos, accesos, inducción con firma), expediente pre-cargado desde el ATS, y la **Notificación de Riesgos ("Derecho a Saber", LOPCYMAT) como puerta obligatoria**: el trabajador no puede iniciar funciones sin firmar el reconocimiento de los riesgos de su puesto
+- **Offboarding (G):** tipos de egreso, entrevista y encuesta de salida, checklist de devoluciones (bloquea liquidación según regla configurable), y emisión de los **documentos de egreso obligatorios: constancia de trabajo (LOTTT) y Forma 14-100 del IVSS (Constancia de Egreso)**
+- **Relaciones laborales y clima:** atención de quejas y mediación de conflictos, **gestión de notificaciones/reclamos de la Inspectoría del Trabajo con plazos y responsables**, afiliaciones sindicales y **convención colectiva aplicable** (reglas configurables por convención), y encuestas de clima
+- **Desempeño:** plantillas configurables por metas y **modelos de competencias** para medir rendimiento e identificar potencial; ciclo por período
+- **Retención:** administración de los **beneficios del paquete integral de compensación no obligatorios** (salud privada, bonos de productividad en divisas, transporte, comedor) por trabajador/grupo, y reporte de **rotación de personal calificado** como métrica de seguimiento
+- **Encuestas internas** (Patria: Encuestas): clima laboral y de un clic; **comités y afiliaciones**: comité SST (LOPCYMAT), comité de alimentación, sindicato
+- **Capacitación:** cursos, certificados, **planes de formación vinculados a la cuota y programas del INCES** (técnicos y habilidades blandas); horas acumuladas
+- **SST (D):** registro e investigación de accidentes/enfermedades ocupacionales con reporte IVSS/INPSASEL, entregas de **EPP** con firma y reposición, exámenes médicos con agendamiento y recordatorios, estadísticas por unidad
+- **Activos asignados (E):** custodia de equipos/uniformes con acta, check-in/out y QR (patrón assettag-qr), vinculado al offboarding
+
+**Criterios de aceptación:** candidato → contrato → onboarding completo sin doble captura; egreso con devoluciones y liquidación disparada; acta de entrega de activos firmada (firma canvas).
+
+## M4 — Extensión (opcional, a priorizar con el sponsor)
+
+- **Caja de ahorro (L):** aportes, préstamos con avales y **tabla de amortización** (brecha confirmada: construir en `packages/domain`), deducción en nómina
+- **Reconocimientos (M):** diplomas/reconocimientos internos PDF con membrete (Patria: "Logros")
+- Tienda de beneficios (Ecwid embebido; Jumpseller alternativa) · **Firma electrónica** de documentos · **API pública + webhooks** · módulo de contenido público (o Publii) · **régimen sector público completo** (tabuladores, INCES 1%, NPC 9%) + **SIGEP** · **canal ético de denuncias** (Patria: Bloqueos y Denuncias)
+
+---
+
+## Observaciones del sponsor
+
+> Espacio para tus ediciones manuales: ajustes de alcance, prioridades, vocabulario y requisitos que surjan de la revisión.
+
+### Decisiones abiertas que requieren tu confirmación
+
+Registradas en la revisión documental del 2026-09-27 (esta sección es el punto de entrada;
+las decisiones con impacto arquitectónico además necesitan ADR propio).
+
+| # | Decisión | Estado | Impacto si se aplaza |
+|---|---|---|---|
+| 1 | **Contrato de fórmulas de nómina**: ¿cómo se referencia una fórmula de `payroll_concepts` a `packages/domain`? Propuesta: `formula_key` (enum) + `params jsonb` versionado, **nunca una expresión ejecutable leída de la BD** | abierta | La forma del catálogo de conceptos se fija al implementarlo; cambiarla después obliga a migrar datos de nómina ya calculados |
+| 2 | **Licencia (ADR-0005)**: AGPL-3 (propuesta) vs MIT/Apache-2.0 | abierta | Bloquea la publicación del repo en GitHub. Define además si se pueden re-implementar vs. copiar los activos AGPL (`activos-reutilizables.md` §5) |
+| 3 | **Sesiones y RBAC**: falta ADR para el modelo de sesión en PostgreSQL, el conjunto de roles y la política de autoidentificación por cédula | abierta | Es la base de auth/RBAC de todo M0; conviene fijarla antes de escribir código |
+| 4 | **Driver de almacenamiento** (disco local por defecto vs S3/MinIO opcional): falta ADR que fije la interfaz | abierta | Afecta a `files`, adjuntos de solicitudes, documentos del expediente y activos (M3) |
+| 5 | **RIF**: conjunto de prefijos, longitud del cuerpo y algoritmo del dígito verificador sin verificar contra SENIAT (ver `regionalizacion-venezuela.md` §1.1) | abierta | Bloquea el validador de RIF del expediente; la fórmula ya quedó parametrizada para no bloquear el trabajo |
+| 6 | **Presupuesto y tamaño de M2**: M2 concentra nómina + asistencia extendida + integraciones bancarias/parafiscales + reportes. ¿Se divide en M2a (nómina) y M2b (asistencia + integraciones)? | abierta | El alcance de un solo hito puede resultar inmanejable; conviene decidir antes de abrir los issues |
+| 7 | **Rendimiento esperado** (nº de trabajadores por instalación, usuarios concurrentes): no hay criterios no funcionales definidos | abierta | Sin un orden de magnitud no se pueden fijar límites de carga masiva ni decidir DataTables server-side vs. cliente |
+
+### Pendientes de las páginas Patria por aportar
+
+`analisis-patria.md` §7 sigue esperando: `/perfil/laboral/`, `/perfil/carnet/`, `/encuestas/`,
+`/perfil/seguridad/`, `/perfil/configuracion/` y la página de login.

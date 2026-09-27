@@ -1,0 +1,319 @@
+{
+  "_meta": {
+    "dataset": "ve-tipos-personal",
+    "descripcion": "Catálogo de tipos de personal de Venezuela: combina la nomenclatura de la Administración Pública Nacional con las clasificaciones de la LOTTT y las relaciones no laborales (becas, honorarios). Cada tipo lleva `relacion_laboral`: los tipos no laborales NO generan prestaciones sociales ni aportes parafiscales.",
+    "fuentes": [
+      "Decreto N° 6.055 (29-abr-2008, Gaceta Oficial N° 38.921): Sistema de Clasificación de Cargos de la Carrera Funcionarial",
+      "Ley del Estatuto de la Función Pública (Art. 20: libre nombramiento y remoción — cargos de alto nivel o de confianza)",
+      "Manual Descriptivo de Cargos APN (Alto Nivel, administrativo, profesional, defensorial, obrero)",
+      "LOTTT: clasificación por duración (permanente, eventual, estacional, ocasional), trabajadores de confianza, tiempo parcial, Art. 59 (contratos escritos por duplicado)",
+      "Tabuladores APN (Tabla 3/3.1, documento MinDefensa may-2025): BI-TII-PI-PIII, Alto Nivel, Obrero G1-G10",
+      "Sector educativo: convenciones colectivas (docente, administrativo, obrero)",
+      "Curación inicial propia; montos y vigencias por verificar en Gaceta al implementar"
+    ],
+    "fecha_consulta": "2026-09-26",
+    "politica_actualizacion": "Semilla editable: CRUD completo en admin; el re-seed solo inserta tipos inexistentes. Los tipos alimentan reglas (`rule_sets`) y filtros; `relacion_laboral=False` excluye al trabajador de nómina prestacional y parafiscales (solo pago de honorarios/beca)."
+  },
+  "tipos": [
+    {
+      "nombre": "Obrero Fijo",
+      "grupo": "obrero",
+      "regimen": "laboral",
+      "vinculo": "indeterminado",
+      "sector": "publico",
+      "relacion_laboral": true,
+      "base_legal": "LOTTT; carrera obrera APN (Tabla 3.1)",
+      "tabulador_apn": "Obrero G1-G10"
+    },
+    {
+      "nombre": "Obrero Contratado",
+      "grupo": "obrero",
+      "regimen": "laboral",
+      "vinculo": "determinado",
+      "sector": "publico",
+      "relacion_laboral": true,
+      "base_legal": "LOTTT; práctica APN",
+      "tabulador_apn": "Obrero G1-G10"
+    },
+    {
+      "nombre": "Administrativo Fijo (Carrera Funcionarial)",
+      "grupo": "administrativo",
+      "regimen": "laboral",
+      "vinculo": "indeterminado",
+      "sector": "publico",
+      "relacion_laboral": true,
+      "base_legal": "LOTTT; Ley del Estatuto de la Función Pública; Decreto N° 6.055",
+      "tabulador_apn": "BI-BIII"
+    },
+    {
+      "nombre": "Administrativo Contratado",
+      "grupo": "administrativo",
+      "regimen": "laboral",
+      "vinculo": "determinado",
+      "sector": "publico",
+      "relacion_laboral": true,
+      "base_legal": "LOTTT; práctica APN",
+      "tabulador_apn": "BI-BIII"
+    },
+    {
+      "nombre": "Profesional Fijo (Carrera Funcionarial)",
+      "grupo": "profesional",
+      "regimen": "laboral",
+      "vinculo": "indeterminado",
+      "sector": "publico",
+      "relacion_laboral": true,
+      "base_legal": "LOTTT; Decreto N° 6.055",
+      "tabulador_apn": "PI-PIII"
+    },
+    {
+      "nombre": "Profesional Contratado",
+      "grupo": "profesional",
+      "regimen": "laboral",
+      "vinculo": "determinado",
+      "sector": "publico",
+      "relacion_laboral": true,
+      "base_legal": "LOTTT; práctica APN",
+      "tabulador_apn": "PI-PIII"
+    },
+    {
+      "nombre": "Técnico Fijo (Carrera Funcionarial)",
+      "grupo": "tecnico",
+      "regimen": "laboral",
+      "vinculo": "indeterminado",
+      "sector": "publico",
+      "relacion_laboral": true,
+      "base_legal": "LOTTT; Decreto N° 6.055",
+      "tabulador_apn": "TI-TII"
+    },
+    {
+      "nombre": "Técnico Contratado",
+      "grupo": "tecnico",
+      "regimen": "laboral",
+      "vinculo": "determinado",
+      "sector": "publico",
+      "relacion_laboral": true,
+      "base_legal": "LOTTT; práctica APN",
+      "tabulador_apn": "TI-TII"
+    },
+    {
+      "nombre": "Personal de Alto Nivel (AN)",
+      "grupo": "alto_nivel",
+      "regimen": "laboral",
+      "vinculo": "indeterminado",
+      "sector": "publico",
+      "relacion_laboral": true,
+      "base_legal": "Ley del Estatuto de la Función Pública (Art. 20); tramo AN niveles I-V",
+      "tabulador_apn": "Alto Nivel"
+    },
+    {
+      "nombre": "Personal de Libre Nombramiento y Remoción (LNR)",
+      "grupo": "alto_nivel",
+      "regimen": "laboral",
+      "vinculo": "indeterminado",
+      "sector": "publico",
+      "relacion_laboral": true,
+      "base_legal": "Ley del Estatuto de la Función Pública (Art. 20): ocupan cargos de alto nivel o de confianza",
+      "tabulador_apn": "Alto Nivel/LNR"
+    },
+    {
+      "nombre": "Personal de Confianza",
+      "grupo": "confianza",
+      "regimen": "laboral",
+      "vinculo": "indeterminado",
+      "sector": "publico",
+      "relacion_laboral": true,
+      "base_legal": "LOTTT (trabajadores de confianza); Estatuto Función Pública",
+      "tabulador_apn": null
+    },
+    {
+      "nombre": "Personal Docente Fijo",
+      "grupo": "docente",
+      "regimen": "laboral",
+      "vinculo": "indeterminado",
+      "sector": "publico",
+      "relacion_laboral": true,
+      "base_legal": "LOTTT; Estatuto de la Carrera Docente; convención colectiva sector educación",
+      "tabulador_apn": null
+    },
+    {
+      "nombre": "Personal Docente Contratado",
+      "grupo": "docente",
+      "regimen": "laboral",
+      "vinculo": "determinado",
+      "sector": "publico",
+      "relacion_laboral": true,
+      "base_legal": "LOTTT; convención colectiva sector educación",
+      "tabulador_apn": null
+    },
+    {
+      "nombre": "Personal Docente Interino/Suplente",
+      "grupo": "docente",
+      "regimen": "laboral",
+      "vinculo": "determinado",
+      "sector": "publico",
+      "relacion_laboral": true,
+      "base_legal": "Estatuto de la Carrera Docente",
+      "tabulador_apn": null
+    },
+    {
+      "nombre": "Personal Militar o Civil de la FANB",
+      "grupo": "militar",
+      "regimen": "especial",
+      "vinculo": "militar",
+      "sector": "publico",
+      "relacion_laboral": true,
+      "base_legal": "Leyes orgánicas de la FANB (régimen especial, fuera de la LOTTT)",
+      "tabulador_apn": null
+    },
+    {
+      "nombre": "Contratado por Obra Determinada",
+      "grupo": "general",
+      "regimen": "laboral",
+      "vinculo": "obra",
+      "sector": "publico",
+      "relacion_laboral": true,
+      "base_legal": "LOTTT Art. 59 (escrito y por duplicado)",
+      "tabulador_apn": null
+    },
+    {
+      "nombre": "Jubilado/Pensionado Recontratado",
+      "grupo": "general",
+      "regimen": "laboral",
+      "vinculo": "determinado",
+      "sector": "publico",
+      "relacion_laboral": true,
+      "base_legal": "Práctica APN; verificar normativa vigente",
+      "tabulador_apn": null
+    },
+    {
+      "nombre": "Trabajador Permanente (Tiempo Indeterminado)",
+      "grupo": "general",
+      "regimen": "laboral",
+      "vinculo": "indeterminado",
+      "sector": "privado",
+      "relacion_laboral": true,
+      "base_legal": "LOTTT",
+      "tabulador_apn": null
+    },
+    {
+      "nombre": "Trabajador Contratado (Tiempo Determinado)",
+      "grupo": "general",
+      "regimen": "laboral",
+      "vinculo": "determinado",
+      "sector": "privado",
+      "relacion_laboral": true,
+      "base_legal": "LOTTT Art. 59",
+      "tabulador_apn": null
+    },
+    {
+      "nombre": "Trabajador por Obra Determinada",
+      "grupo": "general",
+      "regimen": "laboral",
+      "vinculo": "obra",
+      "sector": "privado",
+      "relacion_laboral": true,
+      "base_legal": "LOTTT",
+      "tabulador_apn": null
+    },
+    {
+      "nombre": "Trabajador Eventual",
+      "grupo": "general",
+      "regimen": "laboral",
+      "vinculo": "eventual",
+      "sector": "privado",
+      "relacion_laboral": true,
+      "base_legal": "LOTTT (clasificación por duración)",
+      "tabulador_apn": null
+    },
+    {
+      "nombre": "Trabajador Estacional",
+      "grupo": "general",
+      "regimen": "laboral",
+      "vinculo": "estacional",
+      "sector": "privado",
+      "relacion_laboral": true,
+      "base_legal": "LOTTT (clasificación por duración)",
+      "tabulador_apn": null
+    },
+    {
+      "nombre": "Trabajador Ocasional",
+      "grupo": "general",
+      "regimen": "laboral",
+      "vinculo": "ocasional",
+      "sector": "privado",
+      "relacion_laboral": true,
+      "base_legal": "LOTTT (clasificación por duración)",
+      "tabulador_apn": null
+    },
+    {
+      "nombre": "Trabajador a Tiempo Parcial",
+      "grupo": "general",
+      "regimen": "laboral",
+      "vinculo": "parcial",
+      "sector": "ambos",
+      "relacion_laboral": true,
+      "base_legal": "LOTTT (jornada parcial)",
+      "tabulador_apn": null
+    },
+    {
+      "nombre": "Trabajador de Confianza",
+      "grupo": "confianza",
+      "regimen": "laboral",
+      "vinculo": "indeterminado",
+      "sector": "privado",
+      "relacion_laboral": true,
+      "base_legal": "LOTTT (trabajadores de confianza)",
+      "tabulador_apn": null
+    },
+    {
+      "nombre": "Teletrabajador / Trabajador a Domicilio",
+      "grupo": "general",
+      "regimen": "laboral",
+      "vinculo": "indeterminado",
+      "sector": "ambos",
+      "relacion_laboral": true,
+      "base_legal": "LOTTT; Ley de Teletrabajo",
+      "tabulador_apn": null
+    },
+    {
+      "nombre": "Aprendiz (Beca de Trabajo)",
+      "grupo": "general",
+      "regimen": "no_laboral",
+      "vinculo": "beca",
+      "sector": "ambos",
+      "relacion_laboral": false,
+      "base_legal": "Ley INCES / programas de aprendizaje; verificar vigencia",
+      "tabulador_apn": null
+    },
+    {
+      "nombre": "Pasante (Convenio de Pasantías)",
+      "grupo": "general",
+      "regimen": "no_laboral",
+      "vinculo": "beca",
+      "sector": "ambos",
+      "relacion_laboral": false,
+      "base_legal": "Ley de Pasantías y Servicio Comunitario; verificar",
+      "tabulador_apn": null
+    },
+    {
+      "nombre": "Profesional por Honorarios (Contrato de Servicios)",
+      "grupo": "general",
+      "regimen": "no_laboral",
+      "vinculo": "honorarios",
+      "sector": "ambos",
+      "relacion_laboral": false,
+      "base_legal": "Derecho civil/comercial (no LOTTT); verificar criterio de laboralidad real",
+      "tabulador_apn": null
+    },
+    {
+      "nombre": "Consultor Independiente",
+      "grupo": "general",
+      "regimen": "no_laboral",
+      "vinculo": "honorarios",
+      "sector": "ambos",
+      "relacion_laboral": false,
+      "base_legal": "Derecho civil/comercial (no LOTTT)",
+      "tabulador_apn": null
+    }
+  ]
+}

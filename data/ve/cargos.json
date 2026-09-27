@@ -1,0 +1,478 @@
+{
+  "_meta": {
+    "dataset": "ve-cargos",
+    "descripcion": "Catálogo semilla de denominaciones de cargos comunes en Venezuela, curado para prellenar `positions` en instalaciones nuevas. ES UNA SEMILLA EDITABLE: el usuario final puede crear, editar, activar/desactivar cargos desde el admin; el re-seed nunca sobrescribe ediciones.",
+    "fuentes": [
+      "Taxonomía: ISCO-08 en español (OIT) — grupos mayores 1-9 (ilo.org/public/english/bureau/stat/isco/isco08/)",
+      "Ampliación posible: ESCO (~2.942 ocupaciones en español, CSV descargable, mapeadas a ISCO-08) — esco.ec.europa.eu",
+      "Sector público: nomenclatura APN (grupos de tabulador BI-TII-PI-PIII de Tabla 3 APN may-2025; 'Obrero' de Tabla 3.1) y Sistema de Clasificación de Cargos de la Carrera Funcionarial (Decreto N° 6.055); manual descriptivo de cargos a curar en M4 (régimen público)",
+      "Curación inicial propia: denominaciones habituales del mercado laboral venezolano"
+    ],
+    "fecha_consulta": "2026-09-26",
+    "politica_actualizacion": "Semilla versionada: el seed inserta solo cargos cuyo (nombre) no exista; ediciones del usuario jamás se sobrescriben. Importación masiva Excel/CSV disponible (M1a)."
+  },
+  "cargos": [
+    {
+      "nombre": "Director(a) General",
+      "categoria": "gerencia",
+      "grupo_isco": 1,
+      "aplica_sector": "ambos",
+      "nivel_tabulador_apn": "Alto Nivel"
+    },
+    {
+      "nombre": "Gerente General",
+      "categoria": "gerencia",
+      "grupo_isco": 1,
+      "aplica_sector": "ambos",
+      "nivel_tabulador_apn": "Alto Nivel"
+    },
+    {
+      "nombre": "Gerente de Administración",
+      "categoria": "gerencia",
+      "grupo_isco": 1,
+      "aplica_sector": "ambos",
+      "nivel_tabulador_apn": null
+    },
+    {
+      "nombre": "Gerente de Operaciones",
+      "categoria": "gerencia",
+      "grupo_isco": 1,
+      "aplica_sector": "ambos",
+      "nivel_tabulador_apn": null
+    },
+    {
+      "nombre": "Gerente de Recursos Humanos",
+      "categoria": "gerencia",
+      "grupo_isco": 1,
+      "aplica_sector": "ambos",
+      "nivel_tabulador_apn": null
+    },
+    {
+      "nombre": "Jefe(a) de Departamento",
+      "categoria": "gerencia",
+      "grupo_isco": 1,
+      "aplica_sector": "ambos",
+      "nivel_tabulador_apn": null
+    },
+    {
+      "nombre": "Coordinador(a)",
+      "categoria": "coordinacion",
+      "grupo_isco": 1,
+      "aplica_sector": "ambos",
+      "nivel_tabulador_apn": null
+    },
+    {
+      "nombre": "Coordinador(a) de Área",
+      "categoria": "coordinacion",
+      "grupo_isco": 1,
+      "aplica_sector": "ambos",
+      "nivel_tabulador_apn": null
+    },
+    {
+      "nombre": "Supervisor(a)",
+      "categoria": "coordinacion",
+      "grupo_isco": 3,
+      "aplica_sector": "ambos",
+      "nivel_tabulador_apn": "Obrero Supervisor"
+    },
+    {
+      "nombre": "Encargado(a) de Turno",
+      "categoria": "coordinacion",
+      "grupo_isco": 3,
+      "aplica_sector": "privado",
+      "nivel_tabulador_apn": null
+    },
+    {
+      "nombre": "Coordinador(a) de Talento Humano",
+      "categoria": "talento_humano",
+      "grupo_isco": 2,
+      "aplica_sector": "ambos",
+      "nivel_tabulador_apn": null
+    },
+    {
+      "nombre": "Analista de Talento Humano",
+      "categoria": "talento_humano",
+      "grupo_isco": 2,
+      "aplica_sector": "ambos",
+      "nivel_tabulador_apn": "PI"
+    },
+    {
+      "nombre": "Analista de Nómina",
+      "categoria": "talento_humano",
+      "grupo_isco": 2,
+      "aplica_sector": "ambos",
+      "nivel_tabulador_apn": null
+    },
+    {
+      "nombre": "Especialista en Selección y Reclutamiento",
+      "categoria": "talento_humano",
+      "grupo_isco": 2,
+      "aplica_sector": "ambos",
+      "nivel_tabulador_apn": null
+    },
+    {
+      "nombre": "Asistente de Personal",
+      "categoria": "talento_humano",
+      "grupo_isco": 4,
+      "aplica_sector": "ambos",
+      "nivel_tabulador_apn": "BI"
+    },
+    {
+      "nombre": "Asistente Administrativo",
+      "categoria": "administracion",
+      "grupo_isco": 4,
+      "aplica_sector": "ambos",
+      "nivel_tabulador_apn": "BI"
+    },
+    {
+      "nombre": "Oficinista",
+      "categoria": "administracion",
+      "grupo_isco": 4,
+      "aplica_sector": "ambos",
+      "nivel_tabulador_apn": "BI"
+    },
+    {
+      "nombre": "Secretario(a) Ejecutivo(a)",
+      "categoria": "administracion",
+      "grupo_isco": 4,
+      "aplica_sector": "ambos",
+      "nivel_tabulador_apn": null
+    },
+    {
+      "nombre": "Recepcionista",
+      "categoria": "administracion",
+      "grupo_isco": 4,
+      "aplica_sector": "ambos",
+      "nivel_tabulador_apn": null
+    },
+    {
+      "nombre": "Archivista",
+      "categoria": "administracion",
+      "grupo_isco": 4,
+      "aplica_sector": "ambos",
+      "nivel_tabulador_apn": null
+    },
+    {
+      "nombre": "Analista Administrativo",
+      "categoria": "administracion",
+      "grupo_isco": 4,
+      "aplica_sector": "ambos",
+      "nivel_tabulador_apn": "BII"
+    },
+    {
+      "nombre": "Mensajero(a)",
+      "categoria": "administracion",
+      "grupo_isco": 4,
+      "aplica_sector": "ambos",
+      "nivel_tabulador_apn": null
+    },
+    {
+      "nombre": "Contador(a) General",
+      "categoria": "finanzas",
+      "grupo_isco": 2,
+      "aplica_sector": "ambos",
+      "nivel_tabulador_apn": "PII"
+    },
+    {
+      "nombre": "Analista de Contabilidad",
+      "categoria": "finanzas",
+      "grupo_isco": 2,
+      "aplica_sector": "ambos",
+      "nivel_tabulador_apn": "PI"
+    },
+    {
+      "nombre": "Tesorero(a)",
+      "categoria": "finanzas",
+      "grupo_isco": 2,
+      "aplica_sector": "ambos",
+      "nivel_tabulador_apn": null
+    },
+    {
+      "nombre": "Auditor(a) Interno(a)",
+      "categoria": "finanzas",
+      "grupo_isco": 2,
+      "aplica_sector": "ambos",
+      "nivel_tabulador_apn": null
+    },
+    {
+      "nombre": "Analista de Presupuesto",
+      "categoria": "finanzas",
+      "grupo_isco": 2,
+      "aplica_sector": "ambos",
+      "nivel_tabulador_apn": null
+    },
+    {
+      "nombre": "Asistente de Tesorería",
+      "categoria": "finanzas",
+      "grupo_isco": 4,
+      "aplica_sector": "ambos",
+      "nivel_tabulador_apn": null
+    },
+    {
+      "nombre": "Analista de Sistemas",
+      "categoria": "tecnologia",
+      "grupo_isco": 2,
+      "aplica_sector": "ambos",
+      "nivel_tabulador_apn": "PI"
+    },
+    {
+      "nombre": "Desarrollador(a) de Software",
+      "categoria": "tecnologia",
+      "grupo_isco": 2,
+      "aplica_sector": "ambos",
+      "nivel_tabulador_apn": null
+    },
+    {
+      "nombre": "Soporte Técnico",
+      "categoria": "tecnologia",
+      "grupo_isco": 3,
+      "aplica_sector": "ambos",
+      "nivel_tabulador_apn": "TI"
+    },
+    {
+      "nombre": "Administrador(a) de Redes e Infraestructura",
+      "categoria": "tecnologia",
+      "grupo_isco": 2,
+      "aplica_sector": "ambos",
+      "nivel_tabulador_apn": null
+    },
+    {
+      "nombre": "Analista de Compras",
+      "categoria": "logistica",
+      "grupo_isco": 3,
+      "aplica_sector": "ambos",
+      "nivel_tabulador_apn": null
+    },
+    {
+      "nombre": "Comprador(a)",
+      "categoria": "logistica",
+      "grupo_isco": 3,
+      "aplica_sector": "ambos",
+      "nivel_tabulador_apn": null
+    },
+    {
+      "nombre": "Almacenista",
+      "categoria": "logistica",
+      "grupo_isco": 4,
+      "aplica_sector": "ambos",
+      "nivel_tabulador_apn": null
+    },
+    {
+      "nombre": "Planificador(a) de Logística",
+      "categoria": "logistica",
+      "grupo_isco": 3,
+      "aplica_sector": "ambos",
+      "nivel_tabulador_apn": null
+    },
+    {
+      "nombre": "Despachador(a)",
+      "categoria": "logistica",
+      "grupo_isco": 8,
+      "aplica_sector": "privado",
+      "nivel_tabulador_apn": null
+    },
+    {
+      "nombre": "Ejecutivo(a) de Ventas",
+      "categoria": "ventas",
+      "grupo_isco": 5,
+      "aplica_sector": "privado",
+      "nivel_tabulador_apn": null
+    },
+    {
+      "nombre": "Vendedor(a)",
+      "categoria": "ventas",
+      "grupo_isco": 5,
+      "aplica_sector": "privado",
+      "nivel_tabulador_apn": null
+    },
+    {
+      "nombre": "Cajero(a)",
+      "categoria": "ventas",
+      "grupo_isco": 5,
+      "aplica_sector": "privado",
+      "nivel_tabulador_apn": null
+    },
+    {
+      "nombre": "Asesor Legal",
+      "categoria": "legal",
+      "grupo_isco": 2,
+      "aplica_sector": "ambos",
+      "nivel_tabulador_apn": "PII"
+    },
+    {
+      "nombre": "Abogado(a) Laboralista",
+      "categoria": "legal",
+      "grupo_isco": 2,
+      "aplica_sector": "ambos",
+      "nivel_tabulador_apn": null
+    },
+    {
+      "nombre": "Técnico Electricista",
+      "categoria": "operativo_calificado",
+      "grupo_isco": 7,
+      "aplica_sector": "ambos",
+      "nivel_tabulador_apn": null
+    },
+    {
+      "nombre": "Técnico de Refrigeración y Aire Acondicionado",
+      "categoria": "operativo_calificado",
+      "grupo_isco": 7,
+      "aplica_sector": "ambos",
+      "nivel_tabulador_apn": null
+    },
+    {
+      "nombre": "Mecánico",
+      "categoria": "operativo_calificado",
+      "grupo_isco": 7,
+      "aplica_sector": "ambos",
+      "nivel_tabulador_apn": null
+    },
+    {
+      "nombre": "Soldador(a)",
+      "categoria": "operativo_calificado",
+      "grupo_isco": 7,
+      "aplica_sector": "ambos",
+      "nivel_tabulador_apn": null
+    },
+    {
+      "nombre": "Carpintero(a)",
+      "categoria": "operativo_calificado",
+      "grupo_isco": 7,
+      "aplica_sector": "ambos",
+      "nivel_tabulador_apn": null
+    },
+    {
+      "nombre": "Albañil",
+      "categoria": "operativo_calificado",
+      "grupo_isco": 7,
+      "aplica_sector": "ambos",
+      "nivel_tabulador_apn": null
+    },
+    {
+      "nombre": "Inspector(a) de Calidad",
+      "categoria": "operativo_calificado",
+      "grupo_isco": 3,
+      "aplica_sector": "ambos",
+      "nivel_tabulador_apn": null
+    },
+    {
+      "nombre": "Obrero(a)",
+      "categoria": "operativo_elemental",
+      "grupo_isco": 9,
+      "aplica_sector": "ambos",
+      "nivel_tabulador_apn": "Obrero G1-G4"
+    },
+    {
+      "nombre": "Ayudante General",
+      "categoria": "operativo_elemental",
+      "grupo_isco": 9,
+      "aplica_sector": "ambos",
+      "nivel_tabulador_apn": null
+    },
+    {
+      "nombre": "Limpieza y Mantenimiento",
+      "categoria": "operativo_elemental",
+      "grupo_isco": 9,
+      "aplica_sector": "ambos",
+      "nivel_tabulador_apn": null
+    },
+    {
+      "nombre": "Jardinero(a)",
+      "categoria": "operativo_elemental",
+      "grupo_isco": 9,
+      "aplica_sector": "ambos",
+      "nivel_tabulador_apn": null
+    },
+    {
+      "nombre": "Chofer",
+      "categoria": "transporte",
+      "grupo_isco": 8,
+      "aplica_sector": "ambos",
+      "nivel_tabulador_apn": null
+    },
+    {
+      "nombre": "Motorizado(a)",
+      "categoria": "transporte",
+      "grupo_isco": 8,
+      "aplica_sector": "privado",
+      "nivel_tabulador_apn": null
+    },
+    {
+      "nombre": "Operador(a) de Maquinaria Pesada",
+      "categoria": "transporte",
+      "grupo_isco": 8,
+      "aplica_sector": "ambos",
+      "nivel_tabulador_apn": null
+    },
+    {
+      "nombre": "Vigilante de Seguridad",
+      "categoria": "seguridad",
+      "grupo_isco": 5,
+      "aplica_sector": "ambos",
+      "nivel_tabulador_apn": null
+    },
+    {
+      "nombre": "Docente",
+      "categoria": "docencia",
+      "grupo_isco": 2,
+      "aplica_sector": "publico",
+      "nivel_tabulador_apn": null
+    },
+    {
+      "nombre": "Docente de Aula",
+      "categoria": "docencia",
+      "grupo_isco": 2,
+      "aplica_sector": "publico",
+      "nivel_tabulador_apn": null
+    },
+    {
+      "nombre": "Directivo(a) Docente",
+      "categoria": "docencia",
+      "grupo_isco": 1,
+      "aplica_sector": "publico",
+      "nivel_tabulador_apn": null
+    },
+    {
+      "nombre": "Especialista (Área Educativa)",
+      "categoria": "docencia",
+      "grupo_isco": 2,
+      "aplica_sector": "publico",
+      "nivel_tabulador_apn": null
+    },
+    {
+      "nombre": "Médico Integral Comunitario",
+      "categoria": "salud",
+      "grupo_isco": 2,
+      "aplica_sector": "publico",
+      "nivel_tabulador_apn": null
+    },
+    {
+      "nombre": "Enfermero(a)",
+      "categoria": "salud",
+      "grupo_isco": 3,
+      "aplica_sector": "ambos",
+      "nivel_tabulador_apn": null
+    },
+    {
+      "nombre": "Odontólogo(a)",
+      "categoria": "salud",
+      "grupo_isco": 2,
+      "aplica_sector": "ambos",
+      "nivel_tabulador_apn": null
+    },
+    {
+      "nombre": "Bioanalista",
+      "categoria": "salud",
+      "grupo_isco": 2,
+      "aplica_sector": "ambos",
+      "nivel_tabulador_apn": null
+    },
+    {
+      "nombre": "Asistente de Enfermería",
+      "categoria": "salud",
+      "grupo_isco": 3,
+      "aplica_sector": "ambos",
+      "nivel_tabulador_apn": null
+    }
+  ]
+}

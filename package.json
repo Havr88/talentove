@@ -1,0 +1,15 @@
+{
+  "name": "talento-ve",
+  "version": "0.1.0",
+  "private": true,
+  "description": "Plataforma RRHH auto-alojada para Venezuela — marca blanca, una instalación por empresa (nombre de trabajo: TalentoVe)",
+  "license": "SEE LICENSE IN docs/decisiones/0005-licencia.md",
+  "engines": {
+    "node": ">=20"
+  },
+  "packageManager": "pnpm@11.17.0",
+  "scripts": {
+    "dev": "node -e \"console.error('dev: se implementa en M0 — ver docs/modulos-y-hitos.md'); process.exit(1)\"",
+    "test": "node -e \"console.error('test: se implementa en M0 — ver docs/modulos-y-hitos.md'); process.exit(1)\""
+  }
+}
