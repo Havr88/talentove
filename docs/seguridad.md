@@ -36,10 +36,13 @@ laborales y de salud). Consecuencia: acceso por rol siempre, exportación regist
   fuera de la red local. **El secreto TOTP se cifra en reposo** (AES-256-GCM) con una clave
   derivada por HKDF de `SESSION_SECRET`; nunca en claro (ADR-0007).
 - **Un solo secreto maestro**: `SESSION_SECRET` es el único secreto que se configura; de él se
-  derivan por HKDF, con contextos separados, el firmador de cookies y el de los tokens CSRF.
+  derivan por HKDF, con contextos separados, los tokens CSRF, las claves TOTP y la clave de
+  cifrado de los secretos TOTP. **El token de sesión no se firma**: es opaco y en la base de
+  datos solo se guarda su hash SHA-256 (ADR-0007).
   El esquema zod de arranque **rechaza los valores de ejemplo** (`CAMBIAR`, `changeme`,
-  `secret`, `password`) y exige ≥32 bytes hex: un placeholder que pasara la validación
-  firmaría las sesiones de toda instalación que compartiera ese valor con una clave conocida,
+  `secret`, `password`) y exige ≥32 bytes hex: un placeholder que pasara la validación haría que
+  toda instalación que compartiera ese valor derivara los mismos tokens CSRF y las mismas
+  claves TOTP, es decir, CSRF forjable y 2FAs pueden ser replicados,
   y el fallo sería silencioso.
 - **Sesiones**: store en PostgreSQL, token opaco de 256 bits en la cookie **guardado solo como
   hash** — una filtración de la tabla no permite secuestrar sesiones (ADR-0007); rotación del identificador

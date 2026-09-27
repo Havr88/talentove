@@ -63,7 +63,7 @@ Reglas estructurales (ver `AGENTS.md`): archivos ≤400 líneas, feature-first (
 
 ## 5. Autenticación y autorización
 
-- Sesiones cookie `httpOnly`/`SameSite=Lax` con store en PostgreSQL: token opaco de 256 bits **guardado como hash**, un solo secreto maestro del que se derivan por HKDF el firmador de sesión y el de CSRF (ADR-0007).
+- Sesiones cookie `httpOnly`/`SameSite=Lax` con store en PostgreSQL: token opaco de 256 bits **sin firmar, guardado solo como hash SHA-256**; un solo secreto maestro del que se derivan por HKDF, con contextos separados, los tokens CSRF, las claves TOTP y la clave de cifrado TOTP (ADR-0007).
 - Contraseñas **argon2id**; 2FA TOTP opcional por usuario.
 - **RBAC**: roles de instalación: `superadmin` (dueño de la instalación), `admin_rrhh`, `aprobador` (jefaturas), `empleado`, `auditor` (solo lectura de reportes/audit). Los códigos de rol y permiso viven en el código; la asignación es dato (ADR-0007).
 - Empleado se autoidentifica por cédula en la UI (patrón Patria).

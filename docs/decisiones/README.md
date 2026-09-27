@@ -17,6 +17,9 @@ Convención: estado `Aceptada`, `Abierta` (⏳) o `Sustituida por ADR-XXXX`.
 | [0007](0007-sesiones-rbac.md) | Sesiones en PostgreSQL, RBAC por permisos y segundo factor de identidad | Aceptada | Decisión abierta #3 |
 | [0008](0008-storage-driver.md) | Almacenamiento de documentos: driver con clave opaca, disco local por defecto | Aceptada | Decisión abierta #4 |
 | [0009](0009-formulas-nomina.md) | Contrato de fórmulas de nómina: `formula_key` + `params`, nunca código en la BD | Aceptada | Decisión abierta #1 |
+| [0010](0010-zona-horaria-y-fechas.md) | Zona horaria y fechas: `America/Caracas` por nombre IANA, `date` para calendario y `timestamptz` para instantes | Aceptada | — |
+| [0011](0011-dinero-precision-y-redondeo.md) | Dinero: sin `float`, texto en el borde, un solo redondeo *half away from zero* al acreditar | Aceptada | — |
+| [0012](0012-identificadores-de-personas.md) | Identificadores de personas: canónico en texto, catálogo versionado, sin adivinar el dígito verificador | Aceptada | — |
 
 ## Abiertas
 

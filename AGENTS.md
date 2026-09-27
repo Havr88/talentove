@@ -20,15 +20,20 @@ Node ≥20 · TypeScript · Express.js · Nunjucks · HTMX 2 · Lit · DataTable
 - **Inmutabilidad:** sin mutar inputs ni estado compartido; arrays/objetos nuevos (spread).
 - **Tamaños:** archivos ≤400 líneas, funciones <50, anidación ≤4.
 - **Sin `console.log`**: logger estructurado con contexto.
+- **Identificadores de personas (ADR-0012):** `native_id` es texto canónico `V12345678` / `J000029709` (prefijo + dígitos, sin separadores), clave primaria `uuid v7`, y la validación sale del catálogo versionado `data/ve/identificadores.json` — nunca una regex en el código. Mientras no se verifique contra SENIAT, **no se valida el dígito verificador**.
 - **Sin secretos ni datos reales en el repo**: fixtures sintéticos siempre (nombres/cédulas generadas); el análisis de Patria usa capturas redactadas.
 
 ## Regla de dominio (crítica)
 
 Toda fórmula de nómina/LOTTT/parafiscales vive en `packages/domain` como **función pura con parámetros inyectados**. Prohibido: hardcodear tasas, porcentajes, topes o valores de UT/BCV. Cualquier valor legal entra por parámetro y se registra con fuente y vigencia (`rate_tables`/`rule_sets`).
 
-## Dinero y fechas
+## Dinero y fechas (ver ADR-0010 y ADR-0011)
 
-Dinero: `numeric(20,2)` en BD, string/BigInt en dominio si hace falta precisión — **jamás float**. Fechas: `timestamptz`; TZ por defecto `America/Caracas`; UI `dd/mm/aaaa`.
+- **Dinero: `numeric(20,2)`; tasas y cantidades: `numeric(20,6)`.** En `packages/domain` se usa `decimal.js`; el constructor de `Money` **rechaza `number`** y solo acepta texto, `bigint` o `Decimal`. En el borde HTTP el dinero viaja como **string**, nunca como número JSON. **Prohibido** `parseFloat`, `Number(`, `toFixed(` en el camino del dinero: hay un test guardián que falla.
+- **Un solo redondeo**, `roundHalfUp` (*half away from zero*), y **al acreditar**, no al final del recibo. El saldo acumulado es el valor ya redondeado; el cálculo sin redondear queda en la traza (ADR-0009).
+- **Toda cantidad lleva moneda ISO-4217** (`VES`, `USD`). Prohibido un `amount` sin moneda.
+- **Fechas:** `timestamptz` para instantes, `date` para días de calendario. Zona **`America/Caracas` siempre por nombre IANA**: prohibido escribir `-04:00` o usar los getters de `Date` (`getDate()`, `getFullYear()`, `toLocaleDateString()`), que usan la zona del proceso. Hay un test guardián que falla ante ellos. UI en `dd/mm/aaaa`.
+- Un turno que cruza medianoche pertenece al día de **inicio** (`shift_date`); los días de prestaciones se restan como fechas, nunca dividiendo por 86400.
 
 ## Testing (TDD)
 

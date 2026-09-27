@@ -43,6 +43,7 @@
 
 | Dataset | Ruta futura | Hito | Fuente prevista |
 |---|---|---|---|
+| Prefijos y longitudes de cédula/RIF | `data/ve/identificadores.json` | M0 | Catálogo de trabajo **NO verificado** contra SENIAT; la app valida prefijo y longitud y **no** el dígito verificador (ADR-0012) |
 | Territorio VE: estados/municipios/parroquias | `data/ve/territorio.json` | M1a | geoBoundaries `gbOpen/VEN/ADM1+ADM2` (receta en `geo/docs/territorios-venezuela.md`, activo local) + `referencia-municipios.json` de IDANZ (Anzoátegui, 21 municipios con parroquias) |
 | Catálogo de tipos de documento del expediente (con metadata_schema y base legal) | `data/ve/tipos-documento.json` | M1a | LOTTT/LOPCYMAT/IVSS — catálogo detallado en `regionalizacion-venezuela.md` §8 |
 | Feriados VE (nacionales + móviles) | `data/ve/feriados.json` | M1b | Ley orgánica + computación eclesiástica de Pascua; locales por instalación (BD) |

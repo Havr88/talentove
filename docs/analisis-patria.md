@@ -76,7 +76,7 @@ drawCallback: ocultar paginación cuando pages <= 1
 Columnas responsivas por prioridad: `data-priority` en los `<th>` + clases `hide-on-small-only` (patrón de Familia).
 
 ### 4.4 Máscaras de entrada
-`jquery.mask`: cédula `V-XXXXXXXX` / `E-XXXXXXXX`, teléfonos `0412-1234567`, RIF `J-XXXXXXXX-X`. `jquery.maskMoney`: montos Bs/USD con coma decimal y punto de miles (`Bs 155.000,00`). Preferible: re-empaquetar como inputs Lit reutilizables.
+`jquery.mask`: cédula `V-XXXXXXXX` / `E-XXXXXXXX`, teléfonos `0412-1234567`, RIF `J-XXXXXXXX-X`. `jquery.maskMoney`: montos Bs/USD con coma decimal y punto de miles (`Bs 155.000,00`). preferible: re-empaquetar como inputs Lit reutilizables.
 
 ### 4.5 Resumen multi-moneda (patrón "Consolidado" del Monedero)
 Tabla de filas: [icono cuadrado de color] [nombre del concepto] [saldo alineado a la derecha, clase `negative` en rojo] [chevron → detalle/movimientos]. **Adaptación RRHH:** una fila por concepto/moneda — salario base Bs, saldo de vacaciones (días), prestaciones Bs (+equiv. USD), anticipos (negativo). El chevron lleva al detalle con movimientos.

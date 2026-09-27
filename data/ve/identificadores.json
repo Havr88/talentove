@@ -1,0 +1,49 @@
+{
+  "_meta": {
+    "dataset": "ve-identificadores",
+    "descripcion": "Catalogo de prefijos y longitudes de cedula (persona natural) y RIF (persona juridica) para Venezuela, usado por la validacion de `native_id`",
+    "fuente": "Observacion sobre el Registro Publico Interbancario (`data/ve/bancos.json`, 25 RIF dinámicos) + uso corriente_documentado del prefijo V. NO es una fuente oficial",
+    "fecha_consulta": "2026-09-27",
+    "verificacion": "NO VERIFICADO contra la tabla oficial de SENIAT. Longitudes y prefijos son una hipotesis de trabajo. El digito verificador NO se valida en el codigo (ver ADR-0012 y regionalizacion-venezuela.md 9)",
+    "actualizacion": "Cerrar la verificacion contra SENIAT antes de produccion; hasta entonces la API expone `verificado: false` en la respuesta de validacion para que la UI pueda avisar al usuario"
+  },
+  "canonico": {
+    "formato": "prefijo + digitos, sin guiones ni puntos, prefijo en mayusculas (V12345678, J000029709)",
+    "digito_verificador": "opcional y aparte; se conserva en `native_id_dv` cuando viene informado, y no participa del formato canonico"
+  },
+  "prefijos": [
+    {
+      "prefijo": "V",
+      "tipo": "persona_natural",
+      "significado": "Persona natural",
+      "longitudes_digitos": [6, 8],
+      "confianza": "media",
+      "notas": "Se observan historicamente 6 y 8 digitos. La longitud exacta depende de la fecha de expedicion del documento; no se debe rechazar un documento por tener una longitud distinta sin confirmar la tabla oficial"
+    },
+    {
+      "prefijo": "J",
+      "tipo": "persona_juridica",
+      "significado": "Empresa privada",
+      "longitudes_digitos": [9],
+      "confianza": "alta",
+      "notas": "Confirmado en 25 RIF del registro interbancario publico (data/ve/bancos.json): todos J con 9 digitos"
+    },
+    {
+      "prefijo": "G",
+      "tipo": "persona_juridica",
+      "significado": "Organizacion estatal",
+      "longitudes_digitos": [9],
+      "confianza": "alta",
+      "notas": "Confirmado en 25 RIF del registro interbancario publico (data/ve/bancos.json): todos G con 9 digitos"
+    },
+    {
+      "prefijo": "E",
+      "tipo": "persona_juridica",
+      "significado": "Empresa de propiedad estatal",
+      "longitudes_digitos": [9],
+      "confianza": "baja",
+      "notas": "No observado en el registro interbancario consultado; incluido por uso corriente, pendiente de confirmar. No usar para bloquear un RIF valido"
+    }
+  ],
+  "longitudes_aceptadas_por_defecto": [6, 8, 9]
+}

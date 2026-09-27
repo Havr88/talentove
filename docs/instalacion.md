@@ -19,7 +19,7 @@ El catálogo completo y comentado está en [`.env.example`](../.env.example).
 |---|---|---|
 | Aplicación | `NODE_ENV`, `PORT`, `BASE_URL`, `TZ` (fija `America/Caracas`), `INSTANCE_NAME` | Sí |
 | Base de datos | `DATABASE_URL`, `DATABASE_POOL_MAX`, `DATABASE_POOL_IDLE_TIMEOUT_MS` | Sí |
-| Sesiones y seguridad | `SESSION_SECRET` (secreto **maestro**; de él se derivan por HKDF el firmador de sesión y el de CSRF), `SESSION_COOKIE_NAME`, `SESSION_TTL_HOURS`, `SESSION_INACTIVE_WARNING_MINUTES` (8 por defecto), `SESSION_INACTIVE_LOGOUT_MINUTES` (10), `LOGIN_RATE_LIMIT_MAX`, `LOGIN_RATE_LIMIT_WINDOW_MINUTES` | Sí |
+| Sesiones y seguridad | `SESSION_SECRET` (secreto **maestro**; de él se derivan por HKDF los tokens CSRF, las claves TOTP y la clave de cifrado TOTP), `SESSION_COOKIE_NAME`, `SESSION_TTL_HOURS`, `SESSION_INACTIVE_WARNING_MINUTES` (8 por defecto), `SESSION_INACTIVE_LOGOUT_MINUTES` (10), `LOGIN_RATE_LIMIT_MAX`, `LOGIN_RATE_LIMIT_WINDOW_MINUTES` | Sí |
 | Correo | `SMTP_HOST`*, `SMTP_PORT`, `SMTP_SECURE`, `SMTP_USER`*, `SMTP_PASS`*, `MAIL_FROM`, `MAIL_FROM_NAME` | Solo si se quiere correo |
 | Documentos | `STORAGE_DRIVER` (`local`\|`s3`), `STORAGE_LOCAL_PATH`, `STORAGE_MAX_FILE_BYTES`, `STORAGE_ALLOWED_MIME`; `S3_*` si el driver es `s3` | Sí |
 | Parámetros legales | `INITIAL_BCV_USD_RATE`* | Solo en el primer arranque |
@@ -34,9 +34,14 @@ openssl rand -hex 32   # → SESSION_SECRET
 ```
 
 `SESSION_SECRET` es el **único** secreto que hay que generar: de él se derivan por HKDF,
-con contextos separados, el firmador de las cookies de sesión y el de los tokens CSRF.
-Así no existe un segundo secreto que se pueda olvidar o dejar en su valor de ejemplo, y las
-dos claves nunca coinciden por accidente.
+con contextos separados, los tokens CSRF, las claves TOTP y la clave con que se cifra el secreto
+TOTP en reposo (ADR-0007). Así no existe un segundo secreto que se pueda olvidar o dejar en su
+valor de ejemplo, y las claves nunca coinciden por accidente.
+
+El token de sesión **no se firma**: es opaco, de 256 bits, generado al azar, y en la base de
+datos solo se guarda su hash SHA-256. La cookie no necesita firma porque la validez se decide
+consultando la fila de la sesión; lo que sí se protege con `SESSION_SECRET` son CSRF, TOTP y el
+cifrado de los secretos TOTP.
 
 **La app rechaza los valores de ejemplo.** El esquema zod de arranque exige al menos 32 bytes
 hex y rechaza explícitamente `CAMBIAR`, `changeme`, `secret` y `password`. Sin esa comprobación,
