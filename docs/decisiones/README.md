@@ -12,7 +12,7 @@ Convención: estado `Aceptada`, `Abierta` (⏳) o `Sustituida por ADR-XXXX`.
 | [0002](0002-entrega-selfhosted.md) | Modelo de entrega: instalación independiente por empresa (self-hosted) | Aceptada | — |
 | [0003](0003-ui-referencia-patria.md) | UI de referencia: patrones del portal Patria, implementación modernizada | Aceptada | — |
 | [0004](0004-postgres-unica-dependencia.md) | PostgreSQL como única dependencia: colas con pg-boss, sin Redis | Aceptada | — |
-| [0005](0005-licencia.md) | Licencia del proyecto | ⏳ **Abierta** | — |
+| [0005](0005-licencia.md) | Licencia del proyecto (análisis de 6 opciones; recomendación AGPL-3.0-only) | ⏳ **Abierta — recomendada AGPL-3.0-only** | — |
 | [0006](0006-sin-cms-externo.md) | Sin CMS externo: contenido propio + Publii opcional | Aceptada | — |
 | [0007](0007-sesiones-rbac.md) | Sesiones en PostgreSQL, RBAC por permisos y segundo factor de identidad | Aceptada | Decisión abierta #3 |
 | [0008](0008-storage-driver.md) | Almacenamiento de documentos: driver con clave opaca, disco local por defecto | Aceptada | Decisión abierta #4 |
@@ -20,15 +20,15 @@ Convención: estado `Aceptada`, `Abierta` (⏳) o `Sustituida por ADR-XXXX`.
 
 ## Abiertas
 
-- **ADR-0005 (licencia).** Bloquea la publicación del repo en GitHub y determina si los activos
-  AGPL del entorno local se copian o se reimplementan (`activos-reutilizables.md` §5).
+- **ADR-0005 (licencia).** El análisis está hecho y la recomendación es **AGPL-3.0-only**;
+  falta la confirmación del sponsor. Bloquea la publicación del repo en GitHub. La decisión
+  **no está forzada por los activos locales**: como ya se decidió re-implementar en vez de
+  copiar, cualquier licencia es válida desde el punto de vista legal.
 
 ## Pendientes de decisión, sin ADR aún
 
 - **Alcance de M2** (¿se divide en M2a/M2b?): es una decisión de planificación, no de
   arquitectura, pero conviene cerrarla antes de abrir los issues del hito.
-- **Orden de magnitud** (trabajadores y usuarios concurrentes por instalación): alimenta los
-  requisitos no funcionales de `arquitectura.md` §9.
 
 ## Orden de lectura recomendado
 

@@ -102,12 +102,12 @@ quedaron resueltas en ADRs ([índice](decisiones/README.md)); las de negocio sig
 | # | Decisión | Estado | Impacto si se aplaza |
 |---|---|---|---|
 | 1 | **Contrato de fórmulas de nómina** | ✅ **Resuelta** — [ADR-0009](decisiones/0009-formulas-nomina.md): `formula_key` (cerrado en el código) + `params jsonb` validado con zod, `breakdown` y `appliedRuleIds` por renglón, versión de fórmula grabada en `payroll_items`. **Ninguna expresión ejecutable desde la BD.** | cerrada |
-| 2 | **Licencia (ADR-0005)**: AGPL-3 (propuesta) vs MIT/Apache-2.0 | abierta | Bloquea la publicación del repo en GitHub. Define además si se pueden re-implementar vs. copiar los activos AGPL (`activos-reutilizables.md` §5) |
+| 2 | **Licencia (ADR-0005)** | ⏳ **abierta con recomendación**: análisis de 6 opciones escrito; se recomienda **AGPL-3.0-only**, con Apache-2.0 como repliegue si el sector público excluye el copyleft fuerte | Bloquea la publicación del repo en GitHub. Aclarado que **no está forzada por los activos locales** (se re-implementa, no se copia) |
 | 3 | **Sesiones y RBAC** | ✅ **Resuelta** — [ADR-0007](decisiones/0007-sesiones-rbac.md): token opaco de 256 bits guardado **como hash**, un solo secreto maestro con derivación HKDF por contexto, códigos de rol y permiso en el código y asignación en datos, y la cédula como identidad (no autenticación) | cerrada |
 | 4 | **Driver de almacenamiento** | ✅ **Resuelta** — [ADR-0008](decisiones/0008-storage-driver.md): interfaz por **clave opaca generada** (path traversal imposible por construcción), descarga siempre por endpoint autenticado, MIME detectado por contenido, cifrado en reposo responsabilidad del volumen | cerrada |
 | 5 | **RIF**: conjunto de prefijos, longitud del cuerpo y algoritmo del dígito verificador sin verificar contra SENIAT (ver `regionalizacion-venezuela.md` §1.1) | abierta | Bloquea el validador de RIF del expediente; la fórmula ya quedó parametrizada para no bloquear el trabajo |
 | 6 | **Presupuesto y tamaño de M2**: M2 concentra nómina + asistencia extendida + integraciones bancarias/parafiscales + reportes. ¿Se divide en M2a (nómina) y M2b (asistencia + integraciones)? | abierta | El alcance de un solo hito puede resultar inmanejable; conviene decidir antes de abrir los issues |
-| 7 | **Rendimiento esperado** (nº de trabajadores y usuarios concurrentes por instalación) | abierta — hay **objetivos propuestos** en `arquitectura.md` §9 (5.000 trabajadores, 200 concurrentes) que necesitan tu visto bueno | Sin confirmación, los límites de carga masiva y la decisión DataTables server-side vs. cliente quedan en supuestos |
+| 7 | **Rendimiento esperado** | ✅ **Resuelta** — el sponsor confirma **< 100 usuarios concurrentes** por instalación (2026-09-27); objetivos derivados en `arquitectura.md` §9 (5.000 trabajadores, latencias, carga masiva y tiempo de cierre) | cerrada |
 
 ### Pendientes de las páginas Patria por aportar
 

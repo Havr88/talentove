@@ -92,13 +92,18 @@ Reglas estructurales (ver `AGENTS.md`): archivos ≤400 líneas, feature-first (
 
 ## 9. Requisitos no funcionales
 
-Estos números son **objetivos de diseño** (no compromisos medidos todavía): fijan el orden de
-magnitud para decidir tablas server-side vs. cliente, límites de carga masiva y capacidad de
-hardware. **Están pendientes de confirmación del sponsor** (`modulos-y-hitos.md`, observación 7).
+Fijan el orden de magnitud para decidir tablas server-side vs. cliente, límites de carga masiva
+y capacidad de hardware. Son **objetivos de diseño**, no compromisos medidos: se validarán con
+las primeras instalaciones piloto.
+
+**Confirmado por el sponsor (2026-09-27): menos de 100 usuarios concurrentes por instalación.**
+Ese techo es la restricción que manda, y es holgadamente alcanzable con un monolito SSR en
+Node: el cuello de botella real serán las consultas a PostgreSQL, no el idioma. El resto de los
+objetivos se derivan de él.
 
 | Área | Objetivo |
 |---|---|
-| Escala por instalación | Hasta **5.000 trabajadores** y **200 usuarios concurrentes** por instalación |
+| Escala por instalación | Hasta **5.000 trabajadores** y **< 100 usuarios concurrentes** por instalación (confirmado por el sponsor) |
 | Latencia de pantalla | p95 < 400 ms en listados paginados; < 800 ms en búsquedas con filtros |
 | Carga masiva | Hasta **10.000 filas** por archivo, ejecución en segundo plano (pg-boss) con reporte de errores descargable; modo dry-run obligatorio |
 | Cierre de nómina | Quincena de 5.000 trabajadores en **< 60 min**; el cálculo es puro (`packages/domain`) y por lotes, con progreso visible |
@@ -108,6 +113,17 @@ hardware. **Están pendientes de confirmación del sponsor** (`modulos-y-hitos.m
 | Uploads | Tope por archivo configurable (`STORAGE_MAX_FILE_BYTES`, 10 MB por defecto) y validación de tipo MIME por lista blanca |
 | Restauración | Un backup `pg_dump` + directorio de documentos restaura la instalación en **< 2 h** |
 | Accesibilidad | WCAG AA en todos los flujos; el incumplimiento es un bug, no una excepción |
+
+**Qué deja descartado el techo de 100 usuarios concurrentes:**
+
+- **No** hace falta caché distribuida, ni CDN, ni réplicas de lectura: no hay justificación para
+  esa complejidad en una instalación con un servidor de 2 GB.
+- **Sí** importa el aislamiento: si veinte usuarios abren a la vez la corrida de nómina, la
+  instalación no debe volverse inusable. De ahí que la corrida vaya por `pg-boss` y el cálculo
+  sea por lotes, sin bloquear la interfaz.
+- **La lista de módulos activados** por instalación (`settings`) debe asumir rendimiento
+  aceptable con todos ellos encendidos: no se presupone que el cliente desactivará módulos
+  "para que vaya rápido".
 
 **Implicaciones de diseño:** lo anterior es lo que justifica (a) `numeric` en BD y funciones
 puras de dominio en vez de cálculos en SQL, (b) cierres de nómina por lotes y no en una
