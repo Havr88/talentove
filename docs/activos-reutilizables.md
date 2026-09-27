@@ -25,7 +25,7 @@
 | **i18n zero-dependency** es/en/pt | `novaplay-portal/shared/js/i18n/i18n.js` | [ADAPTAR] | Base del módulo i18n (es-VE default) sin dependencias |
 | **Máquina de estados de citas** (Reservada→Confirmada→Atendida→Cancelada con motivo/autor) | `appointments_analysis/docs/04_MODELO_DATOS_Y_ALGORITMO_HORARIOS.md` y `05_GUIA_UI_UX_Y_FLUJOS_USUARIO.md` | [SOLO-REFERENCIA] | Mapeo directo a entrevistas del ATS (candidato↔entrevistador) |
 | **Brand tokens centralizados + audit-logger forense** | `gas/gas_anzoategui_suite/packages/branding/brand.config.js`, `packages/audit-logger/` | [ADAPTAR-PATRÓN] | Refuerzo para `marca-blanca.md` y `audit_log` (IP, UA, huella) |
-| **Créditos con abonos parciales** | `omni_pos_app/lib/features/credit_accounts/` (MIT) | [ADAPTAR-PATRÓN] | Modelo de anticipos/salarios pendientes (M2) — sin interés; falta construir amortización |
+| **Créditos con abonos parciales** | `omni_pos_app/lib/features/credit_accounts/` (MIT) | [ADAPTAR-PATRÓN] | Modelo de anticipos/salarios pendientes (M2a) — sin interés; falta construir amortización |
 | **Runbook dominio .gob.ve** (NIC.VE, DNSSEC, Cloudflare) | `/home/havr/dominio gob.ve.md` | [SOLO-REFERENCIA] | Anexar como guía de despliegue institucional en `docs/instalacion.md` si hay clientes públicos |
 
 ## 3. Tooling y plantillas de docs
@@ -36,7 +36,7 @@
 
 ## 4. Brechas confirmadas (construir de cero)
 
-El análisis confirmó que **no existen** en el entorno local: validadores de cédula/RIF con dígito verificador, fórmulas de nómina/LOTTT, amortización de préstamos con interés, y datasets completos de municipios/parroquias de toda Venezuela (solo Anzoátegui). Todas ya estaban en el plan (`packages/domain`, M1–M2); se valida el esfuerzo.
+El análisis confirmó que **no existen** en el entorno local: validadores de cédula/RIF con dígito verificador, fórmulas de nómina/LOTTT, amortización de préstamos con interés, y datasets completos de municipios/parroquias de toda Venezuela (solo Anzoátegui). Todas ya estaban en el plan (`packages/domain`, M1–M2a); se valida el esfuerzo.
 
 ## 5. Advertencias de licencia y privacidad (obligatorias antes de copiar)
 
@@ -52,5 +52,6 @@ El análisis confirmó que **no existen** en el entorno local: validadores de c�
 
 - **M0:** fusionar reglas de `everything-claude-code` en `AGENTS.md`; crear CI a partir de la plantilla de `geo`; (si el sponsor aprueba) portar `rateService`+schema bimoneda a los primeros módulos de `packages/domain` (tasas) con tests Vitest.
 - **M1:** seed territorial Anzoátegui (IDANZ+municipios) y generación del dataset nacional vía geoBoundaries; portar scanner/impresión QR (assettag, MIT); notificaciones 3 capas (molaris, MIT) como componente Lit; modelo de asistencia re-implementado tomando el DDL de `asistencias-mejoras` como referencia.
-- **M2:** calculadora fiscal (omni) y doble entrada bimoneda (bimoneda) a `packages/domain`; patrón de abonos/créditos para anticipos; cierre mensual con revisiones (patrón `month_closes`) para el cierre de nómina.
+- **M2a:** calculadora fiscal (omni) y doble entrada bimoneda (bimoneda) a `packages/domain`; patrón de abonos/créditos para anticipos.
+- **M2b:** modelo de asistencia re-implementado con el cierre mensual y revisiones (patrón `month_closes`) como cierre de asistencia.
 - **M3:** máquina de estados de entrevistas (appointments docs) para el ATS.

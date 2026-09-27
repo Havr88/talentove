@@ -16,7 +16,7 @@ Una plataforma de RRHH/talento humano que cualquier empresa venezolana —públi
 | 4 | Sector público | Bandera en el modelo de datos desde el inicio; solo se implementa el régimen privado primero |
 | 5 | UI de referencia | Patrones del portal Patria como sistema de diseño (ADR-0003) |
 | 6 | Simplificación de infra | PostgreSQL como única dependencia fuerte; colas con pg-boss (ADR-0004) |
-| 7 | Licencia | **Pendiente** (propuesta AGPL-3) — ADR-0005 |
+| 7 | Licencia | **AGPL-3.0-only** — ADR-0005 |
 
 ## 3. Mapeo del stack (origen: lista tecnológica del sponsor)
 
@@ -35,7 +35,8 @@ Detalle completo en [modulos-y-hitos.md](modulos-y-hitos.md):
 - **M0 — Fundación:** entorno, repo+CI, esqueleto Express+Nunjucks+HTMX+Materialize, auth+RBAC, wizard de primera instalación, theming por CSS variables, shell UI estilo Patria, docker-compose, y primer módulo de dominio testado (tasas Bs/USD).
 - **M1a — Expediente + Estructura organizacional:** expediente con validadores VE y tokens de incorporación, unidades organizativas configurables con asignaciones vigentes y organigrama, carga masiva Excel/CSV, búsqueda global.
 - **M1b — Portal + Motor de solicitudes:** portal del trabajador, motor de solicitudes configurable (vacaciones, permisos, constancias, actualización de datos, reclamos, pases) con cadenas de aprobación jefe→coordinación→RRHH, portal del coordinador, feriados VE paramétricos.
-- **M2 — Nómina + Asistencia extendida + Integraciones:** nómina completa (LOTTT, parafiscales, dualidad Bs/USD, anticipos, liquidación), movimientos con efecto salarial, cuadrantes/turnos/intercambios/marcaciones biométricas, archivos bancarios y de parafiscales, reportes básicos.
+- **M2a — Nómina Venezuelan:** nómina completa (LOTTT, parafiscales, dualidad Bs/USD, anticipos, liquidación), movimientos con efecto salarial, recibos y tabla histórica, archivos de cotización de parafiscales, verificación de los parámetros legales contra Gaceta Oficial. No depende del módulo de asistencia: las horas extra llegan aprobadas desde el motor de solicitudes de M1b.
+- **M2b — Asistencia extendida + integraciones + reportes:** cuadrantes/turnos/intercambios/marcaciones biométricas con cierre mensual auditable que alimenta la nómina, archivos bancarios de pago, export contable, reportes básicos.
 - **M3 — Talento y ciclo de vida:** ATS con entrevistas, onboarding, offboarding, desempeño, capacitación, SST (accidentes, EPP, exámenes), activos asignados con custodia QR, encuestas y comités.
 - **M4 — Extensión (opcional):** caja de ahorro con amortización, reconocimientos, tienda de beneficios, firma electrónica, API pública, contenido público, régimen sector público completo + SIGEP, canal ético.
 

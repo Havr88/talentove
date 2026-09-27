@@ -38,6 +38,12 @@ RED → GREEN → REFACTOR. Cobertura: ≥80% global, **≥95% en `packages/doma
 
 Replicar patrones Patria (shell §3, mecanismos §4) con la implementación modernizada del ADR-0003: HTMX para fragmentos, Lit para widgets, accesibilidad WCAG AA, cambios de estado por POST+CSRF, español por defecto en DataTables.
 
+## Licencia
+
+- **AGPL-3.0-only** ([ADR-0005](docs/decisiones/0005-licencia.md), decided 2026-09-27). Cualquier contribución se publica bajo la misma licencia.
+- **Re-implementar, no copiar**, el código de activos externos AGPL: copiar obligaría a AGPL a quien lo use. Los *datos* y los datasets públicos son libres. Ver `docs/activos-reutilizables.md` §5.
+- Si el proyecto acepta contribuciones externas, hay que firmar un **CLA** antes del primer commit aceptado, para conservar la opción de una doble licencia.
+
 ## Git
 
 - Commits: `<type>: <descripción>` — tipos: `feat`, `fix`, `refactor`, `docs`, `test`, `chore`, `perf`, `ci`.

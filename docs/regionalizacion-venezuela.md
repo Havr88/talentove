@@ -49,9 +49,9 @@ La divergencia entre "24 entidades" (§1) y "25 unidades ADM1" (`activos-reutili
 
 Costo patronal aproximado (privado): ~15–17% + 0,5% sobre utilidades.
 
-Fuentes consultadas (no oficiales, para calibrar defaults): sistematemis.com (retenciones y aportes patronales 2026), hipotecas.com.ve (guía FAOV/IVSS/INCES), runrun.es (reajuste UT). La verificación contra Gaceta Oficial es tarea explícita de M2.
+Fuentes consultadas (no oficiales, para calibrar defaults): sistematemis.com (retenciones y aportes patronales 2026), hipotecas.com.ve (guía FAOV/IVSS/INCES), runrun.es (reajuste UT). La verificación contra Gaceta Oficial es tarea explícita de M2a.
 
-## 3. Fórmulas LOTTT (base del módulo de nómina, M2)
+## 3. Fórmulas LOTTT (base del módulo de nómina, M2a)
 
 Implementadas como **funciones puras en `packages/domain`** con todos los parámetros inyectados (testables, cobertura ≥95%):
 
@@ -134,14 +134,14 @@ Puntos clave del documento:
 ## 6. Calendario de feriados y formatos bancarios
 
 - **Feriados paramétricos** (tabla `holidays`): nacionales fijos (1-ene, 19-abr, 1-may, 24-jun, 5-jul, 24-jul, 12-oct, 24-dic, 31-dic…) y móviles religiosos (Carnaval, Semana Santa — computados de Pascua), más **locales por instalación** (feriados estatales/municipales propios). El cálculo de vacaciones/permisos en días hábiles usa este calendario.
-- **Formatos bancarios de pago de nómina** (M2): adaptador **paramétrico por banco** (layout delimitado/ancho fijo, campos: cédula/RIF, cuenta, monto Bs, referencia, lote). Los layouts se cargan como plantillas versionadas — un banco nuevo no requiere código. Los bancos válidos (emisor/destino) se validan contra el **dataset de bancos venezolanos** (`data/ve/bancos.json`, códigos SUDEBAN de 4 dígitos — ver `datasets.md`).
+- **Formatos bancarios de pago de nómina** (M2b): adaptador **paramétrico por banco** (layout delimitado/ancho fijo, campos: cédula/RIF, cuenta, monto Bs, referencia, lote). Los layouts se cargan como plantillas versionadas — un banco nuevo no requiere código. Los bancos válidos (emisor/destino) se validan contra el **dataset de bancos venezolanos** (`data/ve/bancos.json`, códigos SUDEBAN de 4 dígitos — ver `datasets.md`).
 - Archivos de cotización (IVSS/FAOV/INCES) y export contable: mismo enfoque de adaptadores paramétricos.
 
 ## 7. Comprobantes y documentos legales
 
 - Recibo de pago con conceptos, retenciones y aportes (pdfmake), y su equivalente en USD si aplica.
 - **Constancia de trabajo** (emisión gratuita a petición y al egreso — LOTTT) y **Forma 14-100 del IVSS (Constancia de Egreso)** como documentos de egreso obligatorios.
-- Fórmulas de ARC/planillas fiscales: por confirmar con contador público y norma vigente (tarea de M2 — evitar suposiciones).
+- Fórmulas de ARC/planillas fiscales: por confirmar con contador público y norma vigente (tarea de M2a — evitar suposiciones).
 
 ## 8. Expediente laboral — base legal y catálogo de documentos
 
@@ -172,7 +172,7 @@ La conformación del expediente laboral es **requisito obligatorio** regulado po
 
 **Alertas de cumplimiento:** vencimientos próximos (certificado médico, licencia, certificaciones) y **requisitos faltantes según ley/sector** (`document_requirements`) → notificaciones al trabajador y a RRHH (rail estilo Patria).
 
-## 9. Pendientes de verificación (checklist M2)
+## 9. Pendientes de verificación (checklist M2a)
 
 - [ ] Valores vigentes de UT, salario mínimo y tope IVSS en Gaceta Oficial (al implementar)
 - [ ] Tarifas IVSS por clase de riesgo y procedimiento de enteramiento

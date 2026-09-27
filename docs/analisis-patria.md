@@ -91,7 +91,7 @@ Tarjetas codificadas por color con título, texto y botones de acción directa (
 Banners del rail con enlace externo pasando por `enlace.patria.org.ve/?url=...`. En RRHH: slots de avisos internos configurables (marca blanca); redirector opcional para links externos.
 
 ### 4.9 Anticipos con límite paramétrico (Monedero/Estadísticas)
-Tarjeta "Adelanto de Fondos": "El máximo adelanto será igual al 30% del beneficio promedio recibido en los últimos tres meses. Fondos en adelanto: Bs 45.780,00" (saldo negativo). **Adaptación RRHH (M2):** módulo de anticipos de salario con límite configurable (ej. % del promedio de nómina de los últimos N meses), saldo negativo visible en el consolidado.
+Tarjeta "Adelanto de Fondos": "El máximo adelanto será igual al 30% del beneficio promedio recibido en los últimos tres meses. Fondos en adelanto: Bs 45.780,00" (saldo negativo). **Adaptación RRHH (M2a):** módulo de anticipos de salario con límite configurable (ej. % del promedio de nómina de los últimos N meses), saldo negativo visible en el consolidado.
 
 ### 4.10 Incorporación por token (Directorio/Instituciones)
 Dropdown "Agregar" con dos vías: **"Agregar por Hash"** (enlace/código opaco que la otra parte usa para cargarse a sí misma) y **"Agregar por Identificación"** (búsqueda directa). **Adaptación RRHH (M1a):** RRHH genera un token de incorporación; el candidato/nuevo empleado abre el enlace y llena su propio expediente sin que nadie vea ni escriba su cédula; la vía "por identificación" queda para el admin.
@@ -121,9 +121,9 @@ Tablas vacías con texto explícito ("Ningún dato disponible en esta tabla") y 
 | Directorio → Familia | Cargas familiares y beneficiarios (CRUD + estados) | M1a |
 | Directorio → Instituciones (por hash/identificación) | Incorporación self-service por token | M1a |
 | Encuestas (Sí/No en un clic) | Encuestas internas de RRHH | M3 |
-| Monedero → Consolidado multi-moneda | Resumen de beneficios (vacaciones, prestaciones Bs/USD) | M2 |
-| Monedero → Estadísticas (tabla mensual) | Histórico de nómina/bonos mensual | M2 |
-| Monedero → Adelanto de Fondos | Anticipos con límite paramétrico | M2 |
+| Monedero → Consolidado multi-moneda | Resumen de beneficios (vacaciones, prestaciones Bs/USD) | M2a |
+| Monedero → Estadísticas (tabla mensual) | Histórico de nómina/bonos mensual | M2a |
+| Monedero → Adelanto de Fondos | Anticipos con límite paramétrico | M2a |
 | Protección Social → Logros/Premios | Reconocimientos internos con PDF de membrete | M4 |
 | Carnet de la Patria / veQR | Carnet digital del trabajador con QR (marcación) | M1a/M3 |
 | Grupos y Programas | Comités y afiliaciones (comité SST LOPCYMAT, sindicato) | M3 |

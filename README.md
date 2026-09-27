@@ -18,7 +18,8 @@ Plataforma web de **gestión de recursos humanos y talento humano** para Venezue
 | M0 | Fundación: repo, CI, esqueleto Express+HTMX, auth/RBAC, wizard de instalación, theming, Docker, tasas Bs/USD |
 | M1a | Expediente del trabajador + estructura organizacional (unidades/coordinaciones, asignaciones, organigrama) + carga masiva |
 | M1b | Portal del trabajador + motor de solicitudes (vacaciones, permisos, trámites) + portal del coordinador |
-| M2 | Nómina venezolana completa + asistencia extendida (cuadrantes, biométricos) + integraciones bancarias/parafiscales + reportes |
+| M2a | Nómina venezolana completa: conceptos, fórmulas LOTTT y parafiscales, dualidad Bs/USD, anticipos, liquidación, recibos, archivos de cotización |
+| M2b | Asistencia extendida (cuadrantes, turnos, biométricos, cierre mensual) + archivos bancarios de pago + export contable + reportes |
 | M3 | ATS + onboarding/offboarding + desempeño + capacitación + SST + activos asignados |
 | M4 (opcional) | Caja de ahorro + reconocimientos + tienda de beneficios + firma electrónica + API + régimen público + SIGEP |
 
@@ -48,7 +49,7 @@ Razones y alternativas descartadas en [`docs/decisiones/0001-stack-nucleo.md`](d
 
 ## Licencia
 
-**Pendiente de decisión** antes de publicar en GitHub (propuesta: AGPL-3). Ver [`docs/decisiones/0005-licencia.md`](docs/decisiones/0005-licencia.md).
+**AGPL-3.0-only** (decidido el 2026-09-27; ver [`LICENSE`](LICENSE) y [`docs/decisiones/0005-licencia.md`](docs/decisiones/0005-licencia.md)). Quien instala el software para uso interno no tiene ninguna obligación de publicar; la copyleft protege frente a que un tercero ofrezca un fork cerrado como servicio.
 
 ## Nombre
 

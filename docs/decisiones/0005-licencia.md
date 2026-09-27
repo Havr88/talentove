@@ -1,7 +1,7 @@
-# ADR-0005 — Licencia del proyecto
+# ADR-0005 — Licencia del proyecto: AGPL-3.0-only
 
-**Estado:** ⏳ **Abierta con recomendación** — análisis del 2026-09-27; requiere confirmación del
-sponsor para cerrarse. Bloquea la publicación del repo en GitHub.
+**Estado:** ✅ **Aceptada** (2026-09-27) — decisión del sponsor tras el análisis de opciones
+de este mismo documento.
 
 ## Contexto
 
@@ -74,9 +74,10 @@ decir, **titularidad única del copyright o un CLA** firmado por todos los colab
 proyecto es de un solo autor, así que es viable sin fricción; si se aceptan contribuciones
 externas, hay que montar el CLA desde el primer commit, no después.
 
-## Recomendación
+## Decisión
 
-**AGPL-3.0-only**, por estos motivos, en orden de peso:
+**AGPL-3.0-only**, elegida por el sponsor el 2026-09-27 tras el análisis de opciones de este
+documento, por estos motivos, en orden de peso:
 
 1. El modelo es una instalación por empresa: el instalador no paga nada por la copyleft, así que
    la adopción no se sacrifica en el cliente real.
@@ -93,15 +94,35 @@ privado no es el mismo cliente que uno que gana una licitación pública.
 contradice la simplicidad de la instalación auto-alojada (ADR-0002). Si algún día hiciera falta,
 la vía limpia es la doble licencia, no un núcleo partido.
 
-## Estado mientras se decide
+## Aplicación de la decisión
 
-- El repo **no se publica** en GitHub y `package.json` declara
-  `SEE LICENSE IN docs/decisiones/0005-licencia.md`.
-- Cuando se cierre: añadir el texto de la licencia como `LICENSE` en la raíz, poner
-  `license` en `package.json`, actualizar esta tabla a "Aceptada" y dejar constancia de la
-  decisión en `README.md`.
-- **Si el proyecto acepta contribuciones externas, firmar un CLA antes del primer commit
-  aceptado**, para no perder la posibilidad de la doble licencia.
+- `LICENSE` en la raíz: texto íntegro de la GNU AGPL v3 (661 líneas, copia canónica).
+- `package.json` declara `"license": "AGPL-3.0-only"`.
+- **Variante `-only`:** el archivo `LICENSE` es siempre el mismo texto; la elección entre
+  "solo esta versión" y "esta versión o cualquier posterior" no está en el archivo, sino en
+  cómo se declara el proyecto. Aquí se declara **`-only`**, lo que significa que la versión 3
+  **no** se puede re-licenciar automáticamente a AGPL-4.0 en el futuro: hace falta una
+  declaración explícita del proyecto. Es la opción conservadora y la coherente con el resto
+  del trabajo del sponsor.
+- **Si el proyecto acepta contribuciones externas, hay que firmar un CLA antes del primer
+  commit aceptado**, para conservar la posibilidad de una doble licencia en el futuro. Hoy el
+  proyecto es de un solo autor, así que no hay ningún CLA pendiente.
+
+### Lo que esta decisión habilita y lo que impide
+
+| | |
+|---|---|
+| ✅ | Publicar el repo en GitHub y que cualquiera lo clone, instale y use internamente **sin condiciones** (la instalación interna no es distribución) |
+| ✅ | Cobrar implantación, soporte y mantenimiento sin condición de licencia |
+| ✅ | Re-implementar freely los diseño de los activos AGPL del entorno local, y reutilizar sus datos y datasets públicos |
+| ✅ | Aceptar contribuciones de terceros, con la condición de que sigan siendo AGPL |
+| ❌ | Ofrecer una versión modificada **cerrada** sin publicar los cambios |
+| ❌ | Vender una edición propietaria sin una doble licencia explícita (que además exigiría un CLA) |
+| ❌ | Añadir módulos propietarios al árbol principal (contradice ADR-0002; la vía limpia sería una distribución aparte bajo doble licencia) |
+
+**Publicación:** la licencia ya no bloquea publicar el repo. Lo que sí debe revisarse antes de
+hacerlo público es que `activos-reutilizables.md` contiene rutas internas del entorno del
+mantenedor (`/home/havr/...`), que no deben salir del repo (`seguridad.md` §8).
 
 ## Consecuencias
 

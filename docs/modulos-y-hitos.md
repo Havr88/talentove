@@ -1,6 +1,6 @@
 # Módulos y hitos — especificación (v2)
 
-> Estado: **v2.1 — aprobado por el sponsor 2026-09-26**, con decisiones abiertas registradas (2026-09-27) (estructura M1a/M1b/M2/M3/M4). Referencias "(Patria)" = patrón copiado de `analisis-patria.md`; "(activo local)" = recurso de `activos-reutilizables.md`. Los módulos se abren como issues al iniciar su hito.
+> Estado: **v2.2 — aprobado por el sponsor 2026-09-26**; decisiones abiertas registradas y M2 dividido en M2a/M2b (2026-09-27) (estructura M1a/M1b/M2/M3/M4). Referencias "(Patria)" = patrón copiado de `analisis-patria.md`; "(activo local)" = recurso de `activos-reutilizables.md`. Los módulos se abren como issues al iniciar su hito.
 
 ## M0 — Fundación
 
@@ -37,7 +37,7 @@
 - Catálogo de tipos **configurable por instalación**: formulario JSON → formularios HTMX dinámicos, cadena de aprobación con resolutores (jefe directo desde la org, coordinador de unidad, rol RRHH, usuario fijo), SLA, adjuntos, flag de incidencia en nómina
 - Tipos M1b:
   - **Vacaciones:** solicitud de días con **cálculo automático de disfrute** (saldo disponible según LOTTT 15+1→30, contados en días hábiles contra el calendario de feriados, periodo propuesto y advertencias de solapamiento con el equipo) y flujo **solicitud → aprobación del jefe directo → RRHH**
-  - **Horas extra y días feriados laborados:** el trabajador **solicita/notifica/indica** las horas extra y los días feriados o de descanso trabajados (o el coordinador los registra por él), con aprobación del jefe directo; los recargos LOTTT paramétricos (extra diurna +50%, nocturno +30%, feriado/descanso — verificar Art. 190 en Gaceta) se calculan y pagan en nómina desde M2
+  - **Horas extra y días feriados laborados:** el trabajador **solicita/notifica/indica** las horas extra y los días feriados o de descanso trabajados (o el coordinador los registra por él), con aprobación del jefe directo; los recargos LOTTT paramétricos (extra diurna +50%, nocturno +30%, feriado/descanso — verificar Art. 190 en Gaceta) se calculan y pagan en nómina desde M2a
   - **Permisos:** remunerados/no remunerados (personal, estudio, sindical, nacimiento de hijo, matrimonio, fallecimiento de familiar) con duraciones paramétricas
   - **Reposos médicos avalados por el IVSS:** registro con adjunto/referencia del reposo y su **aval IVSS**; los días de incapacidad no cuentan como ausencia y quedan disponibles para las reglas de subsidio IVSS (patrono vs IVSS — paramétricas, a verificar)
   - **Licencias:** maternidad (18 semanas: 6 antes + 12 después), paternidad, luto — duraciones paramétricas según LOTTT (Arts. 213 y ss.)
@@ -53,19 +53,64 @@
 
 **Criterios de aceptación:** flujo completo empleado→jefe→RRHH de una solicitud de vacaciones con saldo correcto y cálculo de disfrute; reposo médico registrado con aval IVSS que no penaliza asistencia; reporte de horas extra/feriado laborado aprobado por el jefe y visible para nómina; delegación funcional; constancia PDF generada; E2E Playwright del flujo.
 
-## M2 — Nómina venezolana + Asistencia extendida + Integraciones
+## M2a — Nómina venezolana
 
-**Nómina** (como v1): conceptos configurables con **flags de incidencia**, fórmulas LOTTT (vacaciones, bono vacacional, utilidades, prestaciones garantía+complemento+intereses, liquidación), parafiscales paramétricos (IVSS/RPE/FAOV/INCES), dualidad Bs/USD con histórico, períodos con cierre y confirmación en 2 pasos, **anticipos con límite paramétrico** (Patria: Adelanto de Fondos), recibos PDF, tabla mensual histórica (Patria: Estadísticas). Incluye: cestaticket/beneficio de alimentación (frecuencia configurable — mensual o fraccionada), **calendario de registro mensual y depósito trimestral de la Garantía de Prestaciones Sociales (Art. 142 LOTTT)**, horas extras/recargos nocturnos/feriados laborados calculados desde el cierre de asistencia, y control del libro de vacaciones con pago oportuno del bono vacacional.
+> **Por qué nómina va primero:** es el módulo por el que se paga el producto, y **no depende del
+> módulo de asistencia**. Las horas extra y los días feriados laborados llegan ya aprobados desde
+> el motor de solicitudes de M1b (`overtime_requests`), así que M2a puede calcular recargos sin
+> tener cuadrantes ni biométricos. Eso elimina la dependencia circular entre asistencia y nómina y
+> permite entregar valor antes. M2b después automatiza la fuente de esas horas.
 
-**Movimientos con efecto salarial:** transferencias/cambios de cargo con fecha efectiva que generan el cambio de salario en nómina; historial inmutable.
+**Alcance:** conceptos configurables con **flags de incidencia** (ADR-0009), fórmulas LOTTT
+(vacaciones, bono vacacional, utilidades, prestaciones garantía+complemento+intereses,
+liquidación), parafiscales paramétricos (IVSS/RPE/FAOV/INCES), dualidad Bs/USD con histórico,
+períodos con cierre y confirmación en 2 pasos, **anticipos con límite paramétrico** (Patria: Adelanto
+de Fondos), recibos PDF, tabla mensual histórica (Patria: Estadísticas), y el **calendario de
+registro mensual y depósito trimestral de la Garantía de Prestaciones Sociales (Art. 142 LOTTT)**.
+Incluye cestaticket/beneficio de alimentación (frecuencia configurable: mensual o fraccionada) y
+control del libro de vacaciones con pago oportuno del bono vacacional.
 
-**Asistencia extendida (módulo C):** cuadrantes semanal/mensual por unidad (turnos rotativos, cruces de medianoche, TZ Caracas), **intercambio de turnos** con aprobación, marcaciones multi-fuente (web, QR, **importación de relojes biométricos tipo ZKTeco**), horas extra con aprobación previa, cierre mensual con revisiones que alimenta nómina.
+**Parámetros legales:** verificación de los valores de `regionalizacion-venezuela.md` §2 contra
+Gaceta Oficial y carga por UI con vigencia y fuente. Es el entregable de M2a que más valor tiene
+para el cliente y el que más depende de investigación, no de código.
 
-**Integraciones (módulo I, núcleo):** archivos bancarios de pago de nómina (adaptador paramétrico por banco), archivos de cotización IVSS/FAOV-BANAVIH/INCES, export contable (asientos dual Bs/USD, referencia: doble entrada de `sistema_caja_bimoneda`).
+**Movimientos con efecto salarial:** transferencias/cambios de cargo con fecha efectiva que
+generan el cambio de salario en nómina; historial inmutable.
 
-**Reportes básicos (módulo H):** headcount, ausentismo, costo de nómina y patronal; exportaciones CSV/Excel/PDF.
+**Archivos de cotización:** IVSS / FAOV-BANAVIH / INCES por período (los de **pago** van en M2b,
+porque dependen del layout bancario).
 
-**Criterios de aceptación:** quincena de prueba completa con recibos consistentes y auditoría; archivo bancario generado y validado con el banco del pilot; asistencia biométrica importada y reflejada en el cierre; calibración de fórmulas con contador (≥95% cobertura en domain).
+**Criterios de aceptación:** quincena de prueba completa con recibos consistentes y auditoría;
+cada renglón explica cómo se calculó (ADR-0009); **calibración de fórmulas validada con un
+contador**; ≥95% de cobertura en `packages/domain`; parámetros legales verificados y con fuente
+registrada.
+
+## M2b — Asistencia extendida + integraciones bancarias + reportes
+
+**Asistencia extendida (módulo C):** cuadrantes semanal/mensual por unidad (turnos rotativos,
+cruces de medianoche, TZ Caracas), **intercambio de turnos** con aprobación, marcaciones
+multi-fuente (web, QR, **importación de relojes biométricos tipo ZKTeco**), y **cierre mensual
+con revisiones** auditable (patrón `month_closes`). El cierre pasa a ser la fuente de horas
+extra, recargos nocturnos y feriados laborados que M2a consume: a partir de aquí la Attendance
+deja de depender de la solicitud manual.
+
+**Integraciones (módulo I, núcleo):** archivos bancarios de pago de nómina (**adaptador
+paramétrico por banco**, validado con el banco del piloto) y export contable (asientos dual
+Bs/USD, referencia: doble entrada de `sistema_caja_bimoneda`).
+
+**Reportes básicos (módulo H):** headcount, ausentismo, costo de nómina y patronal; exportaciones
+CSV/Excel/PDF.
+
+**Criterios de aceptación:** asistencia biométrica importada y reflejada en el cierre; el cierre
+alimenta la quincena de M2a con recargos sin doble conteo; **archivo bancario generado y validado
+con el banco del piloto**; relatórios de ausentismo y costo consistentes con la nómina del período.
+
+## Nota sobre el alcance de M2 (antes uno solo)
+
+M2 se dividió en **M2a** (nómina) y **M2b** (asistencia, integraciones y reportes) porque son
+alcances independientes y de riesgo distinto: M2a tiene el riesgo legal y de exactitud del
+cálculo; M2b tiene el riesgo de integración con terceros (bancos, relojes biométricos) y es
+fácilmente postergable sin que la nómina deje de funcionar.
 
 ## M3 — Talento: ATS, ciclo de vida, SST, activos
 
@@ -106,7 +151,7 @@ quedaron resueltas en ADRs ([índice](decisiones/README.md)); las de negocio sig
 | 3 | **Sesiones y RBAC** | ✅ **Resuelta** — [ADR-0007](decisiones/0007-sesiones-rbac.md): token opaco de 256 bits guardado **como hash**, un solo secreto maestro con derivación HKDF por contexto, códigos de rol y permiso en el código y asignación en datos, y la cédula como identidad (no autenticación) | cerrada |
 | 4 | **Driver de almacenamiento** | ✅ **Resuelta** — [ADR-0008](decisiones/0008-storage-driver.md): interfaz por **clave opaca generada** (path traversal imposible por construcción), descarga siempre por endpoint autenticado, MIME detectado por contenido, cifrado en reposo responsabilidad del volumen | cerrada |
 | 5 | **RIF**: conjunto de prefijos, longitud del cuerpo y algoritmo del dígito verificador sin verificar contra SENIAT (ver `regionalizacion-venezuela.md` §1.1) | abierta | Bloquea el validador de RIF del expediente; la fórmula ya quedó parametrizada para no bloquear el trabajo |
-| 6 | **Presupuesto y tamaño de M2**: M2 concentra nómina + asistencia extendida + integraciones bancarias/parafiscales + reportes. ¿Se divide en M2a (nómina) y M2b (asistencia + integraciones)? | abierta | El alcance de un solo hito puede resultar inmanejable; conviene decidir antes de abrir los issues |
+| 6 | **Alcance de M2** | ✅ **Resuelta** — el sponsor decide dividir: **M2a** nómina venezolana (con sus archivos de cotización) y **M2b** asistencia extendida + integraciones bancarias + reportes. M2a no depende de asistencia: consume las horas extra ya aprobadas del motor de solicitudes de M1b | cerrada |
 | 7 | **Rendimiento esperado** | ✅ **Resuelta** — el sponsor confirma **< 100 usuarios concurrentes** por instalación (2026-09-27); objetivos derivados en `arquitectura.md` §9 (5.000 trabajadores, latencias, carga masiva y tiempo de cierre) | cerrada |
 
 ### Pendientes de las páginas Patria por aportar

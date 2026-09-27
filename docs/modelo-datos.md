@@ -52,7 +52,7 @@
 | `holidays` | Calendario de feriados paramétrico | `fecha`, `nombre`, `ambito ('nacional','local')`, `location_id?` |
 | `leave_types` / `leave_balances` / `leave_requests` | Vacaciones, permisos, **reposos médicos (aval IVSS)** y **licencias**, integrados al motor | `leave_types.subtipo ('vacaciones','permiso','reposo_medico','licencia_maternidad','licencia_paternidad','luto',…)`, `dias_default` paramétrico; `leave_requests.ivss_referencia?` (adjunto/aval del reposo), `dias_incapacidad`; saldos por año con fórmula LOTTT |
 
-## Tiempo y asistencia extendida (M1b/M2)
+## Tiempo y asistencia extendida (M1b/M2b)
 
 | Tabla | Propósito | Columnas clave |
 |---|---|---|
@@ -63,9 +63,9 @@
 | `attendance_marks` | Marcaciones multi-fuente | `employee_id`, `fecha`, `tipo ('entrada','salida')`, `origen ('web','qr','biometrico','manual')`, `device_id?` |
 | `attendance_closes` (+ `revisions`) | Cierre mensual auditable con revisiones (patrón `month_closes`) | `org_unit_id`, `mes`, `estado`, `hash_cadena` |
 | `biometric_imports` | Importación desde relojes biométricos (ZKTeco) | `archivo`, `device_id`, `registros`, `errores` |
-| `overtime_requests` | **Horas extra y días feriados/descanso laborados**: reporte/solicitud del trabajador o registro del coordinador, aprobación del jefe | `employee_id`, `fecha`, `tipo ('extra_diurna','extra_nocturna','feriado_laborado','descanso_laborado')`, `horas`, `request_id?`; recargos LOTTT paramétricos aplicados en nómina (M2) |
+| `overtime_requests` | **Horas extra y días feriados/descanso laborados**: reporte/solicitud del trabajador o registro del coordinador, aprobación del jefe | `employee_id`, `fecha`, `tipo ('extra_diurna','extra_nocturna','feriado_laborado','descanso_laborado')`, `horas`, `request_id?`; recargos LOTTT paramétricos aplicados en nómina (M2a) |
 
-## Nómina (M2)
+## Nómina (M2a)
 
 | Tabla | Propósito |
 |---|---|
@@ -100,7 +100,7 @@
 
 **Libros legales (M1a):** `legal_register_issues` — emisiones de libros legales digitales generados de los datos reales (libro de contratos de trabajo con firma en duplicado Art. 59, registro de ingreso, libro de vacaciones, libro de reclamaciones): `tipo`, `company_id`, `periodo`, `pdf`, `hash`, `emitido_el` (los libros son **vistas imprimibles con numeración correlativa**, no duplican datos).
 
-## Integraciones y extensiones (M2/M4)
+## Integraciones y extensiones (M2b/M4)
 
 | Tabla | Propósito |
 |---|---|

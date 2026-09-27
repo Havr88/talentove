@@ -3,7 +3,7 @@
   "version": "0.1.0",
   "private": true,
   "description": "Plataforma RRHH auto-alojada para Venezuela — marca blanca, una instalación por empresa (nombre de trabajo: TalentoVe)",
-  "license": "SEE LICENSE IN docs/decisiones/0005-licencia.md",
+  "license": "AGPL-3.0-only",
   "engines": {
     "node": ">=20"
   },

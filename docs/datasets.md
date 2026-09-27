@@ -13,8 +13,8 @@
 | Consumidor | Uso |
 |---|---|
 | `bank_accounts` (expediente, M1a) | Selector de banco en cuentas del trabajador; **validador de cuenta**: 20 dígitos donde los primeros 4 = `codigo` del dataset |
-| `bank_payment_files` (nómina, M2) | Adaptadores bancarios paramétricos: cada layout lleva el código del banco emisor y valida los bancos destino contra el dataset |
-| Pago Móvil C2P / datos de pago (M2+) | Código de banco de 4 dígitos en formularios y conciliaciones |
+| `bank_payment_files` (nómina, M2b) | Adaptadores bancarios paramétricos: cada layout lleva el código del banco emisor y valida los bancos destino contra el dataset |
+| Pago Móvil C2P / datos de pago (M2b+) | Código de banco de 4 dígitos en formularios y conciliaciones |
 | Reportes de nómina | Nombre/RIF del banco pagador en recibos y archivos |
 
 **Sembrado:** migración M1a crea `financial_institutions` y siembra desde este JSON (una fila por institución); las FKs usan `codigo` como clave natural. Nueva institución = nueva entrada del dataset + seed versionado (nunca edición manual en producción).
