@@ -1,0 +1,88 @@
+{% extends "layouts/base.njk" %}
+
+{% block content %}
+<div style="max-width: 700px; margin: 0 auto;">
+  <div style="margin-bottom: 1.5rem;">
+    <a href="/solicitudes" style="color: var(--text-muted); text-decoration: none; font-size: 0.9rem;">&larr; Volver a Solicitudes</a>
+    <h1 style="font-size: 1.75rem; color: var(--primary-color); margin-top: 0.4rem;">Radicar Nueva Solicitud</h1>
+    <p style="color: var(--text-muted); font-size: 0.9rem;">Emisión de constancias de trabajo, anticipos de prestaciones o permisos</p>
+  </div>
+
+  {% if error %}
+    <div class="alert-error">{{ error }}</div>
+  {% endif %}
+
+  <div class="card">
+    <form action="/solicitudes" method="POST">
+      <input type="hidden" name="_csrf" value="{{ csrfToken }}">
+
+      <div class="form-group">
+        <label for="employeeId">Trabajador Solicitante *</label>
+        <select id="employeeId" name="employeeId" class="form-control" required>
+          <option value="">Seleccione el trabajador...</option>
+          {% for emp in employees %}
+            <option value="{{ emp.id }}" {% if selectedEmployeeId == emp.id %}selected{% endif %}>
+              {{ emp.cedulaTipo }}-{{ emp.cedulaNumero }} &bull; {{ emp.nombres }} {{ emp.apellidos }}
+            </option>
+          {% endfor %}
+        </select>
+      </div>
+
+      <div class="form-group">
+        <label for="tipo">Tipo de Trámite *</label>
+        <select id="tipo" name="tipo" class="form-control" required onchange="actualizarCampos()">
+          <option value="constancia_trabajo">📄 Constancia de Trabajo Formal con Sello Digital</option>
+          <option value="adelanto_prestaciones">💰 Anticipo de Prestaciones Sociales (Art. 144 LOTTT)</option>
+          <option value="permiso">⏱️ Permiso Laboral / Ausencia Justificada</option>
+          <option value="vacaciones">🏖️ Solicitud de Período Vacacional</option>
+        </select>
+      </div>
+
+      <div class="form-group">
+        <label for="motivo">Motivo / Justificación *</label>
+        <textarea id="motivo" name="motivo" class="form-control" rows="3" required placeholder="Indique para qué entidad o fin requiere el trámite (ej. Trámite bancario, visa, etc.)..."></textarea>
+      </div>
+
+      <div id="campo-monto" style="display: none;" class="form-group">
+        <label for="montoSolicitado">Monto Solicitado (VES)</label>
+        <input type="number" step="0.01" id="montoSolicitado" name="montoSolicitado" class="form-control" placeholder="0.00">
+      </div>
+
+      <div id="campo-fechas" style="display: none; grid-template-columns: 1fr 1fr; gap: 1rem;" class="form-group">
+        <div>
+          <label for="fechaDesde">Fecha de Inicio</label>
+          <input type="date" id="fechaDesde" name="fechaDesde" class="form-control">
+        </div>
+        <div>
+          <label for="fechaHasta">Fecha de Culminación</label>
+          <input type="date" id="fechaHasta" name="fechaHasta" class="form-control">
+        </div>
+      </div>
+
+      <div style="display: flex; justify-content: flex-end; gap: 0.75rem; margin-top: 1.5rem;">
+        <a href="/solicitudes" class="btn" style="background-color: #90a4ae;">Cancelar</a>
+        <button type="submit" class="btn">Radicar Trámite</button>
+      </div>
+    </form>
+  </div>
+</div>
+
+<script>
+  function actualizarCampos() {
+    const tipo = document.getElementById('tipo').value;
+    const campoMonto = document.getElementById('campo-monto');
+    const campoFechas = document.getElementById('campo-fechas');
+
+    if (tipo === 'adelanto_prestaciones') {
+      campoMonto.style.display = 'block';
+      campoFechas.style.display = 'none';
+    } else if (tipo === 'permiso' || tipo === 'vacaciones') {
+      campoMonto.style.display = 'none';
+      campoFechas.style.display = 'grid';
+    } else {
+      campoMonto.style.display = 'none';
+      campoFechas.style.display = 'none';
+    }
+  }
+</script>
+{% endblock %}

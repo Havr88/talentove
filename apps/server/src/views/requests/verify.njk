@@ -1,0 +1,91 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Verificación de Constancia Laboral — {{ instanceName }}</title>
+  <style>
+    :root {
+      --primary-color: {{ primaryColor }};
+      --accent-color: {{ accentColor }};
+    }
+    * { box-sizing: border-box; margin: 0; padding: 0; font-family: system-ui, -apple-system, sans-serif; }
+    body { background-color: #f0f2f5; color: #263238; display: flex; flex-direction: column; min-height: 100vh; }
+    header { background-color: var(--primary-color); color: white; padding: 1.25rem 2rem; text-align: center; }
+    main { flex: 1; display: flex; justify-content: center; align-items: center; padding: 2rem 1rem; }
+    .card { background: white; border-radius: 8px; box-shadow: 0 4px 12px rgba(0,0,0,0.08); padding: 2.5rem; max-width: 600px; width: 100%; }
+    .badge-valid { background-color: #e8f5e9; color: #2e7d32; padding: 0.5rem 1rem; border-radius: 9999px; font-weight: 700; display: inline-block; font-size: 0.95rem; margin-bottom: 1.5rem; }
+    .badge-invalid { background-color: #ffebee; color: #c62828; padding: 0.5rem 1rem; border-radius: 9999px; font-weight: 700; display: inline-block; font-size: 0.95rem; margin-bottom: 1.5rem; }
+    .data-row { display: flex; justify-content: space-between; padding: 0.6rem 0; border-bottom: 1px solid #eeeeee; font-size: 0.95rem; }
+    .label { color: #546e7a; }
+    .value { font-weight: 600; text-align: right; }
+    footer { text-align: center; padding: 1.5rem; font-size: 0.85rem; color: #90a4ae; }
+  </style>
+</head>
+<body>
+  <header>
+    <h1>{{ instanceName }} &bull; Verificación de Documentos</h1>
+  </header>
+
+  <main>
+    <div class="card">
+      {% if valid %}
+        <div style="text-align: center;">
+          <div class="badge-valid">✅ Documento Auténtico y Vigente</div>
+          <h2 style="font-size: 1.4rem; color: var(--primary-color); margin-bottom: 0.5rem;">Constancia de Trabajo Certificada</h2>
+          <p style="color: #546e7a; font-size: 0.9rem; margin-bottom: 1.5rem;">
+            Emitida formalmente por <strong>{{ company.companyName }}</strong> (RIF: {{ company.nativeId }})
+          </p>
+        </div>
+
+        <div style="margin-top: 1rem;">
+          <div class="data-row">
+            <span class="label">Trabajador:</span>
+            <span class="value">{{ employee.nombres }} {{ employee.apellidos }}</span>
+          </div>
+          <div class="data-row">
+            <span class="label">Cédula de Identidad:</span>
+            <span class="value">{{ employee.cedulaTipo }}-{{ employee.cedulaNumero }}</span>
+          </div>
+          <div class="data-row">
+            <span class="label">Cargo Desempeñado:</span>
+            <span class="value">{{ contract.positionName }}</span>
+          </div>
+          <div class="data-row">
+            <span class="label">Unidad Adscrita:</span>
+            <span class="value">{{ contract.unitName }}</span>
+          </div>
+          <div class="data-row">
+            <span class="label">Fecha de Ingreso:</span>
+            <span class="value">{{ contract.fechaIngreso }}</span>
+          </div>
+          <div class="data-row">
+            <span class="label">Código de Validación:</span>
+            <span class="value" style="font-family: monospace; color: var(--primary-color);">{{ request.codigoVerificacion }}</span>
+          </div>
+          <div class="data-row">
+            <span class="label">Fecha de Expedición:</span>
+            <span class="value">{{ request.createdAt | formatDate }}</span>
+          </div>
+        </div>
+
+        <div style="margin-top: 2rem; background: #fafafa; padding: 1rem; border-radius: 6px; font-size: 0.8rem; color: #78909c; text-align: center;">
+          Este documento fue emitido electrónicamente con base en los registros laborales auditados del sistema TalentoVe.
+        </div>
+      {% else %}
+        <div style="text-align: center;">
+          <div class="badge-invalid">❌ Código de Verificación Inválido</div>
+          <h2 style="font-size: 1.3rem; color: #c62828; margin-bottom: 0.75rem;">Documento no Encontrado</h2>
+          <p style="color: #546e7a; font-size: 0.95rem; line-height: 1.5;">
+            El código ingresado no corresponde a ninguna constancia laboral emitida por este sistema o ha expirado. Verifique que haya ingresado el código alfanumérico exacto que aparece al pie de la constancia.
+          </p>
+        </div>
+      {% endif %}
+    </div>
+  </main>
+
+  <footer>
+    <p>&copy; {{ instanceName }} &bull; Sistema de Gestión de Talento y Nómina Venezolana</p>
+  </footer>
+</body>
+</html>

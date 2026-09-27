@@ -1,0 +1,62 @@
+{% extends "layouts/base.njk" %}
+
+{% block content %}
+<div style="max-width: 850px; margin: 0 auto;">
+  <div style="margin-bottom: 1.5rem;">
+    <a href="/trabajadores" style="color: var(--text-muted); text-decoration: none;">&larr; Volver al Listado</a>
+    <h1 style="font-size: 1.75rem; color: var(--primary-color); margin-top: 0.5rem;">Carga Masiva de Trabajadores (Módulo J)</h1>
+    <p style="color: var(--text-muted);">Importa nóminas y plantillas completas desde archivos Excel (.xlsx) o texto CSV con validación en tiempo real.</p>
+  </div>
+
+  {% if errors and errors.length > 0 %}
+    <div class="alert-error">
+      <strong>Se encontraron {{ errors.length }} errores en el archivo:</strong>
+      <ul style="margin-top: 0.5rem; margin-left: 1.5rem;">
+        {% for err in errors %}
+          <li>Fila {{ err.rowNumber }}: {{ err.message }}</li>
+        {% endfor %}
+      </ul>
+    </div>
+  {% endif %}
+
+  {% if preview and preview.validCount > 0 %}
+    <div class="alert-success">
+      <strong>Previsualización exitosa:</strong> {{ preview.validCount }} filas validadas sin errores.
+    </div>
+  {% endif %}
+
+  <div class="card">
+    <form action="/trabajadores/importar" method="POST">
+      {% if csrfToken %}<input type="hidden" name="_csrf" value="{{ csrfToken }}">{% endif %}
+
+      <div class="form-group">
+        <label for="csvData">Pegar Datos en Formato CSV</label>
+        <p style="font-size: 0.85rem; color: var(--text-muted); margin-bottom: 0.5rem;">
+          Cabeceras esperadas: <code>cedula,rif,nombres,apellidos,fechaNacimiento,sexo,estadoCivil,direccion,correo,cargo,unidad,tipoContrato,sector,fechaIngreso,salario,moneda</code>
+        </p>
+        <textarea id="csvData" name="csvData" class="form-control" rows="8" placeholder="cedula,rif,nombres,apellidos,fechaNacimiento,sexo,estadoCivil,direccion,correo,cargo,unidad,tipoContrato,sector,fechaIngreso,salario,moneda
+V-12345678,,Juan,Perez,1990-05-15,M,soltero,Caracas,juan@empresa.ve,Analista,Tecnología,indeterminado,privado,2026-01-15,1200.00,USD">{{ csvData | default('') }}</textarea>
+      </div>
+
+      <div style="display: flex; gap: 1rem; align-items: center; margin-top: 1.5rem;">
+        <button type="submit" name="mode" value="dryrun" class="btn" style="background-color: #455a64;">
+          🔍 Validar Archivo (Modo Simulación / Dry-Run)
+        </button>
+        <button type="submit" name="mode" value="execute" class="btn">
+          🚀 Importar y Guardar en la Base de Datos
+        </button>
+      </div>
+    </form>
+  </div>
+
+  <div class="card" style="background: #fafafa;">
+    <h3 style="font-size: 1rem; margin-bottom: 0.5rem; color: var(--text-color);">ℹ️ Reglas de Validación de Venezuela</h3>
+    <ul style="font-size: 0.85rem; color: var(--text-muted); margin-left: 1.5rem; line-height: 1.5;">
+      <li>Las cédulas se normalizan y verifican contra el catálogo nacional (prefijo V o E con longitud válida).</li>
+      <li>Las fechas deben tener el formato ISO <code>AAAA-MM-DD</code> (ej. 1995-10-25).</li>
+      <li>El sector admite <code>privado</code> (LOTTT) o <code>publico</code> (Estatutario).</li>
+      <li>Las unidades organizativas y los cargos se crean automáticamente si no existen previamente.</li>
+    </ul>
+  </div>
+</div>
+{% endblock %}

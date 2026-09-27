@@ -1,0 +1,151 @@
+{% extends "layouts/base.njk" %}
+
+{% block content %}
+<div style="margin-bottom: 1.5rem;">
+  <a href="/asistencia" style="color: var(--text-muted); text-decoration: none; font-size: 0.9rem;">&larr; Volver a planillas</a>
+  <div style="display: flex; justify-content: space-between; align-items: flex-start; margin-top: 0.5rem; flex-wrap: wrap; gap: 1rem;">
+    <div>
+      <h2 style="margin: 0; color: var(--primary-color);">Planilla Semanal: Semana {{ sheet.weekNumber }} ({{ sheet.year }})</h2>
+      <p style="color: var(--text-muted); margin-top: 0.25rem;">
+        <strong>Departamento:</strong> {{ sheet.departmentName | default("General") }} &bull;
+        <strong>Período:</strong> {{ sheet.startDate }} al {{ sheet.endDate }} &bull;
+        <strong>Coordinador:</strong> {{ sheet.coordinatorName }}
+      </p>
+    </div>
+    <div style="display: flex; gap: 0.75rem; align-items: center;">
+      <a href="/asistencia/{{ sheet.id }}/pdf" target="_blank" class="btn btn-accent" style="display: flex; align-items: center; gap: 0.4rem;">
+        <span>📄</span> Descargar Planilla Oficial (PDF)
+      </a>
+
+      {% if sheet.status != "cerrada" and currentUser.role in ["superadmin", "admin", "rrhh"] %}
+        <form action="/asistencia/{{ sheet.id }}/verificar" method="POST" style="margin: 0;">
+          {% if csrfToken %}<input type="hidden" name="_csrf" value="{{ csrfToken }}">{% endif %}
+          <button type="submit" class="btn" style="background: #2e7d32;" onclick="return confirm('¿Confirma la verificación técnica de esta planilla para cómputo de nómina?')">
+            ✓ Certificar y Aprobar RRHH
+          </button>
+        </form>
+      {% endif %}
+    </div>
+  </div>
+</div>
+
+{% if query.saved %}
+  <div class="alert-success">Registros guardados y recalculados exitosamente según LOTTT.</div>
+{% endif %}
+{% if query.verified %}
+  <div class="alert-success">Planilla verificada y certificada exitosamente por Talento Humano.</div>
+{% endif %}
+{% if error %}
+  <div class="alert-error">{{ error }}</div>
+{% endif %}
+
+<!-- Estado y Metadatos -->
+<div class="card" style="display: flex; gap: 2rem; flex-wrap: wrap; background: #fafafa; padding: 1rem 1.5rem;">
+  <div>
+    <span style="font-size: 0.8rem; color: var(--text-muted); text-transform: uppercase;">Estado de Planilla:</span><br>
+    {% if sheet.status == "verificada" or sheet.status == "cerrada" %}
+      <strong style="color: #2e7d32;">● VERIFICADA POR TALENTO HUMANO</strong>
+    {% elif sheet.status == "cargada" %}
+      <strong style="color: #1565c0;">● CARGADA (PENDIENTE VERIFICACIÓN)</strong>
+    {% else %}
+      <strong style="color: #ef6c00;">● BORRADOR EN DIGITACIÓN</strong>
+    {% endif %}
+  </div>
+  <div>
+    <span style="font-size: 0.8rem; color: var(--text-muted); text-transform: uppercase;">Firma de Coordinador:</span><br>
+    <strong>{{ "FIRMADO CONFORME" if sheet.coordinatorSigned else "PENDIENTE POR FIRMA" }}</strong>
+  </div>
+  <div>
+    <span style="font-size: 0.8rem; color: var(--text-muted); text-transform: uppercase;">Analista Verificador:</span><br>
+    <strong>{{ sheet.verifiedByName | default("Pendiente de verificación") }}</strong>
+    {% if sheet.verifiedAt %}<small style="color: var(--text-muted);">({{ sheet.verifiedAt | truncate(10, true, "") }})</small>{% endif %}
+  </div>
+  <div>
+    <span style="font-size: 0.8rem; color: var(--text-muted); text-transform: uppercase;">Total Registros:</span><br>
+    <strong>{{ records.length }} turnos asignados</strong>
+  </div>
+</div>
+
+<!-- Formulario de Registros Diarios -->
+<div class="card">
+  <form action="/asistencia/{{ sheet.id }}/guardar" method="POST">
+    {% if csrfToken %}<input type="hidden" name="_csrf" value="{{ csrfToken }}">{% endif %}
+
+    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1rem;">
+      <h3 style="margin: 0; font-size: 1.1rem; color: var(--primary-color);">Carga y Verificación Diaria de Asistencia</h3>
+      {% if sheet.status != "cerrada" %}
+        <button type="submit" class="btn" style="font-size: 0.9rem; padding: 0.4rem 1rem;">💾 Guardar y Recalcular Horas</button>
+      {% endif %}
+    </div>
+
+    {% if records.length === 0 %}
+      <p style="color: var(--text-muted); padding: 1.5rem; text-align: center;">
+        No hay registros cargados para esta planilla semanal.
+      </p>
+    {% else %}
+      <div style="overflow-x: auto;">
+        <table style="width: 100%; border-collapse: collapse; font-size: 0.88rem;">
+          <thead>
+            <tr style="border-bottom: 2px solid var(--border-color); background: #f0f4f8; text-align: left;">
+              <th style="padding: 0.6rem 0.5rem;">Fecha</th>
+              <th style="padding: 0.6rem 0.5rem;">Cédula y Trabajador</th>
+              <th style="padding: 0.6rem 0.5rem; width: 100px;">Entrada</th>
+              <th style="padding: 0.6rem 0.5rem; width: 100px;">Salida</th>
+              <th style="padding: 0.6rem 0.5rem; text-align: center; width: 70px;">Firma</th>
+              <th style="padding: 0.6rem 0.5rem; width: 60px; text-align: center;">Ord.</th>
+              <th style="padding: 0.6rem 0.5rem; width: 60px; text-align: center;">Ext.D</th>
+              <th style="padding: 0.6rem 0.5rem; width: 60px; text-align: center;">Ext.N</th>
+              <th style="padding: 0.6rem 0.5rem; width: 60px; text-align: center;">Bono.N</th>
+              <th style="padding: 0.6rem 0.5rem;">Observaciones</th>
+            </tr>
+          </thead>
+          <tbody>
+            {% for r in records %}
+              <tr style="border-bottom: 1px solid var(--border-color);">
+                <td style="padding: 0.5rem; white-space: nowrap; font-weight: 500;">
+                  {{ r.workDate }}
+                  <input type="hidden" name="recordIds" value="{{ r.id }}">
+                </td>
+                <td style="padding: 0.5rem;">
+                  <strong>{{ r.workerIdDoc }}</strong><br>
+                  <small style="color: var(--text-muted);">{{ r.workerName }}</small>
+                </td>
+                <td style="padding: 0.5rem;">
+                  <input type="text" name="timeIn_{{ r.id }}" value="{{ r.timeIn | default('') }}" placeholder="08:00" class="form-control" style="padding: 0.3rem 0.4rem; font-size: 0.85rem;" {% if sheet.status == 'cerrada' %}disabled{% endif %}>
+                </td>
+                <td style="padding: 0.5rem;">
+                  <input type="text" name="timeOut_{{ r.id }}" value="{{ r.timeOut | default('') }}" placeholder="17:00" class="form-control" style="padding: 0.3rem 0.4rem; font-size: 0.85rem;" {% if sheet.status == 'cerrada' %}disabled{% endif %}>
+                </td>
+                <td style="padding: 0.5rem; text-align: center;">
+                  <input type="checkbox" name="signature_{{ r.id }}" value="1" {% if r.workerSignature %}checked{% endif %} {% if sheet.status == 'cerrada' %}disabled{% endif %}>
+                </td>
+                <td style="padding: 0.5rem; text-align: center; font-weight: 600; color: #1565c0;">
+                  {{ r.regularHours | default(0) }}h
+                </td>
+                <td style="padding: 0.5rem; text-align: center; font-weight: 600; color: #2e7d32;">
+                  {{ r.overtimeDayHours | default(0) }}h
+                </td>
+                <td style="padding: 0.5rem; text-align: center; font-weight: 600; color: #c62828;">
+                  {{ r.overtimeNightHours | default(0) }}h
+                </td>
+                <td style="padding: 0.5rem; text-align: center; font-weight: 600; color: #6a1b9a;">
+                  {{ r.nightBonusHours | default(0) }}h
+                </td>
+                <td style="padding: 0.5rem;">
+                  <input type="text" name="notes_{{ r.id }}" value="{{ r.notes | default('') }}" placeholder="Sin novedades" class="form-control" style="padding: 0.3rem 0.4rem; font-size: 0.85rem;" {% if sheet.status == 'cerrada' %}disabled{% endif %}>
+                </td>
+              </tr>
+            {% endfor %}
+          </tbody>
+        </table>
+      </div>
+
+      {% if sheet.status != "cerrada" %}
+        <div style="margin-top: 1.5rem; display: flex; justify-content: flex-end;">
+          <button type="submit" class="btn">💾 Guardar y Recalcular Horas</button>
+        </div>
+      {% endif %}
+    {% endif %}
+  </form>
+</div>
+{% endblock %}

@@ -1,0 +1,108 @@
+{% extends "layouts/base.njk" %}
+
+{% block content %}
+<div style="max-width: 800px; margin: 0 auto;">
+  <div style="margin-bottom: 1.5rem;">
+    <a href="/trabajadores/{{ employee.id }}" style="color: var(--text-muted); text-decoration: none; font-size: 0.9rem;">&larr; Volver al Expediente</a>
+    <h1 style="font-size: 1.75rem; color: var(--primary-color); margin-top: 0.4rem;">
+      Editar Expediente: {{ employee.nombres }} {{ employee.apellidos }}
+    </h1>
+    <p style="color: var(--text-muted); font-size: 0.9rem;">
+      Cédula: <strong>{{ employee.cedulaTipo }}-{{ employee.cedulaNumero }}</strong>
+    </p>
+  </div>
+
+  {% if error %}
+    <div class="alert-error">{{ error }}</div>
+  {% endif %}
+
+  <div class="card">
+    <form action="/trabajadores/{{ employee.id }}/editar" method="POST">
+      <input type="hidden" name="_csrf" value="{{ csrfToken }}">
+
+      <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1rem;">
+        <div class="form-group">
+          <label for="nombres">Nombres *</label>
+          <input type="text" id="nombres" name="nombres" class="form-control" value="{{ employee.nombres }}" required>
+        </div>
+
+        <div class="form-group">
+          <label for="apellidos">Apellidos *</label>
+          <input type="text" id="apellidos" name="apellidos" class="form-control" value="{{ employee.apellidos }}" required>
+        </div>
+      </div>
+
+      <div style="display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 1rem;">
+        <div class="form-group">
+          <label for="fechaNacimiento">Fecha de Nacimiento *</label>
+          <input type="date" id="fechaNacimiento" name="fechaNacimiento" class="form-control" value="{{ employee.fechaNacimiento }}" required>
+        </div>
+
+        <div class="form-group">
+          <label for="sexo">Sexo *</label>
+          <select id="sexo" name="sexo" class="form-control" required>
+            <option value="M" {% if employee.sexo == 'M' %}selected{% endif %}>Masculino</option>
+            <option value="F" {% if employee.sexo == 'F' %}selected{% endif %}>Femenino</option>
+          </select>
+        </div>
+
+        <div class="form-group">
+          <label for="estadoCivil">Estado Civil *</label>
+          <select id="estadoCivil" name="estadoCivil" class="form-control" required>
+            <option value="soltero" {% if employee.estadoCivil == 'soltero' %}selected{% endif %}>Soltero(a)</option>
+            <option value="casado" {% if employee.estadoCivil == 'casado' %}selected{% endif %}>Casado(a)</option>
+            <option value="divorciado" {% if employee.estadoCivil == 'divorciado' %}selected{% endif %}>Divorciado(a)</option>
+            <option value="viudo" {% if employee.estadoCivil == 'viudo' %}selected{% endif %}>Viudo(a)</option>
+            <option value="union_estable" {% if employee.estadoCivil == 'union_estable' %}selected{% endif %}>Unión Estable de Hecho</option>
+          </select>
+        </div>
+      </div>
+
+      <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1rem;">
+        <div class="form-group">
+          <label for="correo">Correo Electrónico</label>
+          <input type="email" id="correo" name="correo" class="form-control" value="{{ employee.correo or '' }}">
+        </div>
+
+        <div class="form-group">
+          <label for="telefono">Teléfono de Contacto</label>
+          <input type="text" id="telefono" name="telefono" class="form-control" value="{{ employee.telefono or '' }}">
+        </div>
+      </div>
+
+      <div class="form-group">
+        <label for="direccion">Dirección de Habitación *</label>
+        <textarea id="direccion" name="direccion" class="form-control" rows="2" required>{{ employee.direccion }}</textarea>
+      </div>
+
+      <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1rem;">
+        <div class="form-group">
+          <label for="territoryId">Entidad Federal (Estado)</label>
+          <select id="territoryId" name="territoryId" class="form-control">
+            <option value="">Seleccione estado...</option>
+            {% for t in territories %}
+              <option value="{{ t.id }}" {% if employee.territoryId == t.id %}selected{% endif %}>{{ t.nombre }} ({{ t.codigo }})</option>
+            {% endfor %}
+          </select>
+        </div>
+
+        <div class="form-group">
+          <label for="status">Estatus Laboral *</label>
+          <select id="status" name="status" class="form-control" required>
+            <option value="activo" {% if employee.status == 'activo' %}selected{% endif %}>Activo</option>
+            <option value="reposo" {% if employee.status == 'reposo' %}selected{% endif %}>Reposo Médico</option>
+            <option value="vacaciones" {% if employee.status == 'vacaciones' %}selected{% endif %}>Vacaciones</option>
+            <option value="suspendido" {% if employee.status == 'suspendido' %}selected{% endif %}>Suspendido</option>
+            <option value="retirado" {% if employee.status == 'retirado' %}selected{% endif %}>Retirado / Egresado</option>
+          </select>
+        </div>
+      </div>
+
+      <div style="display: flex; justify-content: flex-end; gap: 0.75rem; margin-top: 1rem;">
+        <a href="/trabajadores/{{ employee.id }}" class="btn" style="background-color: #90a4ae;">Cancelar</a>
+        <button type="submit" class="btn">Guardar Cambios</button>
+      </div>
+    </form>
+  </div>
+</div>
+{% endblock %}

@@ -1,0 +1,100 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>{{ pageTitle | default(instanceName | default("TalentoVe")) }}</title>
+  <style>
+    :root {
+      --primary-color: {{ primaryColor | default("#0d47a1") }};
+      --accent-color: {{ accentColor | default("#d32f2f") }};
+      --bg-color: #f5f7fa;
+      --card-bg: #ffffff;
+      --text-color: #263238;
+      --text-muted: #546e7a;
+      --border-color: #cfd8dc;
+      --sidebar-width: 260px;
+      --rail-width: 280px;
+    }
+    * { box-sizing: border-box; margin: 0; padding: 0; font-family: system-ui, -apple-system, sans-serif; }
+    body { background-color: var(--bg-color); color: var(--text-color); display: flex; flex-direction: column; min-height: 100vh; }
+    header.navbar { background-color: var(--primary-color); color: white; height: 56px; display: flex; align-items: center; justify-content: space-between; padding: 0 1.5rem; position: sticky; top: 0; z-index: 100; box-shadow: 0 2px 4px rgba(0,0,0,0.1); }
+    .brand { font-size: 1.25rem; font-weight: 700; color: white; text-decoration: none; display: flex; align-items: center; gap: 0.5rem; }
+    .nav-actions { display: flex; align-items: center; gap: 1rem; }
+    .user-tag { font-size: 0.875rem; background: rgba(255,255,255,0.15); padding: 0.25rem 0.75rem; border-radius: 9999px; }
+    .btn-logout { background: none; border: 1px solid rgba(255,255,255,0.3); color: white; padding: 0.25rem 0.75rem; border-radius: 4px; cursor: pointer; text-decoration: none; font-size: 0.85rem; }
+    .btn-logout:hover { background: rgba(255,255,255,0.2); }
+    .app-layout { display: flex; flex: 1; }
+    aside.sidebar { width: var(--sidebar-width); background: var(--card-bg); border-right: 1px solid var(--border-color); padding: 1rem 0; flex-shrink: 0; }
+    .sidebar ul { list-style: none; }
+    .sidebar li a { display: flex; align-items: center; padding: 0.75rem 1.5rem; color: var(--text-color); text-decoration: none; font-weight: 500; font-size: 0.95rem; border-left: 3px solid transparent; }
+    .sidebar li a:hover, .sidebar li.active a { background-color: #eceff1; border-left-color: var(--primary-color); color: var(--primary-color); }
+    main.content { flex: 1; padding: 2rem; max-width: 1200px; margin: 0 auto; width: 100%; }
+    aside.rail { width: var(--rail-width); background: var(--card-bg); border-left: 1px solid var(--border-color); padding: 1.5rem 1rem; flex-shrink: 0; }
+    .rail-title { font-size: 0.875rem; text-transform: uppercase; letter-spacing: 0.05em; color: var(--text-muted); font-weight: 700; margin-bottom: 1rem; }
+    .card { background: var(--card-bg); border: 1px solid var(--border-color); border-radius: 6px; padding: 1.5rem; margin-bottom: 1.5rem; box-shadow: 0 1px 3px rgba(0,0,0,0.05); }
+    .btn { background-color: var(--primary-color); color: white; border: none; border-radius: 4px; padding: 0.6rem 1.25rem; font-weight: 600; cursor: pointer; text-decoration: none; display: inline-block; }
+    .btn:hover { opacity: 0.9; }
+    .btn-accent { background-color: var(--accent-color); }
+    .form-group { margin-bottom: 1.25rem; }
+    .form-group label { display: block; font-size: 0.875rem; font-weight: 600; margin-bottom: 0.35rem; color: var(--text-color); }
+    .form-control { width: 100%; padding: 0.55rem 0.75rem; border: 1px solid var(--border-color); border-radius: 4px; font-size: 0.95rem; }
+    .form-control:focus { outline: none; border-color: var(--primary-color); box-shadow: 0 0 0 2px rgba(13,71,161,0.15); }
+    footer { text-align: center; padding: 1rem; font-size: 0.8rem; color: var(--text-muted); border-top: 1px solid var(--border-color); background: var(--card-bg); }
+    .alert-error { background-color: #ffebee; color: #c62828; padding: 0.75rem 1rem; border-radius: 4px; margin-bottom: 1rem; border: 1px solid #ffcdd2; font-size: 0.9rem; }
+    .alert-success { background-color: #e8f5e9; color: #2e7d32; padding: 0.75rem 1rem; border-radius: 4px; margin-bottom: 1rem; border: 1px solid #c8e6c9; font-size: 0.9rem; }
+  </style>
+  <script src="https://unpkg.com/htmx.org@2.0.4" integrity="sha384-HGfztofotfshcF7+8n44JQL2oJmReNpAssUSEmWfmErMMrrvOOaz+fZcOi56EDa6" crossorigin="anonymous"></script>
+</head>
+<body>
+  <header class="navbar">
+    <a href="/" class="brand">
+      <span>🇻🇪</span>
+      <span>{{ instanceName | default("TalentoVe") }}</span>
+    </a>
+    <div class="nav-actions">
+      {% if currentUser %}
+        <span class="user-tag">{{ currentUser.fullName }} ({{ currentUser.role }})</span>
+        <form action="/auth/logout" method="POST" style="display:inline;">
+          {% if csrfToken %}<input type="hidden" name="_csrf" value="{{ csrfToken }}">{% endif %}
+          <button type="submit" class="btn-logout">Cerrar Sesión</button>
+        </form>
+      {% endif %}
+    </div>
+  </header>
+
+  <div class="app-layout">
+    {% if currentUser %}
+      <aside class="sidebar">
+        <ul>
+          <li class="active"><a href="/"><span>📊 Panel Principal</span></a></li>
+          <li><a href="/trabajadores"><span>👥 Trabajadores</span></a></li>
+          <li><a href="/asistencia"><span>⏱️ Asistencia</span></a></li>
+          <li><a href="/solicitudes"><span>📝 Solicitudes</span></a></li>
+          <li><a href="/nomina"><span>💵 Nómina</span></a></li>
+          {% if currentUser.role == "superadmin" %}
+            <li><a href="/configuracion"><span>⚙️ Configuración</span></a></li>
+          {% endif %}
+        </ul>
+      </aside>
+    {% endif %}
+
+    <main class="content">
+      {% block content %}{% endblock %}
+    </main>
+
+    {% if currentUser %}
+      <aside class="rail">
+        <h4 class="rail-title">Pendientes y Avisos</h4>
+        <div style="font-size: 0.85rem; color: var(--text-muted);">
+          <p>No tienes notificaciones pendientes.</p>
+        </div>
+      </aside>
+    {% endif %}
+  </div>
+
+  <footer>
+    <p>{{ instanceName | default("TalentoVe") }} &bull; Plataforma RRHH Auto-Alojada &bull; Licencia AGPL-3.0</p>
+  </footer>
+</body>
+</html>

@@ -1,0 +1,36 @@
+{
+  "name": "@talento-ve/server",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "dev": "node --watch src/index.ts",
+    "start": "node dist/index.js",
+    "test": "vitest run",
+    "test:watch": "vitest",
+    "typecheck": "tsc --noEmit"
+  },
+  "dependencies": {
+    "@talento-ve/domain": "workspace:*",
+    "cookie-parser": "^1.4.7",
+    "dotenv": "^16.4.7",
+    "exceljs": "^4.4.0",
+    "express": "^4.21.2",
+    "nunjucks": "^3.2.4",
+    "pdfkit": "^0.20.2",
+    "pg": "^8.13.1",
+    "zod": "^3.24.1"
+  },
+  "devDependencies": {
+    "@types/cookie-parser": "^1.4.8",
+    "@types/express": "^5.0.0",
+    "@types/node": "^26.6.3",
+    "@types/nunjucks": "^3.2.6",
+    "@types/pdfkit": "^0.17.6",
+    "@types/pg": "^8.11.10",
+    "@types/supertest": "^6.0.2",
+    "supertest": "^7.0.0",
+    "typescript": "^5.9.0",
+    "vitest": "^5.0.2"
+  }
+}

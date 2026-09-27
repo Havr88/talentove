@@ -1,0 +1,287 @@
+{% extends "layouts/base.njk" %}
+
+{% block content %}
+<div style="margin-bottom: 1.5rem;">
+  <div style="display: flex; justify-content: space-between; align-items: flex-start;">
+    <div>
+      <a href="/trabajadores" style="color: var(--text-muted); text-decoration: none; font-size: 0.9rem;">&larr; Volver al Listado</a>
+      <h1 style="font-size: 1.85rem; color: var(--primary-color); margin-top: 0.4rem;">
+        {{ employee.nombres }} {{ employee.apellidos }}
+      </h1>
+      <p style="color: var(--text-muted); font-size: 0.95rem;">
+        Cédula: <strong>{{ employee.cedulaTipo }}-{{ employee.cedulaNumero }}</strong>
+        {% if employee.rif %} &bull; RIF: <strong>{{ employee.rif }}</strong>{% endif %}
+        &bull; Estatus: <span style="font-weight: 600; color: #2e7d32;">{{ employee.status | upper }}</span>
+      </p>
+    </div>
+    <div style="display: flex; gap: 0.6rem; flex-wrap: wrap;">
+      <a href="/trabajadores/{{ employee.id }}/editar" class="btn" style="background-color: #455a64;">✏️ Editar Datos</a>
+      <a href="/trabajadores/{{ employee.id }}/constancia/pdf" target="_blank" class="btn" style="background-color: #0288d1;">📄 Constancia PDF</a>
+      <a href="/solicitudes/nueva?employeeId={{ employee.id }}" class="btn" style="background-color: #2e7d32;">📝 Nueva Solicitud</a>
+    </div>
+  </div>
+</div>
+
+{% if success %}
+  <div class="alert-success">{{ success }}</div>
+{% endif %}
+{% if error %}
+  <div class="alert-error">{{ error }}</div>
+{% endif %}
+
+<!-- Grid de Información Principal -->
+<div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1.5rem; margin-bottom: 1.5rem;">
+  <!-- Ficha Personal -->
+  <div class="card">
+    <h3 style="font-size: 1.1rem; color: var(--primary-color); margin-bottom: 1rem; border-bottom: 2px solid var(--border-color); padding-bottom: 0.5rem;">
+      👤 Datos Personales y de Contacto
+    </h3>
+    <table style="width: 100%; border-collapse: collapse; font-size: 0.9rem;">
+      <tr>
+        <td style="padding: 0.4rem 0; color: var(--text-muted); width: 40%;">Fecha de Nacimiento:</td>
+        <td style="padding: 0.4rem 0; font-weight: 500;">{{ employee.fechaNacimiento }}</td>
+      </tr>
+      <tr>
+        <td style="padding: 0.4rem 0; color: var(--text-muted);">Sexo:</td>
+        <td style="padding: 0.4rem 0; font-weight: 500;">{% if employee.sexo == 'M' %}Masculino{% else %}Femenino{% endif %}</td>
+      </tr>
+      <tr>
+        <td style="padding: 0.4rem 0; color: var(--text-muted);">Estado Civil:</td>
+        <td style="padding: 0.4rem 0; font-weight: 500; text-transform: capitalize;">{{ employee.estadoCivil }}</td>
+      </tr>
+      <tr>
+        <td style="padding: 0.4rem 0; color: var(--text-muted);">Correo Electrónico:</td>
+        <td style="padding: 0.4rem 0; font-weight: 500;">{{ employee.correo or 'No registrado' }}</td>
+      </tr>
+      <tr>
+        <td style="padding: 0.4rem 0; color: var(--text-muted);">Teléfono:</td>
+        <td style="padding: 0.4rem 0; font-weight: 500;">{{ employee.telefono or 'No registrado' }}</td>
+      </tr>
+      <tr>
+        <td style="padding: 0.4rem 0; color: var(--text-muted);">Dirección de Habitación:</td>
+        <td style="padding: 0.4rem 0; font-weight: 500;">{{ employee.direccion }}</td>
+      </tr>
+      <tr>
+        <td style="padding: 0.4rem 0; color: var(--text-muted);">Entidad Federal (Estado):</td>
+        <td style="padding: 0.4rem 0; font-weight: 500;">{{ territory.nombre if territory else 'Distrito Capital' }}</td>
+      </tr>
+    </table>
+  </div>
+
+  <!-- Ficha Laboral Activa -->
+  <div class="card">
+    <h3 style="font-size: 1.1rem; color: var(--primary-color); margin-bottom: 1rem; border-bottom: 2px solid var(--border-color); padding-bottom: 0.5rem;">
+      💼 Relación Contractual Activa
+    </h3>
+    {% if activeContract %}
+      <table style="width: 100%; border-collapse: collapse; font-size: 0.9rem;">
+        <tr>
+          <td style="padding: 0.4rem 0; color: var(--text-muted); width: 40%;">Cargo:</td>
+          <td style="padding: 0.4rem 0; font-weight: 600; color: var(--primary-color);">{{ position.name if position else 'Cargo General' }}</td>
+        </tr>
+        <tr>
+          <td style="padding: 0.4rem 0; color: var(--text-muted);">Unidad Adscrita:</td>
+          <td style="padding: 0.4rem 0; font-weight: 500;">{{ orgUnit.name if orgUnit else 'Sede Central' }}</td>
+        </tr>
+        <tr>
+          <td style="padding: 0.4rem 0; color: var(--text-muted);">Sector:</td>
+          <td style="padding: 0.4rem 0; font-weight: 500; text-transform: uppercase;">
+            <span style="display: inline-block; padding: 0.15rem 0.5rem; border-radius: 4px; font-size: 0.75rem; background: #e3f2fd; color: #1565c0;">
+              {{ activeContract.sector }}
+            </span>
+          </td>
+        </tr>
+        <tr>
+          <td style="padding: 0.4rem 0; color: var(--text-muted);">Tipo de Contrato:</td>
+          <td style="padding: 0.4rem 0; font-weight: 500; text-transform: capitalize;">{{ activeContract.tipo }}</td>
+        </tr>
+        <tr>
+          <td style="padding: 0.4rem 0; color: var(--text-muted);">Fecha de Ingreso:</td>
+          <td style="padding: 0.4rem 0; font-weight: 500;">{{ activeContract.fechaIngreso }}</td>
+        </tr>
+        <tr>
+          <td style="padding: 0.4rem 0; color: var(--text-muted);">Salario Base:</td>
+          <td style="padding: 0.4rem 0; font-weight: 700; font-size: 1rem; color: #2e7d32;">
+            {{ activeContract.currency }} {{ activeContract.salarioBase }}
+          </td>
+        </tr>
+      </table>
+    {% else %}
+      <p style="color: var(--text-muted); font-size: 0.9rem;">No tiene contrato activo actualmente.</p>
+    {% endif %}
+  </div>
+</div>
+
+<!-- Sección de Cargas Familiares -->
+<div class="card" style="margin-bottom: 1.5rem;">
+  <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1rem;">
+    <h3 style="font-size: 1.1rem; color: var(--primary-color);">👨‍👩‍👧‍👦 Cargas Familiares y Dependientes (IVSS / Nómina)</h3>
+    <button onclick="document.getElementById('form-carga').style.display = document.getElementById('form-carga').style.display === 'none' ? 'block' : 'none';" class="btn" style="padding: 0.35rem 0.85rem; font-size: 0.85rem;">
+      ➕ Añadir Dependiente
+    </button>
+  </div>
+
+  <!-- Formulario desplegable para agregar dependiente -->
+  <div id="form-carga" style="display: none; background: #f5f7fa; padding: 1.25rem; border-radius: 6px; margin-bottom: 1rem; border: 1px solid var(--border-color);">
+    <h4 style="font-size: 0.95rem; margin-bottom: 0.75rem; color: var(--primary-color);">Registrar Nueva Carga Familiar</h4>
+    <form action="/trabajadores/{{ employee.id }}/cargas" method="POST" style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 0.75rem;">
+      <input type="hidden" name="_csrf" value="{{ csrfToken }}">
+      <div>
+        <label style="font-size: 0.8rem; font-weight: 600;">Nombres *</label>
+        <input type="text" name="nombres" class="form-control" required style="padding: 0.35rem 0.5rem; font-size: 0.85rem;">
+      </div>
+      <div>
+        <label style="font-size: 0.8rem; font-weight: 600;">Apellidos *</label>
+        <input type="text" name="apellidos" class="form-control" required style="padding: 0.35rem 0.5rem; font-size: 0.85rem;">
+      </div>
+      <div>
+        <label style="font-size: 0.8rem; font-weight: 600;">Parentesco *</label>
+        <select name="parentesco" class="form-control" required style="padding: 0.35rem 0.5rem; font-size: 0.85rem;">
+          <option value="hijo">Hijo / Hija</option>
+          <option value="conyuge">Cónyuge / Pareja</option>
+          <option value="padre">Padre</option>
+          <option value="madre">Madre</option>
+          <option value="otro">Otro</option>
+        </select>
+      </div>
+      <div>
+        <label style="font-size: 0.8rem; font-weight: 600;">Cédula (si aplica)</label>
+        <input type="text" name="cedula" class="form-control" placeholder="V-12345678" style="padding: 0.35rem 0.5rem; font-size: 0.85rem;">
+      </div>
+      <div>
+        <label style="font-size: 0.8rem; font-weight: 600;">Fecha de Nacimiento *</label>
+        <input type="date" name="fechaNacimiento" class="form-control" required style="padding: 0.35rem 0.5rem; font-size: 0.85rem;">
+      </div>
+      <div>
+        <label style="font-size: 0.8rem; font-weight: 600;">Sexo *</label>
+        <select name="sexo" class="form-control" required style="padding: 0.35rem 0.5rem; font-size: 0.85rem;">
+          <option value="M">Masculino</option>
+          <option value="F">Femenino</option>
+        </select>
+      </div>
+      <div style="grid-column: span 3; display: flex; justify-content: flex-end; gap: 0.5rem; margin-top: 0.5rem;">
+        <button type="button" onclick="document.getElementById('form-carga').style.display='none'" class="btn" style="background: #90a4ae; padding: 0.4rem 0.85rem; font-size: 0.85rem;">Cancelar</button>
+        <button type="submit" class="btn" style="padding: 0.4rem 0.85rem; font-size: 0.85rem;">Guardar Carga</button>
+      </div>
+    </form>
+  </div>
+
+  <table style="width: 100%; border-collapse: collapse; font-size: 0.9rem;">
+    <thead>
+      <tr style="background: #fafafa; border-bottom: 1px solid var(--border-color); text-align: left;">
+        <th style="padding: 0.6rem 1rem;">Nombre Completo</th>
+        <th style="padding: 0.6rem 1rem;">Parentesco</th>
+        <th style="padding: 0.6rem 1rem;">Cédula</th>
+        <th style="padding: 0.6rem 1rem;">Fecha Nacimiento</th>
+        <th style="padding: 0.6rem 1rem; text-align: right;">Acciones</th>
+      </tr>
+    </thead>
+    <tbody>
+      {% for dep in dependents %}
+        <tr style="border-bottom: 1px solid var(--border-color);">
+          <td style="padding: 0.6rem 1rem; font-weight: 500;">{{ dep.nombres }} {{ dep.apellidos }}</td>
+          <td style="padding: 0.6rem 1rem; text-transform: capitalize;">{{ dep.parentesco }}</td>
+          <td style="padding: 0.6rem 1rem;">{{ dep.cedula or 'Menor sin cédula' }}</td>
+          <td style="padding: 0.6rem 1rem;">{{ dep.fechaNacimiento }}</td>
+          <td style="padding: 0.6rem 1rem; text-align: right;">
+            <form action="/trabajadores/{{ employee.id }}/cargas/{{ dep.id }}/eliminar" method="POST" style="display: inline;">
+              <input type="hidden" name="_csrf" value="{{ csrfToken }}">
+              <button type="submit" style="background: none; border: none; color: #c62828; cursor: pointer; font-size: 0.85rem;" onclick="return confirm('¿Desea eliminar esta carga familiar?');">
+                ❌ Eliminar
+              </button>
+            </form>
+          </td>
+        </tr>
+      {% else %}
+        <tr>
+          <td colspan="5" style="padding: 1.5rem; text-align: center; color: var(--text-muted);">
+            No tiene cargas familiares registradas.
+          </td>
+        </tr>
+      {% endfor %}
+    </tbody>
+  </table>
+</div>
+
+<!-- Sección de Historial de Movimientos Contractuales -->
+<div class="card" style="margin-bottom: 1.5rem;">
+  <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1rem;">
+    <h3 style="font-size: 1.1rem; color: var(--primary-color);">📈 Historial de Movimientos y Ascensos</h3>
+    <button onclick="document.getElementById('form-movimiento').style.display = document.getElementById('form-movimiento').style.display === 'none' ? 'block' : 'none';" class="btn" style="background-color: #00695c; padding: 0.35rem 0.85rem; font-size: 0.85rem;">
+      ➕ Registrar Movimiento
+    </button>
+  </div>
+
+  <!-- Formulario de Movimiento Contractual -->
+  <div id="form-movimiento" style="display: none; background: #e0f2f1; padding: 1.25rem; border-radius: 6px; margin-bottom: 1rem; border: 1px solid #b2dfdb;">
+    <h4 style="font-size: 0.95rem; margin-bottom: 0.75rem; color: #004d40;">Registrar Ascenso, Transferencia o Ajuste Salarial</h4>
+    <form action="/trabajadores/{{ employee.id }}/movimientos" method="POST" style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 0.75rem;">
+      <input type="hidden" name="_csrf" value="{{ csrfToken }}">
+      <div>
+        <label style="font-size: 0.8rem; font-weight: 600;">Tipo de Movimiento *</label>
+        <select name="tipoMovimiento" class="form-control" required style="padding: 0.35rem 0.5rem; font-size: 0.85rem;">
+          <option value="ajuste_salarial">Ajuste Salarial / Aumento</option>
+          <option value="ascenso">Ascenso de Cargo</option>
+          <option value="transferencia">Transferencia de Unidad</option>
+          <option value="suspension">Suspensión Temporal</option>
+        </select>
+      </div>
+      <div>
+        <label style="font-size: 0.8rem; font-weight: 600;">Fecha Efectiva *</label>
+        <input type="date" name="fechaEfectiva" class="form-control" required style="padding: 0.35rem 0.5rem; font-size: 0.85rem;">
+      </div>
+      <div>
+        <label style="font-size: 0.8rem; font-weight: 600;">Nuevo Salario Base *</label>
+        <input type="number" step="0.01" name="salarioNuevo" class="form-control" value="{{ activeContract.salarioBase if activeContract else '0' }}" required style="padding: 0.35rem 0.5rem; font-size: 0.85rem;">
+      </div>
+      <div>
+        <label style="font-size: 0.8rem; font-weight: 600;">Nuevo Cargo *</label>
+        <input type="text" name="cargoNuevo" class="form-control" value="{{ position.name if position else '' }}" required style="padding: 0.35rem 0.5rem; font-size: 0.85rem;">
+      </div>
+      <div>
+        <label style="font-size: 0.8rem; font-weight: 600;">Nueva Unidad *</label>
+        <input type="text" name="unidadNueva" class="form-control" value="{{ orgUnit.name if orgUnit else '' }}" required style="padding: 0.35rem 0.5rem; font-size: 0.85rem;">
+      </div>
+      <div>
+        <label style="font-size: 0.8rem; font-weight: 600;">Motivo / Justificación</label>
+        <input type="text" name="motivo" class="form-control" placeholder="Evaluación de desempeño, ajuste anual..." style="padding: 0.35rem 0.5rem; font-size: 0.85rem;">
+      </div>
+      <div style="grid-column: span 3; display: flex; justify-content: flex-end; gap: 0.5rem; margin-top: 0.5rem;">
+        <button type="button" onclick="document.getElementById('form-movimiento').style.display='none'" class="btn" style="background: #90a4ae; padding: 0.4rem 0.85rem; font-size: 0.85rem;">Cancelar</button>
+        <button type="submit" class="btn" style="background: #00695c; padding: 0.4rem 0.85rem; font-size: 0.85rem;">Aplicar Movimiento</button>
+      </div>
+    </form>
+  </div>
+
+  <table style="width: 100%; border-collapse: collapse; font-size: 0.9rem;">
+    <thead>
+      <tr style="background: #fafafa; border-bottom: 1px solid var(--border-color); text-align: left;">
+        <th style="padding: 0.6rem 1rem;">Fecha</th>
+        <th style="padding: 0.6rem 1rem;">Movimiento</th>
+        <th style="padding: 0.6rem 1rem;">Cargo Nuevo</th>
+        <th style="padding: 0.6rem 1rem;">Unidad Nueva</th>
+        <th style="padding: 0.6rem 1rem;">Salario Nuevo</th>
+        <th style="padding: 0.6rem 1rem;">Motivo</th>
+      </tr>
+    </thead>
+    <tbody>
+      {% for mov in movements %}
+        <tr style="border-bottom: 1px solid var(--border-color);">
+          <td style="padding: 0.6rem 1rem; font-weight: 500;">{{ mov.fechaEfectiva }}</td>
+          <td style="padding: 0.6rem 1rem; text-transform: capitalize;">{{ mov.tipoMovimiento }}</td>
+          <td style="padding: 0.6rem 1rem;">{{ mov.cargoNuevo }}</td>
+          <td style="padding: 0.6rem 1rem;">{{ mov.unidadNueva }}</td>
+          <td style="padding: 0.6rem 1rem; font-weight: 600; color: #2e7d32;">{{ mov.salarioNuevo }}</td>
+          <td style="padding: 0.6rem 1rem; color: var(--text-muted);">{{ mov.motivo or 'N/A' }}</td>
+        </tr>
+      {% else %}
+        <tr>
+          <td colspan="6" style="padding: 1.5rem; text-align: center; color: var(--text-muted);">
+            No hay movimientos registrados para este expediente.
+          </td>
+        </tr>
+      {% endfor %}
+    </tbody>
+  </table>
+</div>
+{% endblock %}

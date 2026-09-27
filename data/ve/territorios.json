@@ -1,0 +1,34 @@
+{
+  "_meta": {
+    "descripcion": "24 entidades federales de primer nivel (ADM1) oficiales de la República Bolivariana de Venezuela (23 estados + Distrito Capital)",
+    "fuente": "Constitución de la República Bolivariana de Venezuela e Instituto Nacional de Estadística (INE)",
+    "fecha_consulta": "2026-09-27",
+    "total": 24
+  },
+  "entidades": [
+    { "codigo": "VE-A", "nombre": "Distrito Capital", "capital": "Caracas" },
+    { "codigo": "VE-B", "nombre": "Anzoátegui", "capital": "Barcelona" },
+    { "codigo": "VE-C", "nombre": "Apure", "capital": "San Fernando de Apure" },
+    { "codigo": "VE-D", "nombre": "Aragua", "capital": "Maracay" },
+    { "codigo": "VE-E", "nombre": "Barinas", "capital": "Barinas" },
+    { "codigo": "VE-F", "nombre": "Bolívar", "capital": "Ciudad Bolívar" },
+    { "codigo": "VE-G", "nombre": "Carabobo", "capital": "Valencia" },
+    { "codigo": "VE-H", "nombre": "Cojedes", "capital": "San Carlos" },
+    { "codigo": "VE-I", "nombre": "Delta Amacuro", "capital": "Tucupita" },
+    { "codigo": "VE-J", "nombre": "Falcón", "capital": "Coro" },
+    { "codigo": "VE-K", "nombre": "Guárico", "capital": "San Juan de los Morros" },
+    { "codigo": "VE-L", "nombre": "Lara", "capital": "Barquisimeto" },
+    { "codigo": "VE-M", "nombre": "Mérida", "capital": "Mérida" },
+    { "codigo": "VE-N", "nombre": "Miranda", "capital": "Los Teques" },
+    { "codigo": "VE-O", "nombre": "Monagas", "capital": "Maturín" },
+    { "codigo": "VE-P", "nombre": "Nueva Esparta", "capital": "La Asunción" },
+    { "codigo": "VE-R", "nombre": "Portuguesa", "capital": "Guanare" },
+    { "codigo": "VE-S", "nombre": "Sucre", "capital": "Cumaná" },
+    { "codigo": "VE-T", "nombre": "Táchira", "capital": "San Cristóbal" },
+    { "codigo": "VE-U", "nombre": "Trujillo", "capital": "Trujillo" },
+    { "codigo": "VE-V", "nombre": "La Guaira", "capital": "La Guaira" },
+    { "codigo": "VE-W", "nombre": "Yaracuy", "capital": "San Felipe" },
+    { "codigo": "VE-X", "nombre": "Zulia", "capital": "Maracaibo" },
+    { "codigo": "VE-Z", "nombre": "Amazonas", "capital": "Puerto Ayacucho" }
+  ]
+}

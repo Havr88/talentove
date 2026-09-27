@@ -1,0 +1,70 @@
+{% extends "layouts/base.njk" %}
+
+{% block content %}
+<div style="max-width: 650px; margin: 2rem auto;">
+  <div class="card">
+    <div style="text-align: center; margin-bottom: 2rem;">
+      <h2 style="font-size: 1.75rem; color: var(--primary-color); margin-bottom: 0.5rem;">Asistente de Primera Instalación</h2>
+      <p style="color: var(--text-muted); font-size: 0.95rem;">Configura los datos de tu empresa y crea el usuario superadministrador.</p>
+    </div>
+
+    {% if error %}
+      <div class="alert-error">{{ error }}</div>
+    {% endif %}
+
+    <form action="/install" method="POST">
+      <h3 style="font-size: 1.1rem; border-bottom: 2px solid var(--border-color); padding-bottom: 0.5rem; margin-bottom: 1.25rem;">1. Datos de la Empresa</h3>
+
+      <div class="form-group">
+        <label for="companyName">Razón Social o Nombre de la Empresa *</label>
+        <input type="text" id="companyName" name="companyName" class="form-control" required value="{{ values.companyName | default('') }}" placeholder="Ej. Corporación Venezolana de Alimentos">
+      </div>
+
+      <div class="form-group">
+        <label for="nativeId">RIF de la Empresa (Ej. J-12345678-9) *</label>
+        <input type="text" id="nativeId" name="nativeId" class="form-control" required value="{{ values.nativeId | default('') }}" placeholder="J-12345678-9">
+        <small style="color: var(--text-muted); display: block; margin-top: 0.25rem;">Se validará y normalizará automáticamente según el catálogo nacional.</small>
+      </div>
+
+      <div class="form-group">
+        <label for="instanceName">Nombre de la Instalación (Aparece en navbar y título) *</label>
+        <input type="text" id="instanceName" name="instanceName" class="form-control" required value="{{ values.instanceName | default('TalentoVe') }}">
+      </div>
+
+      <h3 style="font-size: 1.1rem; border-bottom: 2px solid var(--border-color); padding-bottom: 0.5rem; margin-top: 2rem; margin-bottom: 1.25rem;">2. Cuenta Superadministrador</h3>
+
+      <div class="form-group">
+        <label for="adminName">Nombre Completo *</label>
+        <input type="text" id="adminName" name="adminName" class="form-control" required value="{{ values.adminName | default('') }}" placeholder="Administrador Principal">
+      </div>
+
+      <div class="form-group">
+        <label for="adminEmail">Correo Electrónico *</label>
+        <input type="email" id="adminEmail" name="adminEmail" class="form-control" required value="{{ values.adminEmail | default('') }}" placeholder="admin@empresa.ve">
+      </div>
+
+      <div class="form-group">
+        <label for="adminPassword">Contraseña Segura (Mínimo 8 caracteres) *</label>
+        <input type="password" id="adminPassword" name="adminPassword" class="form-control" required minlength="8">
+      </div>
+
+      <h3 style="font-size: 1.1rem; border-bottom: 2px solid var(--border-color); padding-bottom: 0.5rem; margin-top: 2rem; margin-bottom: 1.25rem;">3. Identidad Visual</h3>
+
+      <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1rem;">
+        <div class="form-group">
+          <label for="primaryColor">Color Primario Institucional</label>
+          <input type="color" id="primaryColor" name="primaryColor" class="form-control" style="height: 42px; padding: 2px;" value="{{ values.primaryColor | default('#0d47a1') }}">
+        </div>
+        <div class="form-group">
+          <label for="accentColor">Color de Énfasis</label>
+          <input type="color" id="accentColor" name="accentColor" class="form-control" style="height: 42px; padding: 2px;" value="{{ values.accentColor | default('#d32f2f') }}">
+        </div>
+      </div>
+
+      <div style="margin-top: 2rem; text-align: right;">
+        <button type="submit" class="btn" style="width: 100%; padding: 0.85rem; font-size: 1.05rem;">Completar Instalación y Comenzar &rarr;</button>
+      </div>
+    </form>
+  </div>
+</div>
+{% endblock %}

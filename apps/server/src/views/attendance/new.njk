@@ -1,0 +1,59 @@
+{% extends "layouts/base.njk" %}
+
+{% block content %}
+<div style="max-width: 700px; margin: 0 auto;">
+  <div style="margin-bottom: 1.5rem;">
+    <a href="/asistencia" style="color: var(--text-muted); text-decoration: none; font-size: 0.9rem;">&larr; Volver al listado</a>
+    <h2 style="margin-top: 0.5rem; color: var(--primary-color);">Apertura de Planilla Semanal</h2>
+    <p style="color: var(--text-muted); font-size: 0.9rem;">
+      Genere una nueva hoja de asistencia por departamento para registrar y verificar el horario semanal de los trabajadores.
+    </p>
+  </div>
+
+  {% if error %}
+    <div class="alert-error">{{ error }}</div>
+  {% endif %}
+
+  <div class="card">
+    <form action="/asistencia" method="POST">
+      {% if csrfToken %}<input type="hidden" name="_csrf" value="{{ csrfToken }}">{% endif %}
+
+      <div class="form-group">
+        <label for="departmentId">Departamento / Dependencia *</label>
+        <select name="departmentId" id="departmentId" class="form-control" required>
+          <option value="">-- Seleccione un departamento --</option>
+          {% for dept in departments %}
+            <option value="{{ dept.id }}" {% if formData.departmentId == dept.id %}selected{% endif %}>{{ dept.name }}</option>
+          {% endfor %}
+        </select>
+      </div>
+
+      <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1rem;">
+        <div class="form-group">
+          <label for="startDate">Fecha Inicio (Lunes) *</label>
+          <input type="date" id="startDate" name="startDate" class="form-control" value="{{ formData.startDate }}" required>
+        </div>
+        <div class="form-group">
+          <label for="endDate">Fecha Fin (Domingo) *</label>
+          <input type="date" id="endDate" name="endDate" class="form-control" value="{{ formData.endDate }}" required>
+        </div>
+      </div>
+
+      <div class="form-group">
+        <label for="coordinatorName">Nombre del Coordinador / Supervisor de Área *</label>
+        <input type="text" id="coordinatorName" name="coordinatorName" class="form-control" placeholder="Ej: Lcdo. Carlos Pérez" value="{{ formData.coordinatorName }}" required>
+      </div>
+
+      <div class="form-group">
+        <label for="notes">Observaciones Iniciales</label>
+        <textarea id="notes" name="notes" class="form-control" rows="3" placeholder="Comentarios sobre el turno, guardias o relevos">{{ formData.notes }}</textarea>
+      </div>
+
+      <div style="display: flex; justify-content: flex-end; gap: 1rem; margin-top: 1.5rem;">
+        <a href="/asistencia" class="btn" style="background: #90a4ae;">Cancelar</a>
+        <button type="submit" class="btn">Crear e Iniciar Registro</button>
+      </div>
+    </form>
+  </div>
+</div>
+{% endblock %}
