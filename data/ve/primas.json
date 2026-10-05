@@ -1,0 +1,147 @@
+{
+  "_meta": {
+    "dataset": "ve-primas",
+    "descripcion": "Primas de la nómina venezolana: antigüedad (por años, % sobre sueldo), profesionalización (por grado de instrucción, %), prima por hijos y bono alimenticio (montos fijos). Valores del legacy del sponsor que COINCIDEN con las Tablas 1-2 del documento APN (MinDefensa may-2025) — doble fuente.",
+    "fuente": "Sponsor (2026-09-27) + documento 'Proceso de Ajuste del Sistema de Remuneración APN' (mindefensa.gob.ve, may-2025)",
+    "notas": [
+      "Prima de antigüedad: tope 30% desde el año 23",
+      "Prima de profesionalización: BACH 0%, TSU 20%, PROF 25%, ESPEC 30%, MGS 35%, DOCT 40%"
+    ]
+  },
+  "prima_antiguedad": [
+    {
+      "anios": 0,
+      "porc": 0.0
+    },
+    {
+      "anios": 1,
+      "porc": 1.0
+    },
+    {
+      "anios": 2,
+      "porc": 2.0
+    },
+    {
+      "anios": 3,
+      "porc": 3.0
+    },
+    {
+      "anios": 4,
+      "porc": 4.0
+    },
+    {
+      "anios": 5,
+      "porc": 5.0
+    },
+    {
+      "anios": 6,
+      "porc": 6.2
+    },
+    {
+      "anios": 7,
+      "porc": 7.4
+    },
+    {
+      "anios": 8,
+      "porc": 8.6
+    },
+    {
+      "anios": 9,
+      "porc": 9.8
+    },
+    {
+      "anios": 10,
+      "porc": 11.0
+    },
+    {
+      "anios": 11,
+      "porc": 12.4
+    },
+    {
+      "anios": 12,
+      "porc": 13.8
+    },
+    {
+      "anios": 13,
+      "porc": 15.2
+    },
+    {
+      "anios": 14,
+      "porc": 16.6
+    },
+    {
+      "anios": 15,
+      "porc": 18.0
+    },
+    {
+      "anios": 16,
+      "porc": 19.6
+    },
+    {
+      "anios": 17,
+      "porc": 21.2
+    },
+    {
+      "anios": 18,
+      "porc": 22.8
+    },
+    {
+      "anios": 19,
+      "porc": 24.4
+    },
+    {
+      "anios": 20,
+      "porc": 26.0
+    },
+    {
+      "anios": 21,
+      "porc": 27.8
+    },
+    {
+      "anios": 22,
+      "porc": 29.6
+    },
+    {
+      "anios": 23,
+      "porc": 30.0
+    }
+  ],
+  "prima_profesionalizacion": [
+    {
+      "grado_instruccion": "BACHILLER",
+      "porc": 0.0
+    },
+    {
+      "grado_instruccion": "TSU",
+      "porc": 20.0
+    },
+    {
+      "grado_instruccion": "PROFESIONAL",
+      "porc": 25.0
+    },
+    {
+      "grado_instruccion": "ESPECIALISTA",
+      "porc": 30.0
+    },
+    {
+      "grado_instruccion": "MAESTRIA",
+      "porc": 35.0
+    },
+    {
+      "grado_instruccion": "DOCTORADO",
+      "porc": 40.0
+    }
+  ],
+  "montos_fijos": [
+    {
+      "concepto": "prima_por_hijos",
+      "monto": 12.5,
+      "currency": "VES"
+    },
+    {
+      "concepto": "bono_alimenticio",
+      "monto": 45.0,
+      "currency": "VES"
+    }
+  ]
+}

@@ -1,0 +1,197 @@
+{
+  "_meta": {
+    "dataset": "ve-especializaciones-entrenador",
+    "cargo_ref": "Entrenador Deportivo",
+    "descripcion": "Especializaciones (disciplinas deportivas) del cargo de Entrenador, aportadas por el sponsor (IDANZ, 2026-09-27). El modelo general es `position_specializations`: cada cargo puede tener N especializaciones y la asignación referencia una opcionalmente.",
+    "fuentes": [
+      "Lista del sponsor (38 denominaciones crudas, IDANZ)"
+    ],
+    "fecha_consulta": "2026-09-27",
+    "decisiones_normalizacion": [
+      "Deduplicados: 'Futbol sala'/'Futbol salon' (misma disciplina) y 'Tae kwon do'/'Taekwondo' (mismo deporte) → 36 especializaciones desde 38 crudas",
+      "'Futbol de salon' se mantiene aparte de 'Fútbol Sala' (variantes de reglamento distintas: FIFUSA vs FIFA/futsal)",
+      "Disciplinas adaptadas marcadas con `adaptada: true` y sufijo '(Discapacidad)' en lugar de entradas duplicadas; 'Bocha' → 'Bochas'",
+      "Normalización ortográfica: acentos, 'Lev.de pesas' → 'Levantamiento de Pesas', 'Beisbol' → 'Béisbol', 'Softbol' → 'Sóftbol'",
+      "Lote 2026-09-27 (cargos 'Entrenador de X' del sponsor): los entrenadores NO son cargos independientes — se resuelven como cargo 'Entrenador Deportivo' + especialización. Añadidas: Gimnasia, Judo, Kickboxing, Motociclismo, Potencia, Remo, Remo (Discapacidad), Sambo, Tiro Deportivo. 'Tiro Deportivo' ≠ 'Tiro con Arco'; 'rowing discapacidad' → 'Remo (Discapacidad)'"
+    ],
+    "politica_actualizacion": "Semilla editable: CRUD de especializaciones desde el admin de cargos (agregar/editar/eliminar/importar/exportar); re-seed solo inserta nombres inexistentes."
+  },
+  "especializaciones": [
+    {
+      "nombre": "Ajedrez",
+      "adaptada": false
+    },
+    {
+      "nombre": "Atletismo",
+      "adaptada": false
+    },
+    {
+      "nombre": "Atletismo (Discapacidad)",
+      "adaptada": true
+    },
+    {
+      "nombre": "Baloncesto",
+      "adaptada": false
+    },
+    {
+      "nombre": "Baloncesto (Discapacidad)",
+      "adaptada": true
+    },
+    {
+      "nombre": "Balonmano",
+      "adaptada": false
+    },
+    {
+      "nombre": "Béisbol",
+      "adaptada": false
+    },
+    {
+      "nombre": "Bochas (Discapacidad)",
+      "adaptada": true
+    },
+    {
+      "nombre": "Bolas Criollas",
+      "adaptada": false
+    },
+    {
+      "nombre": "Bowling",
+      "adaptada": false
+    },
+    {
+      "nombre": "Boxeo",
+      "adaptada": false
+    },
+    {
+      "nombre": "Canotaje",
+      "adaptada": false
+    },
+    {
+      "nombre": "Ciclismo",
+      "adaptada": false
+    },
+    {
+      "nombre": "Fisicoculturismo",
+      "adaptada": false
+    },
+    {
+      "nombre": "Fútbol Campo",
+      "adaptada": false
+    },
+    {
+      "nombre": "Fútbol de Salón",
+      "adaptada": false
+    },
+    {
+      "nombre": "Fútbol Sala",
+      "adaptada": false
+    },
+    {
+      "nombre": "Fútbol Sala (Discapacidad)",
+      "adaptada": true
+    },
+    {
+      "nombre": "Karate",
+      "adaptada": false
+    },
+    {
+      "nombre": "Kickingball",
+      "adaptada": false
+    },
+    {
+      "nombre": "Levantamiento de Pesas",
+      "adaptada": false
+    },
+    {
+      "nombre": "Lucha",
+      "adaptada": false
+    },
+    {
+      "nombre": "Natación Aguas Abiertas",
+      "adaptada": false
+    },
+    {
+      "nombre": "Natación (Discapacidad)",
+      "adaptada": true
+    },
+    {
+      "nombre": "Polo Acuático",
+      "adaptada": false
+    },
+    {
+      "nombre": "Remo",
+      "adaptada": false
+    },
+    {
+      "nombre": "Sóftbol",
+      "adaptada": false
+    },
+    {
+      "nombre": "Taekwondo",
+      "adaptada": false
+    },
+    {
+      "nombre": "Taekwondo (Discapacidad)",
+      "adaptada": true
+    },
+    {
+      "nombre": "Tenis de Campo",
+      "adaptada": false
+    },
+    {
+      "nombre": "Tenis de Mesa",
+      "adaptada": false
+    },
+    {
+      "nombre": "Tiro con Arco",
+      "adaptada": false
+    },
+    {
+      "nombre": "Triatlón",
+      "adaptada": false
+    },
+    {
+      "nombre": "Vela",
+      "adaptada": false
+    },
+    {
+      "nombre": "Voleibol",
+      "adaptada": false
+    },
+    {
+      "nombre": "Wushu",
+      "adaptada": false
+    },
+    {
+      "nombre": "Gimnasia",
+      "adaptada": false
+    },
+    {
+      "nombre": "Judo",
+      "adaptada": false
+    },
+    {
+      "nombre": "Kickboxing",
+      "adaptada": false
+    },
+    {
+      "nombre": "Motociclismo",
+      "adaptada": false
+    },
+    {
+      "nombre": "Potencia",
+      "adaptada": false
+    },
+    {
+      "nombre": "Remo (Discapacidad)",
+      "adaptada": true
+    },
+    {
+      "nombre": "Sambo",
+      "adaptada": false
+    },
+    {
+      "nombre": "Tiro Deportivo",
+      "adaptada": false
+    }
+  ]
+}

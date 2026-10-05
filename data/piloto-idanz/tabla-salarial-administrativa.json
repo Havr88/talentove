@@ -1,0 +1,775 @@
+{
+  "_meta": {
+    "dataset": "piloto-idanz-tabla-salarial-administrativa",
+    "descripcion": "Estructura de la tabla salarial para trabajadores ADMINISTRATIVOS del piloto: 8 grupos de cargo (BI, BII, BIII, TI, TII, PI, PII, PIII) × 7 niveles de recorrido (I-VII) = 56 filas. Los MONTOS están pendientes (el sponsor los enviará); se precargó la REFERENCIA NACIONAL APN (Tabla 3, documento MinDefensa may-2025) de los niveles I y VII de cada grupo para cotejo.",
+    "fuente": "Estructura: sponsor (2026-09-27). Referencia nacional: 'Proceso de Ajuste del Sistema de Remuneración APN' (mindefensa.gob.ve, may-2025) — ver regionalizacion-venezuela.md §5.1",
+    "grupos_significado": {
+      "BI": "Bachiller I",
+      "BII": "Bachiller II",
+      "BIII": "Bachiller III",
+      "TI": "Técnico I",
+      "TII": "Técnico II",
+      "PI": "Profesional I",
+      "PII": "Profesional II",
+      "PIII": "Profesional III"
+    },
+    "pendientes": [
+      "Vigencia y fuente de la tabla (Gaceta/ONAPRE/resolución)",
+      "Grupos faltantes: Alto Nivel (AN I-V), Libre Nombramiento y Remoción, y obreros (Tabla 3.1, G1-G10)",
+      "Vigencia de la tabla (¿cuándo entró en vigencia y con qué fuente?)",
+      "Confirmar significado de grupos MI/MII/EI/EII"
+    ],
+    "moneda": "CONFIRMADO: todos los valores en bolívares (VES)"
+  },
+  "referencia_nacional_apn": {
+    "BI": {
+      "nivel_I": 130,
+      "nivel_VII": 141,
+      "fuente": "Tabla 3 APN (MinDefensa may-2025), Bs"
+    },
+    "BII": {
+      "nivel_I": 148,
+      "nivel_VII": 159,
+      "fuente": "Tabla 3 APN (MinDefensa may-2025), Bs"
+    },
+    "BIII": {
+      "nivel_I": 166,
+      "nivel_VII": 177,
+      "fuente": "Tabla 3 APN (MinDefensa may-2025), Bs"
+    },
+    "TI": {
+      "nivel_I": 192,
+      "nivel_VII": 203,
+      "fuente": "Tabla 3 APN (MinDefensa may-2025), Bs"
+    },
+    "TII": {
+      "nivel_I": 217,
+      "nivel_VII": 228,
+      "fuente": "Tabla 3 APN (MinDefensa may-2025), Bs"
+    },
+    "PI": {
+      "nivel_I": 246,
+      "nivel_VII": 257,
+      "fuente": "Tabla 3 APN (MinDefensa may-2025), Bs"
+    },
+    "PII": {
+      "nivel_I": 276,
+      "nivel_VII": 287,
+      "fuente": "Tabla 3 APN (MinDefensa may-2025), Bs"
+    },
+    "PIII": {
+      "nivel_I": 305,
+      "nivel_VII": 316,
+      "fuente": "Tabla 3 APN (MinDefensa may-2025), Bs"
+    }
+  },
+  "filas": [
+    {
+      "grupo": "BI",
+      "nivel": "I",
+      "monto": 130.0,
+      "currency": "VES",
+      "vigente_desde": null,
+      "fuente": "Legacy institucional del sponsor (2026-09-27); coincide con Tabla 3 APN nacional (MinDefensa may-2025)"
+    },
+    {
+      "grupo": "BI",
+      "nivel": "II",
+      "monto": 132.0,
+      "currency": "VES",
+      "vigente_desde": null,
+      "fuente": "Legacy institucional del sponsor (2026-09-27); coincide con Tabla 3 APN nacional (MinDefensa may-2025)"
+    },
+    {
+      "grupo": "BI",
+      "nivel": "III",
+      "monto": 134.0,
+      "currency": "VES",
+      "vigente_desde": null,
+      "fuente": "Legacy institucional del sponsor (2026-09-27); coincide con Tabla 3 APN nacional (MinDefensa may-2025)"
+    },
+    {
+      "grupo": "BI",
+      "nivel": "IV",
+      "monto": 135.0,
+      "currency": "VES",
+      "vigente_desde": null,
+      "fuente": "Legacy institucional del sponsor (2026-09-27); coincide con Tabla 3 APN nacional (MinDefensa may-2025)"
+    },
+    {
+      "grupo": "BI",
+      "nivel": "V",
+      "monto": 137.0,
+      "currency": "VES",
+      "vigente_desde": null,
+      "fuente": "Legacy institucional del sponsor (2026-09-27); coincide con Tabla 3 APN nacional (MinDefensa may-2025)"
+    },
+    {
+      "grupo": "BI",
+      "nivel": "VI",
+      "monto": 139.0,
+      "currency": "VES",
+      "vigente_desde": null,
+      "fuente": "Legacy institucional del sponsor (2026-09-27); coincide con Tabla 3 APN nacional (MinDefensa may-2025)"
+    },
+    {
+      "grupo": "BI",
+      "nivel": "VII",
+      "monto": 141.0,
+      "currency": "VES",
+      "vigente_desde": null,
+      "fuente": "Legacy institucional del sponsor (2026-09-27); coincide con Tabla 3 APN nacional (MinDefensa may-2025)"
+    },
+    {
+      "grupo": "BII",
+      "nivel": "I",
+      "monto": 148.0,
+      "currency": "VES",
+      "vigente_desde": null,
+      "fuente": "Legacy institucional del sponsor (2026-09-27); coincide con Tabla 3 APN nacional (MinDefensa may-2025)"
+    },
+    {
+      "grupo": "BII",
+      "nivel": "II",
+      "monto": 150.0,
+      "currency": "VES",
+      "vigente_desde": null,
+      "fuente": "Legacy institucional del sponsor (2026-09-27); coincide con Tabla 3 APN nacional (MinDefensa may-2025)"
+    },
+    {
+      "grupo": "BII",
+      "nivel": "III",
+      "monto": 152.0,
+      "currency": "VES",
+      "vigente_desde": null,
+      "fuente": "Legacy institucional del sponsor (2026-09-27); coincide con Tabla 3 APN nacional (MinDefensa may-2025)"
+    },
+    {
+      "grupo": "BII",
+      "nivel": "IV",
+      "monto": 154.0,
+      "currency": "VES",
+      "vigente_desde": null,
+      "fuente": "Legacy institucional del sponsor (2026-09-27); coincide con Tabla 3 APN nacional (MinDefensa may-2025)"
+    },
+    {
+      "grupo": "BII",
+      "nivel": "V",
+      "monto": 155.0,
+      "currency": "VES",
+      "vigente_desde": null,
+      "fuente": "Legacy institucional del sponsor (2026-09-27); coincide con Tabla 3 APN nacional (MinDefensa may-2025)"
+    },
+    {
+      "grupo": "BII",
+      "nivel": "VI",
+      "monto": 157.0,
+      "currency": "VES",
+      "vigente_desde": null,
+      "fuente": "Legacy institucional del sponsor (2026-09-27); coincide con Tabla 3 APN nacional (MinDefensa may-2025)"
+    },
+    {
+      "grupo": "BII",
+      "nivel": "VII",
+      "monto": 159.0,
+      "currency": "VES",
+      "vigente_desde": null,
+      "fuente": "Legacy institucional del sponsor (2026-09-27); coincide con Tabla 3 APN nacional (MinDefensa may-2025)"
+    },
+    {
+      "grupo": "BIII",
+      "nivel": "I",
+      "monto": 166.0,
+      "currency": "VES",
+      "vigente_desde": null,
+      "fuente": "Legacy institucional del sponsor (2026-09-27); coincide con Tabla 3 APN nacional (MinDefensa may-2025)"
+    },
+    {
+      "grupo": "BIII",
+      "nivel": "II",
+      "monto": 168.0,
+      "currency": "VES",
+      "vigente_desde": null,
+      "fuente": "Legacy institucional del sponsor (2026-09-27); coincide con Tabla 3 APN nacional (MinDefensa may-2025)"
+    },
+    {
+      "grupo": "BIII",
+      "nivel": "III",
+      "monto": 170.0,
+      "currency": "VES",
+      "vigente_desde": null,
+      "fuente": "Legacy institucional del sponsor (2026-09-27); coincide con Tabla 3 APN nacional (MinDefensa may-2025)"
+    },
+    {
+      "grupo": "BIII",
+      "nivel": "IV",
+      "monto": 172.0,
+      "currency": "VES",
+      "vigente_desde": null,
+      "fuente": "Legacy institucional del sponsor (2026-09-27); coincide con Tabla 3 APN nacional (MinDefensa may-2025)"
+    },
+    {
+      "grupo": "BIII",
+      "nivel": "V",
+      "monto": 174.0,
+      "currency": "VES",
+      "vigente_desde": null,
+      "fuente": "Legacy institucional del sponsor (2026-09-27); coincide con Tabla 3 APN nacional (MinDefensa may-2025)"
+    },
+    {
+      "grupo": "BIII",
+      "nivel": "VI",
+      "monto": 176.0,
+      "currency": "VES",
+      "vigente_desde": null,
+      "fuente": "Legacy institucional del sponsor (2026-09-27); coincide con Tabla 3 APN nacional (MinDefensa may-2025)"
+    },
+    {
+      "grupo": "BIII",
+      "nivel": "VII",
+      "monto": 177.0,
+      "currency": "VES",
+      "vigente_desde": null,
+      "fuente": "Legacy institucional del sponsor (2026-09-27); coincide con Tabla 3 APN nacional (MinDefensa may-2025)"
+    },
+    {
+      "grupo": "TI",
+      "nivel": "I",
+      "monto": 192.0,
+      "currency": "VES",
+      "vigente_desde": null,
+      "fuente": "Legacy institucional del sponsor (2026-09-27); coincide con Tabla 3 APN nacional (MinDefensa may-2025)"
+    },
+    {
+      "grupo": "TI",
+      "nivel": "II",
+      "monto": 194.0,
+      "currency": "VES",
+      "vigente_desde": null,
+      "fuente": "Legacy institucional del sponsor (2026-09-27); coincide con Tabla 3 APN nacional (MinDefensa may-2025)"
+    },
+    {
+      "grupo": "TI",
+      "nivel": "III",
+      "monto": 196.0,
+      "currency": "VES",
+      "vigente_desde": null,
+      "fuente": "Legacy institucional del sponsor (2026-09-27); coincide con Tabla 3 APN nacional (MinDefensa may-2025)"
+    },
+    {
+      "grupo": "TI",
+      "nivel": "IV",
+      "monto": 197.0,
+      "currency": "VES",
+      "vigente_desde": null,
+      "fuente": "Legacy institucional del sponsor (2026-09-27); coincide con Tabla 3 APN nacional (MinDefensa may-2025)"
+    },
+    {
+      "grupo": "TI",
+      "nivel": "V",
+      "monto": 199.0,
+      "currency": "VES",
+      "vigente_desde": null,
+      "fuente": "Legacy institucional del sponsor (2026-09-27); coincide con Tabla 3 APN nacional (MinDefensa may-2025)"
+    },
+    {
+      "grupo": "TI",
+      "nivel": "VI",
+      "monto": 201.0,
+      "currency": "VES",
+      "vigente_desde": null,
+      "fuente": "Legacy institucional del sponsor (2026-09-27); coincide con Tabla 3 APN nacional (MinDefensa may-2025)"
+    },
+    {
+      "grupo": "TI",
+      "nivel": "VII",
+      "monto": 203.0,
+      "currency": "VES",
+      "vigente_desde": null,
+      "fuente": "Legacy institucional del sponsor (2026-09-27); coincide con Tabla 3 APN nacional (MinDefensa may-2025)"
+    },
+    {
+      "grupo": "TII",
+      "nivel": "I",
+      "monto": 217.0,
+      "currency": "VES",
+      "vigente_desde": null,
+      "fuente": "Legacy institucional del sponsor (2026-09-27); coincide con Tabla 3 APN nacional (MinDefensa may-2025)"
+    },
+    {
+      "grupo": "TII",
+      "nivel": "II",
+      "monto": 219.0,
+      "currency": "VES",
+      "vigente_desde": null,
+      "fuente": "Legacy institucional del sponsor (2026-09-27); coincide con Tabla 3 APN nacional (MinDefensa may-2025)"
+    },
+    {
+      "grupo": "TII",
+      "nivel": "III",
+      "monto": 221.0,
+      "currency": "VES",
+      "vigente_desde": null,
+      "fuente": "Legacy institucional del sponsor (2026-09-27); coincide con Tabla 3 APN nacional (MinDefensa may-2025)"
+    },
+    {
+      "grupo": "TII",
+      "nivel": "IV",
+      "monto": 223.0,
+      "currency": "VES",
+      "vigente_desde": null,
+      "fuente": "Legacy institucional del sponsor (2026-09-27); coincide con Tabla 3 APN nacional (MinDefensa may-2025)"
+    },
+    {
+      "grupo": "TII",
+      "nivel": "V",
+      "monto": 225.0,
+      "currency": "VES",
+      "vigente_desde": null,
+      "fuente": "Legacy institucional del sponsor (2026-09-27); coincide con Tabla 3 APN nacional (MinDefensa may-2025)"
+    },
+    {
+      "grupo": "TII",
+      "nivel": "VI",
+      "monto": 226.0,
+      "currency": "VES",
+      "vigente_desde": null,
+      "fuente": "Legacy institucional del sponsor (2026-09-27); coincide con Tabla 3 APN nacional (MinDefensa may-2025)"
+    },
+    {
+      "grupo": "TII",
+      "nivel": "VII",
+      "monto": 228.0,
+      "currency": "VES",
+      "vigente_desde": null,
+      "fuente": "Legacy institucional del sponsor (2026-09-27); coincide con Tabla 3 APN nacional (MinDefensa may-2025)"
+    },
+    {
+      "grupo": "PI",
+      "nivel": "I",
+      "monto": 246.0,
+      "currency": "VES",
+      "vigente_desde": null,
+      "fuente": "Legacy institucional del sponsor (2026-09-27); coincide con Tabla 3 APN nacional (MinDefensa may-2025)"
+    },
+    {
+      "grupo": "PI",
+      "nivel": "II",
+      "monto": 248.0,
+      "currency": "VES",
+      "vigente_desde": null,
+      "fuente": "Legacy institucional del sponsor (2026-09-27); coincide con Tabla 3 APN nacional (MinDefensa may-2025)"
+    },
+    {
+      "grupo": "PI",
+      "nivel": "III",
+      "monto": 250.0,
+      "currency": "VES",
+      "vigente_desde": null,
+      "fuente": "Legacy institucional del sponsor (2026-09-27); coincide con Tabla 3 APN nacional (MinDefensa may-2025)"
+    },
+    {
+      "grupo": "PI",
+      "nivel": "IV",
+      "monto": 252.0,
+      "currency": "VES",
+      "vigente_desde": null,
+      "fuente": "Legacy institucional del sponsor (2026-09-27); coincide con Tabla 3 APN nacional (MinDefensa may-2025)"
+    },
+    {
+      "grupo": "PI",
+      "nivel": "V",
+      "monto": 254.0,
+      "currency": "VES",
+      "vigente_desde": null,
+      "fuente": "Legacy institucional del sponsor (2026-09-27); coincide con Tabla 3 APN nacional (MinDefensa may-2025)"
+    },
+    {
+      "grupo": "PI",
+      "nivel": "VI",
+      "monto": 256.0,
+      "currency": "VES",
+      "vigente_desde": null,
+      "fuente": "Legacy institucional del sponsor (2026-09-27); coincide con Tabla 3 APN nacional (MinDefensa may-2025)"
+    },
+    {
+      "grupo": "PI",
+      "nivel": "VII",
+      "monto": 257.0,
+      "currency": "VES",
+      "vigente_desde": null,
+      "fuente": "Legacy institucional del sponsor (2026-09-27); coincide con Tabla 3 APN nacional (MinDefensa may-2025)"
+    },
+    {
+      "grupo": "PII",
+      "nivel": "I",
+      "monto": 276.0,
+      "currency": "VES",
+      "vigente_desde": null,
+      "fuente": "Legacy institucional del sponsor (2026-09-27); coincide con Tabla 3 APN nacional (MinDefensa may-2025)"
+    },
+    {
+      "grupo": "PII",
+      "nivel": "II",
+      "monto": 277.0,
+      "currency": "VES",
+      "vigente_desde": null,
+      "fuente": "Legacy institucional del sponsor (2026-09-27); coincide con Tabla 3 APN nacional (MinDefensa may-2025)"
+    },
+    {
+      "grupo": "PII",
+      "nivel": "III",
+      "monto": 279.0,
+      "currency": "VES",
+      "vigente_desde": null,
+      "fuente": "Legacy institucional del sponsor (2026-09-27); coincide con Tabla 3 APN nacional (MinDefensa may-2025)"
+    },
+    {
+      "grupo": "PII",
+      "nivel": "IV",
+      "monto": 281.0,
+      "currency": "VES",
+      "vigente_desde": null,
+      "fuente": "Legacy institucional del sponsor (2026-09-27); coincide con Tabla 3 APN nacional (MinDefensa may-2025)"
+    },
+    {
+      "grupo": "PII",
+      "nivel": "V",
+      "monto": 283.0,
+      "currency": "VES",
+      "vigente_desde": null,
+      "fuente": "Legacy institucional del sponsor (2026-09-27); coincide con Tabla 3 APN nacional (MinDefensa may-2025)"
+    },
+    {
+      "grupo": "PII",
+      "nivel": "VI",
+      "monto": 285.0,
+      "currency": "VES",
+      "vigente_desde": null,
+      "fuente": "Legacy institucional del sponsor (2026-09-27); coincide con Tabla 3 APN nacional (MinDefensa may-2025)"
+    },
+    {
+      "grupo": "PII",
+      "nivel": "VII",
+      "monto": 287.0,
+      "currency": "VES",
+      "vigente_desde": null,
+      "fuente": "Legacy institucional del sponsor (2026-09-27); coincide con Tabla 3 APN nacional (MinDefensa may-2025)"
+    },
+    {
+      "grupo": "PIII",
+      "nivel": "I",
+      "monto": 305.0,
+      "currency": "VES",
+      "vigente_desde": null,
+      "fuente": "Legacy institucional del sponsor (2026-09-27); coincide con Tabla 3 APN nacional (MinDefensa may-2025)"
+    },
+    {
+      "grupo": "PIII",
+      "nivel": "II",
+      "monto": 307.0,
+      "currency": "VES",
+      "vigente_desde": null,
+      "fuente": "Legacy institucional del sponsor (2026-09-27); coincide con Tabla 3 APN nacional (MinDefensa may-2025)"
+    },
+    {
+      "grupo": "PIII",
+      "nivel": "III",
+      "monto": 308.0,
+      "currency": "VES",
+      "vigente_desde": null,
+      "fuente": "Legacy institucional del sponsor (2026-09-27); coincide con Tabla 3 APN nacional (MinDefensa may-2025)"
+    },
+    {
+      "grupo": "PIII",
+      "nivel": "IV",
+      "monto": 310.0,
+      "currency": "VES",
+      "vigente_desde": null,
+      "fuente": "Legacy institucional del sponsor (2026-09-27); coincide con Tabla 3 APN nacional (MinDefensa may-2025)"
+    },
+    {
+      "grupo": "PIII",
+      "nivel": "V",
+      "monto": 312.0,
+      "currency": "VES",
+      "vigente_desde": null,
+      "fuente": "Legacy institucional del sponsor (2026-09-27); coincide con Tabla 3 APN nacional (MinDefensa may-2025)"
+    },
+    {
+      "grupo": "PIII",
+      "nivel": "VI",
+      "monto": 314.0,
+      "currency": "VES",
+      "vigente_desde": null,
+      "fuente": "Legacy institucional del sponsor (2026-09-27); coincide con Tabla 3 APN nacional (MinDefensa may-2025)"
+    },
+    {
+      "grupo": "PIII",
+      "nivel": "VII",
+      "monto": 316.0,
+      "currency": "VES",
+      "vigente_desde": null,
+      "fuente": "Legacy institucional del sponsor (2026-09-27); coincide con Tabla 3 APN nacional (MinDefensa may-2025)"
+    },
+    {
+      "grupo": "MI",
+      "nivel": "I",
+      "monto": 251.0,
+      "currency": "VES",
+      "vigente_desde": null,
+      "fuente": "Legacy institucional del sponsor (2026-09-27)",
+      "nota": null
+    },
+    {
+      "grupo": "MI",
+      "nivel": "II",
+      "monto": 251.0,
+      "currency": "VES",
+      "vigente_desde": null,
+      "fuente": "Legacy institucional del sponsor (2026-09-27)",
+      "nota": null
+    },
+    {
+      "grupo": "MI",
+      "nivel": "III",
+      "monto": 251.0,
+      "currency": "VES",
+      "vigente_desde": null,
+      "fuente": "Legacy institucional del sponsor (2026-09-27)",
+      "nota": null
+    },
+    {
+      "grupo": "MI",
+      "nivel": "IV",
+      "monto": 251.0,
+      "currency": "VES",
+      "vigente_desde": null,
+      "fuente": "Legacy institucional del sponsor (2026-09-27)",
+      "nota": null
+    },
+    {
+      "grupo": "MI",
+      "nivel": "V",
+      "monto": 251.0,
+      "currency": "VES",
+      "vigente_desde": null,
+      "fuente": "Legacy institucional del sponsor (2026-09-27)",
+      "nota": null
+    },
+    {
+      "grupo": "MI",
+      "nivel": "VI",
+      "monto": 0.0,
+      "currency": "VES",
+      "vigente_desde": null,
+      "fuente": null,
+      "nota": "0,00 en el legacy — nivel no aplicable; confirmar"
+    },
+    {
+      "grupo": "MI",
+      "nivel": "VII",
+      "monto": 0.0,
+      "currency": "VES",
+      "vigente_desde": null,
+      "fuente": null,
+      "nota": "0,00 en el legacy — nivel no aplicable; confirmar"
+    },
+    {
+      "grupo": "MII",
+      "nivel": "I",
+      "monto": 251.0,
+      "currency": "VES",
+      "vigente_desde": null,
+      "fuente": "Legacy institucional del sponsor (2026-09-27)",
+      "nota": null
+    },
+    {
+      "grupo": "MII",
+      "nivel": "II",
+      "monto": 251.0,
+      "currency": "VES",
+      "vigente_desde": null,
+      "fuente": "Legacy institucional del sponsor (2026-09-27)",
+      "nota": null
+    },
+    {
+      "grupo": "MII",
+      "nivel": "III",
+      "monto": 251.0,
+      "currency": "VES",
+      "vigente_desde": null,
+      "fuente": "Legacy institucional del sponsor (2026-09-27)",
+      "nota": null
+    },
+    {
+      "grupo": "MII",
+      "nivel": "IV",
+      "monto": 251.0,
+      "currency": "VES",
+      "vigente_desde": null,
+      "fuente": "Legacy institucional del sponsor (2026-09-27)",
+      "nota": null
+    },
+    {
+      "grupo": "MII",
+      "nivel": "V",
+      "monto": 251.0,
+      "currency": "VES",
+      "vigente_desde": null,
+      "fuente": "Legacy institucional del sponsor (2026-09-27)",
+      "nota": null
+    },
+    {
+      "grupo": "MII",
+      "nivel": "VI",
+      "monto": 0.0,
+      "currency": "VES",
+      "vigente_desde": null,
+      "fuente": null,
+      "nota": "0,00 en el legacy — nivel no aplicable; confirmar"
+    },
+    {
+      "grupo": "MII",
+      "nivel": "VII",
+      "monto": 0.0,
+      "currency": "VES",
+      "vigente_desde": null,
+      "fuente": null,
+      "nota": "0,00 en el legacy — nivel no aplicable; confirmar"
+    },
+    {
+      "grupo": "EI",
+      "nivel": "I",
+      "monto": 257.0,
+      "currency": "VES",
+      "vigente_desde": null,
+      "fuente": "Legacy institucional del sponsor (2026-09-27)",
+      "nota": null
+    },
+    {
+      "grupo": "EI",
+      "nivel": "II",
+      "monto": 257.0,
+      "currency": "VES",
+      "vigente_desde": null,
+      "fuente": "Legacy institucional del sponsor (2026-09-27)",
+      "nota": null
+    },
+    {
+      "grupo": "EI",
+      "nivel": "III",
+      "monto": 257.0,
+      "currency": "VES",
+      "vigente_desde": null,
+      "fuente": "Legacy institucional del sponsor (2026-09-27)",
+      "nota": null
+    },
+    {
+      "grupo": "EI",
+      "nivel": "IV",
+      "monto": 257.0,
+      "currency": "VES",
+      "vigente_desde": null,
+      "fuente": "Legacy institucional del sponsor (2026-09-27)",
+      "nota": null
+    },
+    {
+      "grupo": "EI",
+      "nivel": "V",
+      "monto": 257.0,
+      "currency": "VES",
+      "vigente_desde": null,
+      "fuente": "Legacy institucional del sponsor (2026-09-27)",
+      "nota": null
+    },
+    {
+      "grupo": "EI",
+      "nivel": "VI",
+      "monto": 0.0,
+      "currency": "VES",
+      "vigente_desde": null,
+      "fuente": null,
+      "nota": "0,00 en el legacy — nivel no aplicable; confirmar"
+    },
+    {
+      "grupo": "EI",
+      "nivel": "VII",
+      "monto": 0.0,
+      "currency": "VES",
+      "vigente_desde": null,
+      "fuente": null,
+      "nota": "0,00 en el legacy — nivel no aplicable; confirmar"
+    },
+    {
+      "grupo": "EII",
+      "nivel": "I",
+      "monto": 257.0,
+      "currency": "VES",
+      "vigente_desde": null,
+      "fuente": "Legacy institucional del sponsor (2026-09-27)",
+      "nota": null
+    },
+    {
+      "grupo": "EII",
+      "nivel": "II",
+      "monto": 257.0,
+      "currency": "VES",
+      "vigente_desde": null,
+      "fuente": "Legacy institucional del sponsor (2026-09-27)",
+      "nota": null
+    },
+    {
+      "grupo": "EII",
+      "nivel": "III",
+      "monto": 257.0,
+      "currency": "VES",
+      "vigente_desde": null,
+      "fuente": "Legacy institucional del sponsor (2026-09-27)",
+      "nota": null
+    },
+    {
+      "grupo": "EII",
+      "nivel": "IV",
+      "monto": 257.0,
+      "currency": "VES",
+      "vigente_desde": null,
+      "fuente": "Legacy institucional del sponsor (2026-09-27)",
+      "nota": null
+    },
+    {
+      "grupo": "EII",
+      "nivel": "V",
+      "monto": 257.0,
+      "currency": "VES",
+      "vigente_desde": null,
+      "fuente": "Legacy institucional del sponsor (2026-09-27)",
+      "nota": null
+    },
+    {
+      "grupo": "EII",
+      "nivel": "VI",
+      "monto": 0.0,
+      "currency": "VES",
+      "vigente_desde": null,
+      "fuente": null,
+      "nota": "0,00 en el legacy — nivel no aplicable; confirmar"
+    },
+    {
+      "grupo": "EII",
+      "nivel": "VII",
+      "monto": 0.0,
+      "currency": "VES",
+      "vigente_desde": null,
+      "fuente": null,
+      "nota": "0,00 en el legacy — nivel no aplicable; confirmar"
+    }
+  ],
+  "grupos_adicionales_legacy": {
+    "MI": "hipótesis: Médico I — CONFIRMAR",
+    "MII": "hipótesis: Médico II — CONFIRMAR",
+    "EI": "hipótesis: Especialista I — CONFIRMAR",
+    "EII": "hipótesis: Especialista II — CONFIRMAR",
+    "nota": "Montos planos (251/257) para niveles I-V; VI-VII en 0,00 (no aplicable)"
+  }
+}

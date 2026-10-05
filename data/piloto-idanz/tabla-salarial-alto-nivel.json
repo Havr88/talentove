@@ -1,0 +1,89 @@
+{
+  "_meta": {
+    "dataset": "piloto-idanz-tabla-salarial-alto-nivel",
+    "descripcion": "Tabla de Alto Nivel / rangos jerárquicos del legacy. El sponsor envió DOS tablas con unidades NO confirmadas: (A) sueldo + % jerárquico (60%→30%); (B) sueldo sin % (447→348). La relación entre ambas y su moneda están POR CONFIRMAR.",
+    "fuente": "Sponsor (2026-09-27)",
+    "notas": [
+      "'PRESIDENTE' = 'MÁXIMA AUTORIDAD' (mismo monto); la tabla B no repite PRESIDENTE",
+      "El % jerárquico podría aplicar sobre el sueldo base del grupo correspondiente — confirmar fórmula",
+      "M45 = Bs 492,22 (base del Bono de Jerarquía, confirmada en Bs)"
+    ],
+    "unidades": "CONFIRMADO por el sponsor (2026-09-27): TODOS los valores del libro están en BOLÍVARES (VES)",
+    "pendientes": [
+      "Relación entre tabla A (sueldo 31,36–23,80 Bs) y tabla B (447–348 Bs): ¿conceptos distintos o momentos distintos? — por confirmar con RRHH",
+      "Fórmula exacta del % jerárquico sobre la base M45 (492,22 Bs)"
+    ]
+  },
+  "tabla_a_sueldo_y_jerarquia": [
+    {
+      "rango": "MINISTRO",
+      "sueldo": 31.36,
+      "jerarquia_pct": 60.0
+    },
+    {
+      "rango": "VICE",
+      "sueldo": 29.88,
+      "jerarquia_pct": 55.0
+    },
+    {
+      "rango": "MAXIMA AUTORIDAD",
+      "sueldo": 28.48,
+      "jerarquia_pct": 50.0
+    },
+    {
+      "rango": "PRESIDENTE",
+      "sueldo": 28.48,
+      "jerarquia_pct": 50.0
+    },
+    {
+      "rango": "DIRECTOR GRAL",
+      "sueldo": 27.08,
+      "jerarquia_pct": 45.0
+    },
+    {
+      "rango": "DIRECTOR LINEA",
+      "sueldo": 25.9,
+      "jerarquia_pct": 40.0
+    },
+    {
+      "rango": "JEFE DIVISION",
+      "sueldo": 24.92,
+      "jerarquia_pct": 35.0
+    },
+    {
+      "rango": "COORDINADOR",
+      "sueldo": 23.8,
+      "jerarquia_pct": 30.0
+    }
+  ],
+  "tabla_b_sueldo": [
+    {
+      "rango": "MINISTRO",
+      "sueldo": 447
+    },
+    {
+      "rango": "VICE",
+      "sueldo": 427
+    },
+    {
+      "rango": "MAXIMA AUTORIDAD",
+      "sueldo": 409
+    },
+    {
+      "rango": "DIRECTOR GRAL",
+      "sueldo": 391
+    },
+    {
+      "rango": "DIRECTOR LINEA",
+      "sueldo": 376
+    },
+    {
+      "rango": "JEFE DIVISION",
+      "sueldo": 363
+    },
+    {
+      "rango": "COORDINADOR",
+      "sueldo": 348
+    }
+  ]
+}

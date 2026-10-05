@@ -1,0 +1,46 @@
+{
+  "_meta": {
+    "dataset": "piloto-idanz-condiciones-laborales",
+    "descripcion": "CONDICIONES LABORALES del legacy: rótulos usados en constancias de trabajo y otras áreas. Cada condición mapea a un TIPO DE PERSONAL (contracts.personnel_type_id); la constancia imprime la etiqueta exacta del catálogo. Son etiqueta de PRESENTACIÓN, no una entidad laboral adicional.",
+    "fuente": "Sponsor (2026-09-27)",
+    "notas": [
+      "Los tipos sin equivalente previo en tipos-personal se crearon: SALUD FIJO/CONTRATADO y ENTRENADOR CONTRATADO",
+      "El mapeo se resuelve por nombre; en el seed de producción se amarra por FK",
+      "Pendiente confirmar: ¿existe ENTRENADOR FIJO en la práctica? (no vino en el lote)"
+    ]
+  },
+  "condiciones": [
+    {
+      "etiqueta": "ADMINISTRATIVO CONTRATADO",
+      "tipo_personal": "Administrativo Contratado"
+    },
+    {
+      "etiqueta": "ADMINISTRATIVO FIJO",
+      "tipo_personal": "Administrativo Fijo (Carrera Funcionarial)"
+    },
+    {
+      "etiqueta": "ALTO NIVEL",
+      "tipo_personal": "Personal de Alto Nivel (AN)"
+    },
+    {
+      "etiqueta": "ENTRENADOR CONTRATADO",
+      "tipo_personal": "Entrenador Deportivo Contratado"
+    },
+    {
+      "etiqueta": "OBRERO CONTRATADO",
+      "tipo_personal": "Obrero Contratado"
+    },
+    {
+      "etiqueta": "OBRERO FIJO",
+      "tipo_personal": "Obrero Fijo"
+    },
+    {
+      "etiqueta": "SALUD CONTRATADO",
+      "tipo_personal": "Personal de Salud Contratado"
+    },
+    {
+      "etiqueta": "SALUD FIJO",
+      "tipo_personal": "Personal de Salud Fijo (Carrera)"
+    }
+  ]
+}

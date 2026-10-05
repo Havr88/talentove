@@ -1,0 +1,236 @@
+{
+  "_meta": {
+    "dataset": "piloto-idanz-tabla-salarial-obreros",
+    "descripcion": "Estructura de la tabla salarial para trabajadores OBREROS del piloto: 10 grados (GRD 01-10) con rango MIN-MAX cada uno = 20 filas. Montos pendientes (sponsor los enviará). Referencia nacional APN precargada (Tabla 3.1, MinDefensa may-2025).",
+    "fuente": "Estructura: sponsor (2026-09-27). Referencia nacional: Tabla 3.1 APN (mindefensa.gob.ve, may-2025) — ver regionalizacion-venezuela.md §5.1",
+    "categorias_por_grado": {
+      "no_calificados": [
+        "GRD 01",
+        "GRD 02",
+        "GRD 03",
+        "GRD 04"
+      ],
+      "calificados": [
+        "GRD 05",
+        "GRD 06",
+        "GRD 07",
+        "GRD 08"
+      ],
+      "supervisores": [
+        "GRD 09",
+        "GRD 10"
+      ]
+    },
+    "diferencia_con_administrativos": "Los administrativos tienen monto FIJO por grupo-nivel (BI-I…PIII-VII); los obreros tienen RANGO (min-max) por grado — el modelo `salary_scales` usa `tipo_monto ('fijo','min','max')` para cubrir ambos.",
+    "pendientes": [
+      "Montos min/max por grado (sponsor los enviará)",
+      "Vigencia y fuente de la tabla",
+      "Grupos faltantes: Alto Nivel (AN I-V) y Libre Nombramiento y Remoción"
+    ]
+  },
+  "referencia_nacional_apn": {
+    "GRD 01": {
+      "min": 130,
+      "max": 132
+    },
+    "GRD 02": {
+      "min": 140,
+      "max": 142
+    },
+    "GRD 03": {
+      "min": 149,
+      "max": 152
+    },
+    "GRD 04": {
+      "min": 159,
+      "max": 161
+    },
+    "GRD 05": {
+      "min": 169,
+      "max": 171
+    },
+    "GRD 06": {
+      "min": 178,
+      "max": 181
+    },
+    "GRD 07": {
+      "min": 188,
+      "max": 190
+    },
+    "GRD 08": {
+      "min": 198,
+      "max": 200
+    },
+    "GRD 09": {
+      "min": 207,
+      "max": 210
+    },
+    "GRD 10": {
+      "min": 217,
+      "max": 219
+    },
+    "fuente": "Tabla 3.1 APN (MinDefensa may-2025), Bs"
+  },
+  "filas": [
+    {
+      "grado": "GRD 01",
+      "tipo_monto": "min",
+      "monto": null,
+      "currency": "VES",
+      "vigente_desde": null,
+      "fuente": null
+    },
+    {
+      "grado": "GRD 01",
+      "tipo_monto": "max",
+      "monto": null,
+      "currency": "VES",
+      "vigente_desde": null,
+      "fuente": null
+    },
+    {
+      "grado": "GRD 02",
+      "tipo_monto": "min",
+      "monto": null,
+      "currency": "VES",
+      "vigente_desde": null,
+      "fuente": null
+    },
+    {
+      "grado": "GRD 02",
+      "tipo_monto": "max",
+      "monto": null,
+      "currency": "VES",
+      "vigente_desde": null,
+      "fuente": null
+    },
+    {
+      "grado": "GRD 03",
+      "tipo_monto": "min",
+      "monto": null,
+      "currency": "VES",
+      "vigente_desde": null,
+      "fuente": null
+    },
+    {
+      "grado": "GRD 03",
+      "tipo_monto": "max",
+      "monto": null,
+      "currency": "VES",
+      "vigente_desde": null,
+      "fuente": null
+    },
+    {
+      "grado": "GRD 04",
+      "tipo_monto": "min",
+      "monto": null,
+      "currency": "VES",
+      "vigente_desde": null,
+      "fuente": null
+    },
+    {
+      "grado": "GRD 04",
+      "tipo_monto": "max",
+      "monto": null,
+      "currency": "VES",
+      "vigente_desde": null,
+      "fuente": null
+    },
+    {
+      "grado": "GRD 05",
+      "tipo_monto": "min",
+      "monto": null,
+      "currency": "VES",
+      "vigente_desde": null,
+      "fuente": null
+    },
+    {
+      "grado": "GRD 05",
+      "tipo_monto": "max",
+      "monto": null,
+      "currency": "VES",
+      "vigente_desde": null,
+      "fuente": null
+    },
+    {
+      "grado": "GRD 06",
+      "tipo_monto": "min",
+      "monto": null,
+      "currency": "VES",
+      "vigente_desde": null,
+      "fuente": null
+    },
+    {
+      "grado": "GRD 06",
+      "tipo_monto": "max",
+      "monto": null,
+      "currency": "VES",
+      "vigente_desde": null,
+      "fuente": null
+    },
+    {
+      "grado": "GRD 07",
+      "tipo_monto": "min",
+      "monto": null,
+      "currency": "VES",
+      "vigente_desde": null,
+      "fuente": null
+    },
+    {
+      "grado": "GRD 07",
+      "tipo_monto": "max",
+      "monto": null,
+      "currency": "VES",
+      "vigente_desde": null,
+      "fuente": null
+    },
+    {
+      "grado": "GRD 08",
+      "tipo_monto": "min",
+      "monto": null,
+      "currency": "VES",
+      "vigente_desde": null,
+      "fuente": null
+    },
+    {
+      "grado": "GRD 08",
+      "tipo_monto": "max",
+      "monto": null,
+      "currency": "VES",
+      "vigente_desde": null,
+      "fuente": null
+    },
+    {
+      "grado": "GRD 09",
+      "tipo_monto": "min",
+      "monto": null,
+      "currency": "VES",
+      "vigente_desde": null,
+      "fuente": null
+    },
+    {
+      "grado": "GRD 09",
+      "tipo_monto": "max",
+      "monto": null,
+      "currency": "VES",
+      "vigente_desde": null,
+      "fuente": null
+    },
+    {
+      "grado": "GRD 10",
+      "tipo_monto": "min",
+      "monto": null,
+      "currency": "VES",
+      "vigente_desde": null,
+      "fuente": null
+    },
+    {
+      "grado": "GRD 10",
+      "tipo_monto": "max",
+      "monto": null,
+      "currency": "VES",
+      "vigente_desde": null,
+      "fuente": null
+    }
+  ]
+}

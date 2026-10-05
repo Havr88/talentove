@@ -1,0 +1,311 @@
+{
+  "_meta": {
+    "dataset": "ve-tipos-documento",
+    "descripcion": "Catálogo de tipos de documento probatorio del expediente laboral (regionalizacion-venezuela.md §8): cada tipo define su sección, si requiere vencimiento, sus campos de metadatos específicos y la base legal. El requisito de títulos académicos se deriva del gradoInstruccion del trabajador.",
+    "fuente": "LOTTT/LOPCYMAT/IVSS (ver regionalizacion-venezuela.md §8); sponsor 2026-09-27 (niveles de estudio y cursos)",
+    "fecha_consulta": "2026-10-04",
+    "regla_requeridos": "Identidad (cédula) y certificado médico pre-empleo (LOPCYMAT Art. 56) son obligatorios para todos; el título exigido se deriva del grado de instrucción: BACH→titulo_bachiller, TSU→titulo_tsu, PROF→titulo_universitario, ESPEC→titulo_especializacion, MGS→titulo_maestria, DOCT→titulo_doctorado; RIF y cursos son opcionales."
+  },
+  "tipos": [
+    {
+      "id": "cedula_identidad",
+      "seccion": "Identidad",
+      "nombre": "Cédula de Identidad",
+      "requerido": "siempre",
+      "requiere_vencimiento": false,
+      "base_legal": "Identificación oficial VE",
+      "campos": [
+        {
+          "key": "numero",
+          "label": "Número (V/E-XXXXXXXX)",
+          "tipo": "texto"
+        },
+        {
+          "key": "municipio_emision",
+          "label": "Municipio de emisión",
+          "tipo": "texto"
+        }
+      ]
+    },
+    {
+      "id": "rif",
+      "seccion": "Identidad",
+      "nombre": "RIF",
+      "requerido": "opcional",
+      "requiere_vencimiento": false,
+      "base_legal": "SENIAT",
+      "campos": [
+        {
+          "key": "numero",
+          "label": "Número (V-XXXXXXXX-X)",
+          "tipo": "texto"
+        },
+        {
+          "key": "fecha_emision",
+          "label": "Fecha de emisión",
+          "tipo": "fecha"
+        }
+      ]
+    },
+    {
+      "id": "titulo_bachiller",
+      "seccion": "Académico",
+      "nombre": "Título de Bachiller",
+      "requerido": "por_grado:BACH",
+      "requiere_vencimiento": false,
+      "base_legal": "Ministerio del Poder Popular para la Educación",
+      "campos": [
+        {
+          "key": "titulo_obtenido",
+          "label": "Título obtenido (mención)",
+          "tipo": "texto"
+        },
+        {
+          "key": "institucion",
+          "label": "Institución (U.E.)",
+          "tipo": "texto"
+        },
+        {
+          "key": "anio_graduacion",
+          "label": "Año de graduación",
+          "tipo": "numero"
+        },
+        {
+          "key": "numero_acta",
+          "label": "N° de acta/registro",
+          "tipo": "texto"
+        }
+      ]
+    },
+    {
+      "id": "titulo_tsu",
+      "seccion": "Académico",
+      "nombre": "Título de Técnico Superior Universitario",
+      "requerido": "por_grado:TSU",
+      "requiere_vencimiento": false,
+      "base_legal": "MPPEU / IUT",
+      "campos": [
+        {
+          "key": "titulo_obtenido",
+          "label": "Título obtenido (carrera)",
+          "tipo": "texto"
+        },
+        {
+          "key": "institucion",
+          "label": "Institución (IUT/Univ.)",
+          "tipo": "texto"
+        },
+        {
+          "key": "anio_graduacion",
+          "label": "Año de graduación",
+          "tipo": "numero"
+        },
+        {
+          "key": "cedula_universitaria",
+          "label": "Cédula universitaria",
+          "tipo": "texto"
+        }
+      ]
+    },
+    {
+      "id": "titulo_universitario",
+      "seccion": "Académico",
+      "nombre": "Título Universitario",
+      "requerido": "por_grado:PROF",
+      "requiere_vencimiento": false,
+      "base_legal": "MPPEU",
+      "campos": [
+        {
+          "key": "titulo_obtenido",
+          "label": "Título obtenido (Licenciatura)",
+          "tipo": "texto"
+        },
+        {
+          "key": "institucion",
+          "label": "Universidad",
+          "tipo": "texto"
+        },
+        {
+          "key": "anio_graduacion",
+          "label": "Año de graduación",
+          "tipo": "numero"
+        },
+        {
+          "key": "cedula_universitaria",
+          "label": "Cédula universitaria",
+          "tipo": "texto"
+        }
+      ]
+    },
+    {
+      "id": "titulo_especializacion",
+      "seccion": "Académico",
+      "nombre": "Título de Especialista",
+      "requerido": "por_grado:ESPEC",
+      "requiere_vencimiento": false,
+      "base_legal": "MPPEU",
+      "campos": [
+        {
+          "key": "titulo_obtenido",
+          "label": "Especialidad",
+          "tipo": "texto"
+        },
+        {
+          "key": "institucion",
+          "label": "Universidad",
+          "tipo": "texto"
+        },
+        {
+          "key": "anio_graduacion",
+          "label": "Año de graduación",
+          "tipo": "numero"
+        }
+      ]
+    },
+    {
+      "id": "titulo_maestria",
+      "seccion": "Académico",
+      "nombre": "Título de Magíster",
+      "requerido": "por_grado:MGS",
+      "requiere_vencimiento": false,
+      "base_legal": "MPPEU",
+      "campos": [
+        {
+          "key": "titulo_obtenido",
+          "label": "Maestría",
+          "tipo": "texto"
+        },
+        {
+          "key": "institucion",
+          "label": "Universidad",
+          "tipo": "texto"
+        },
+        {
+          "key": "anio_graduacion",
+          "label": "Año de graduación",
+          "tipo": "numero"
+        }
+      ]
+    },
+    {
+      "id": "titulo_doctorado",
+      "seccion": "Académico",
+      "nombre": "Título de Doctor(a)",
+      "requerido": "por_grado:DOCT",
+      "requiere_vencimiento": false,
+      "base_legal": "MPPEU",
+      "campos": [
+        {
+          "key": "titulo_obtenido",
+          "label": "Doctorado",
+          "tipo": "texto"
+        },
+        {
+          "key": "institucion",
+          "label": "Universidad",
+          "tipo": "texto"
+        },
+        {
+          "key": "anio_graduacion",
+          "label": "Año de graduación",
+          "tipo": "numero"
+        }
+      ]
+    },
+    {
+      "id": "certificado_curso",
+      "seccion": "Cursos y Certificaciones",
+      "nombre": "Certificado de Curso",
+      "requerido": "opcional",
+      "requiere_vencimiento": true,
+      "base_legal": "—",
+      "campos": [
+        {
+          "key": "nombre_curso",
+          "label": "Nombre del curso",
+          "tipo": "texto"
+        },
+        {
+          "key": "horas",
+          "label": "Horas académicas",
+          "tipo": "numero"
+        },
+        {
+          "key": "institucion",
+          "label": "Institución",
+          "tipo": "texto"
+        },
+        {
+          "key": "fecha_emision",
+          "label": "Fecha de emisión",
+          "tipo": "fecha"
+        },
+        {
+          "key": "vence_el",
+          "label": "Vence (si aplica)",
+          "tipo": "fecha"
+        }
+      ]
+    },
+    {
+      "id": "certificado_medico",
+      "seccion": "Médico / SST",
+      "nombre": "Certificado Médico Pre-Empleo (LOPCYMAT)",
+      "requerido": "siempre",
+      "requiere_vencimiento": true,
+      "base_legal": "LOPCYMAT Art. 56",
+      "campos": [
+        {
+          "key": "institucion",
+          "label": "Institución / CDR",
+          "tipo": "texto"
+        },
+        {
+          "key": "medico",
+          "label": "Médico",
+          "tipo": "texto"
+        },
+        {
+          "key": "resultado",
+          "label": "Resultado (apto / apto con observaciones / no apto)",
+          "tipo": "texto"
+        },
+        {
+          "key": "fecha_emision",
+          "label": "Fecha de emisión",
+          "tipo": "fecha"
+        },
+        {
+          "key": "vence_el",
+          "label": "Vence",
+          "tipo": "fecha"
+        }
+      ]
+    },
+    {
+      "id": "notificacion_riesgos",
+      "seccion": "Médico / SST",
+      "nombre": "Notificación de Riesgos (Derecho a Saber)",
+      "requerido": "siempre",
+      "requiere_vencimiento": false,
+      "base_legal": "LOPCYMAT — bloqueante antes de iniciar funciones",
+      "campos": [
+        {
+          "key": "puesto",
+          "label": "Puesto",
+          "tipo": "texto"
+        },
+        {
+          "key": "riesgos",
+          "label": "Riesgos notificados",
+          "tipo": "texto"
+        },
+        {
+          "key": "fecha_firma",
+          "label": "Fecha de firma",
+          "tipo": "fecha"
+        }
+      ]
+    }
+  ]
+}

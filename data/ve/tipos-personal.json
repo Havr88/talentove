@@ -9,7 +9,9 @@
       "LOTTT: clasificación por duración (permanente, eventual, estacional, ocasional), trabajadores de confianza, tiempo parcial, Art. 59 (contratos escritos por duplicado)",
       "Tabuladores APN (Tabla 3/3.1, documento MinDefensa may-2025): BI-TII-PI-PIII, Alto Nivel, Obrero G1-G10",
       "Sector educativo: convenciones colectivas (docente, administrativo, obrero)",
-      "Curación inicial propia; montos y vigencias por verificar en Gaceta al implementar"
+      "Curación inicial propia; montos y vigencias por verificar en Gaceta al implementar",
+      "Lote 2026-09-27 (sponsor, 'TPO PSNAL'): +4 tipos legacy — Empleado(a) genérico y 3 uniformados (UNIF. BOMB./PCIVIL/POLIC.); nombres completos por confirmar",
+      "Lote 2026-09-27 (sponsor, condiciones laborales): +3 tipos — Salud Fijo/Contratado y Entrenador Contratado"
     ],
     "fecha_consulta": "2026-09-26",
     "politica_actualizacion": "Semilla editable: CRUD completo en admin; el re-seed solo inserta tipos inexistentes. Los tipos alimentan reglas (`rule_sets`) y filtros; `relacion_laboral=False` excluye al trabajador de nómina prestacional y parafiscales (solo pago de honorarios/beca)."
@@ -313,6 +315,76 @@
       "sector": "ambos",
       "relacion_laboral": false,
       "base_legal": "Derecho civil/comercial (no LOTTT)",
+      "tabulador_apn": null
+    },
+    {
+      "nombre": "Empleado(a)",
+      "grupo": "general",
+      "regimen": "laboral",
+      "vinculo": "indeterminado",
+      "sector": "ambos",
+      "relacion_laboral": true,
+      "base_legal": "LOTTT; término genérico del legacy para personal administrativo/empleado",
+      "tabulador_apn": null
+    },
+    {
+      "nombre": "Personal Uniformado Bomberil",
+      "grupo": "uniformado",
+      "regimen": "especial",
+      "vinculo": "militar",
+      "sector": "publico",
+      "relacion_laboral": true,
+      "base_legal": "Régimen especial de seguridad y emergencia; nombre completo y normativa por confirmar",
+      "tabulador_apn": null
+    },
+    {
+      "nombre": "Personal Uniformado Policía Civil",
+      "grupo": "uniformado",
+      "regimen": "especial",
+      "vinculo": "militar",
+      "sector": "publico",
+      "relacion_laboral": true,
+      "base_legal": "Régimen especial policial; nombre completo por confirmar (UNIF. PCIVIL)",
+      "tabulador_apn": null
+    },
+    {
+      "nombre": "Personal Uniformado Policial",
+      "grupo": "uniformado",
+      "regimen": "especial",
+      "vinculo": "militar",
+      "sector": "publico",
+      "relacion_laboral": true,
+      "base_legal": "Régimen especial policial; nombre completo por confirmar (UNIF. POLIC.)",
+      "tabulador_apn": null
+    },
+    {
+      "nombre": "Personal de Salud Fijo (Carrera)",
+      "grupo": "salud",
+      "regimen": "laboral",
+      "vinculo": "indeterminado",
+      "sector": "ambos",
+      "relacion_laboral": true,
+      "base_legal": "LOTTT; carrera de personal de salud del instituto (condición laboral SALUD FIJO)",
+      "tabulador_apn": null
+    },
+    {
+      "nombre": "Personal de Salud Contratado",
+      "grupo": "salud",
+      "regimen": "laboral",
+      "vinculo": "determinado",
+      "sector": "ambos",
+      "relacion_laboral": true,
+      "base_legal": "LOTTT Art. 59; condición laboral SALUD CONTRATADO",
+      "tabulador_apn": null
+    },
+    {
+      "nombre": "Entrenador Deportivo Contratado",
+      "grupo": "deporte",
+      "regimen": "laboral",
+      "vinculo": "determinado",
+      "sector": "ambos",
+      "relacion_laboral": true,
+      "base_legal": "LOTTT Art. 59; condición laboral ENTRENADOR CONTRATADO",
       "tabulador_apn": null
     }
   ]

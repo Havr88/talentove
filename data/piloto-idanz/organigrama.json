@@ -1,0 +1,154 @@
+{
+  "_meta": {
+    "dataset": "piloto-idanz-organigrama",
+    "descripcion": "BORRADOR de estructura organizativa de la instalación piloto (instituto deportivo estadal, sponsor 2026-09-27). Es una unidad ORGANIZATIVA, no un cargo ni una ubicación física. Los cualificadores entre paréntesis del lote original se resolvieron así: '(comisión de servicio)' → condición de la ASIGNACIÓN del responsable; '(dirección de administración)' → unidad PADRE; '(comunidad indígena - cantaura)' → programa/sección dependiente. El padre solo se registró donde el lote lo indicó explícitamente; el resto queda por confirmar.",
+    "fuente": "Sponsor (2026-09-27), lote 'antes de enviar el lote de ubicaciones físicas'",
+    "pendientes_confirmar": [
+      "¿Coexisten 'Dirección de Administración' y 'Dirección de Administración y Finanzas' como unidades separadas?",
+      "¿Coexisten 'Dirección de Ciencias Médicas' y 'Dirección de Ciencias Médicas Aplicadas al Deporte'?",
+      "Significado de 'Dirección de Administración y Finanzas (departamento de tesorería)' — ¿indicaba la dependencia del Depto. de Tesorería?",
+      "Padre de cada Dirección (Presidencia o Vicepresidencia)",
+      "'Auditoría Interna' y 'Consultoría Jurídica': ¿adscritas a Presidencia? (práctica habitual)",
+      "Los cualificadores '(comisión de servicio)' del lote (Departamento de Compras, Direcciones de Alto Rendimiento, Deporte Popular y Planificación y Presupuesto) reflejan la condición del responsable ACTUAL, no de la unidad",
+      "Estadios añadidos como unidades bajo Dirección de Infraestructura — confirmar adscripción real"
+    ]
+  },
+  "unidades": [
+    {
+      "nombre": "Presidencia",
+      "tipo": "presidencia",
+      "padre": null
+    },
+    {
+      "nombre": "Vicepresidencia",
+      "tipo": "vicepresidencia",
+      "padre": "Presidencia"
+    },
+    {
+      "nombre": "Auditoría Interna",
+      "tipo": "unidad",
+      "padre": null,
+      "nota": "padre por confirmar (habitualmente Presidencia)"
+    },
+    {
+      "nombre": "Consultoría Jurídica",
+      "tipo": "unidad",
+      "padre": null,
+      "nota": "padre por confirmar"
+    },
+    {
+      "nombre": "Dirección de Administración",
+      "tipo": "direccion",
+      "padre": null
+    },
+    {
+      "nombre": "Dirección de Administración y Finanzas",
+      "tipo": "direccion",
+      "padre": null
+    },
+    {
+      "nombre": "Dirección de Alto Rendimiento",
+      "tipo": "direccion",
+      "padre": null
+    },
+    {
+      "nombre": "Dirección de Bienes Públicos",
+      "tipo": "direccion",
+      "padre": null
+    },
+    {
+      "nombre": "Dirección de Ciencias Médicas",
+      "tipo": "direccion",
+      "padre": null
+    },
+    {
+      "nombre": "Dirección de Ciencias Médicas Aplicadas al Deporte",
+      "tipo": "direccion",
+      "padre": null
+    },
+    {
+      "nombre": "Dirección de Comunicación Social",
+      "tipo": "direccion",
+      "padre": null
+    },
+    {
+      "nombre": "Dirección de Deporte Popular",
+      "tipo": "direccion",
+      "padre": null
+    },
+    {
+      "nombre": "Dirección de Deporte Sectorial",
+      "tipo": "direccion",
+      "padre": null
+    },
+    {
+      "nombre": "Dirección de Informática",
+      "tipo": "direccion",
+      "padre": null
+    },
+    {
+      "nombre": "Dirección de Infraestructura",
+      "tipo": "direccion",
+      "padre": null
+    },
+    {
+      "nombre": "Dirección de Planificación y Presupuesto",
+      "tipo": "direccion",
+      "padre": null
+    },
+    {
+      "nombre": "Dirección de Recursos Humanos",
+      "tipo": "direccion",
+      "padre": null
+    },
+    {
+      "nombre": "Dirección de Seguridad",
+      "tipo": "direccion",
+      "padre": null
+    },
+    {
+      "nombre": "Departamento de Compras",
+      "tipo": "departamento",
+      "padre": "Dirección de Administración"
+    },
+    {
+      "nombre": "Departamento de Contabilidad",
+      "tipo": "departamento",
+      "padre": "Dirección de Administración"
+    },
+    {
+      "nombre": "Departamento de Tesorería",
+      "tipo": "departamento",
+      "padre": "Dirección de Administración"
+    },
+    {
+      "nombre": "Departamento de Atención al Ciudadano",
+      "tipo": "departamento",
+      "padre": null,
+      "nota": "el lote de cargos menciona 'Jefe del Departamento de la Oficina de Atención al Ciudadano' — confirmar nombre y padre"
+    },
+    {
+      "nombre": "Deporte Estudiantil",
+      "tipo": "seccion",
+      "padre": "Dirección de Deporte Sectorial"
+    },
+    {
+      "nombre": "Comunidad Indígena - Cantaura",
+      "tipo": "seccion",
+      "padre": "Dirección de Deporte Popular",
+      "nota": "cualificador '(comunidad indígena - cantaura)' del lote: programa/sección de Deporte Popular"
+    },
+    {
+      "nombre": "Estadio La Caraqueña",
+      "tipo": "unidad",
+      "padre": "Dirección de Infraestructura",
+      "nota": "sede deportiva del lote de obreros (2026-09-27): 'Obrero (Estadio …)'"
+    },
+    {
+      "nombre": "Estadio Venezuela",
+      "tipo": "unidad",
+      "padre": "Dirección de Infraestructura",
+      "nota": "sede deportiva del lote de obreros (2026-09-27): 'Obrero (Estadio …)'"
+    }
+  ]
+}

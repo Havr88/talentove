@@ -6,7 +6,13 @@
       "Taxonomía: ISCO-08 en español (OIT) — grupos mayores 1-9 (ilo.org/public/english/bureau/stat/isco/isco08/)",
       "Ampliación posible: ESCO (~2.942 ocupaciones en español, CSV descargable, mapeadas a ISCO-08) — esco.ec.europa.eu",
       "Sector público: nomenclatura APN (grupos de tabulador BI-TII-PI-PIII de Tabla 3 APN may-2025; 'Obrero' de Tabla 3.1) y Sistema de Clasificación de Cargos de la Carrera Funcionarial (Decreto N° 6.055); manual descriptivo de cargos a curar en M4 (régimen público)",
-      "Curación inicial propia: denominaciones habituales del mercado laboral venezolano"
+      "Curación inicial propia: denominaciones habituales del mercado laboral venezolano",
+      "Lote alto nivel (2026-09-26, sponsor): 47 cargos institucionales (presidencia, direcciones, jefaturas y coordinaciones) — nota de diseño: el sufijo '(e)' de ENCRGADO/encargada NO es parte del cargo; se modela como condicion de la asignacion ('titular' vs 'encargado')",
+      "Lote administrativo (2026-09-27, sponsor): 38 cargos administrativos/deportivos con nivel de recorrido en NÚMEROS ROMANOS (I-VII, convención Tabla 3 APN). Los 'Entrenador de X' del lote NO son cargos: se resuelven como Entrenador Deportivo + especialización (9 disciplinas nuevas en especializaciones-entrenador.json). Deduplicaciones aplicadas: 'Analista de presupuesto iv' (repetido), 'Entrandor de futbol sala' (typo) y 'Entrenador de futbol salon' (→ Fútbol Sala), 'Entrenador kickingball' (→ Kickingball), 'Entrenador de de wushu' (typo). 'Planificador IV' se conservó separado de 'Planificador Deportivo IV' — confirmar con el sponsor.",
+      "Lote administrativo 2 (2026-09-27, sponsor): 8 cargos base agregados. POLÍTICA DE GÉNERO: variantes femeninas de roles genéricos se normalizan a forma neutra (a)/(o) — 'Abogada'→'Abogado(a)', 'Diseñadora grafica'→'Diseñador(a) Gráfico(a)', 'Trabajadora social'→'Trabajador(a) Social'; el género de la persona vive en employees.sexo. Duplicados omitidos (ya existían): Asistente administrativo, Planificador deportivo, Promotor deportivo, Asistente de informática (doble con/ sin acento). 'Planificador' y 'Planificador Deportivo' confirmados como familias distintas (resuelve la duda del lote anterior).",
+      "Lote salud (2026-09-27, sponsor): 14 cargos de salud. Género normalizado ('Enfermera'→dedup con 'Enfermero(a)' existente), numerales romanos en mayúsculas. Duplicados omitidos (ya existían): Bioanalista, Enfermero(a), Odontólogo(a). Nota: 'Registro y Control' es el cargo administrativo de admisión/registros de unidades de salud (mantenido como cargo, no como función).",
+      "Lote obreros (2026-09-27, sponsor): 3 cargos agregados (Aseador(a), Mantenimiento de Áreas Verdes, Seguridad). VARIANTES CON SEDE ENTRE PARÉNTESIS — 'Obrero (Estadio La Caraqueña)', 'Obrero (Estadio Venezuela)', 'Seguridad (Estadio Venezuela)' — NO son cargos: el cargo es 'Obrero'/'Seguridad' y la sede es la location/unidad de la asignación (crear 'Estadio La Caraqueña' y 'Estadio Venezuela' como locations al instalar). Duplicados omitidos: Obrero('Obrero(a)'), Almacenista, Chofer (existían); 'Técnico en refrigeración' → 'Técnico de Refrigeración y Aire Acondicionado'; 'Aseadora' → 'Aseador(a)' (género neutro).",
+      "Lote 2026-09-27 (3): cargos 'Atleta' y 'Atleta Olímpico(a)' — el cualificador '(beca)' NO es parte del cargo: es tipo de personal con relación NO laboral (personnel_types, vinculo='beca' → sin prestaciones ni parafiscales). 'Mensajero' ya existía como 'Mensajero(a)'. El lote 'ubicaciones físicas' del sponsor resulta ser el ORGANIGRAMA de la instalación piloto: movido a data/piloto-idanz/organigrama.json (los paréntesis de dependencia '(dirección de administración)' indican unidad PADRE, no cargo ni sede)."
     ],
     "fecha_consulta": "2026-09-26",
     "politica_actualizacion": "Semilla versionada: el seed inserta solo cargos cuyo (nombre) no exista; ediciones del usuario jamás se sobrescriben. Importación masiva Excel/CSV disponible (M1a)."
@@ -473,6 +479,902 @@
       "grupo_isco": 3,
       "aplica_sector": "ambos",
       "nivel_tabulador_apn": null
+    },
+    {
+      "nombre": "Asistente de Dirección",
+      "categoria": "administracion",
+      "grupo_isco": 4,
+      "aplica_sector": "publico",
+      "nivel_tabulador_apn": null,
+      "origen": "sponsor-idanz-2026-09"
+    },
+    {
+      "nombre": "Consultor Jurídico",
+      "categoria": "legal",
+      "grupo_isco": 2,
+      "aplica_sector": "publico",
+      "nivel_tabulador_apn": null,
+      "origen": "sponsor-idanz-2026-09"
+    },
+    {
+      "nombre": "Coordinador de Servicios Generales",
+      "categoria": "coordinacion",
+      "grupo_isco": 1,
+      "aplica_sector": "publico",
+      "nivel_tabulador_apn": null,
+      "origen": "sponsor-idanz-2026-09"
+    },
+    {
+      "nombre": "Coordinador de la Unidad de Inspección de Obra",
+      "categoria": "coordinacion",
+      "grupo_isco": 3,
+      "aplica_sector": "publico",
+      "nivel_tabulador_apn": null,
+      "origen": "sponsor-idanz-2026-09"
+    },
+    {
+      "nombre": "Coordinador de la Sección de Denuncias, Quejas, Reclamos, Sugerencias y Peticiones",
+      "categoria": "coordinacion",
+      "grupo_isco": 4,
+      "aplica_sector": "publico",
+      "nivel_tabulador_apn": null,
+      "origen": "sponsor-idanz-2026-09"
+    },
+    {
+      "nombre": "Coordinadora de Áreas Verdes",
+      "categoria": "coordinacion",
+      "grupo_isco": 3,
+      "aplica_sector": "publico",
+      "nivel_tabulador_apn": null,
+      "origen": "sponsor-idanz-2026-09"
+    },
+    {
+      "nombre": "Coordinadora de la Sección de Información y Promoción de la Participación Ciudadana",
+      "categoria": "coordinacion",
+      "grupo_isco": 2,
+      "aplica_sector": "publico",
+      "nivel_tabulador_apn": null,
+      "origen": "sponsor-idanz-2026-09"
+    },
+    {
+      "nombre": "Director de Alto Rendimiento",
+      "categoria": "gerencia",
+      "grupo_isco": 1,
+      "aplica_sector": "publico",
+      "nivel_tabulador_apn": "Alto Nivel",
+      "origen": "sponsor-idanz-2026-09"
+    },
+    {
+      "nombre": "Director de Bienes Públicos",
+      "categoria": "gerencia",
+      "grupo_isco": 1,
+      "aplica_sector": "publico",
+      "nivel_tabulador_apn": "Alto Nivel",
+      "origen": "sponsor-idanz-2026-09"
+    },
+    {
+      "nombre": "Director de Comunicación Social",
+      "categoria": "gerencia",
+      "grupo_isco": 1,
+      "aplica_sector": "publico",
+      "nivel_tabulador_apn": "Alto Nivel",
+      "origen": "sponsor-idanz-2026-09"
+    },
+    {
+      "nombre": "Director de Deporte Popular",
+      "categoria": "gerencia",
+      "grupo_isco": 1,
+      "aplica_sector": "publico",
+      "nivel_tabulador_apn": "Alto Nivel",
+      "origen": "sponsor-idanz-2026-09"
+    },
+    {
+      "nombre": "Director de Deporte Sectorial",
+      "categoria": "gerencia",
+      "grupo_isco": 1,
+      "aplica_sector": "publico",
+      "nivel_tabulador_apn": "Alto Nivel",
+      "origen": "sponsor-idanz-2026-09"
+    },
+    {
+      "nombre": "Director de Informática",
+      "categoria": "gerencia",
+      "grupo_isco": 1,
+      "aplica_sector": "publico",
+      "nivel_tabulador_apn": "Alto Nivel",
+      "origen": "sponsor-idanz-2026-09"
+    },
+    {
+      "nombre": "Director de Infraestructura Deportiva",
+      "categoria": "gerencia",
+      "grupo_isco": 1,
+      "aplica_sector": "publico",
+      "nivel_tabulador_apn": "Alto Nivel",
+      "origen": "sponsor-idanz-2026-09"
+    },
+    {
+      "nombre": "Directora de Ciencias Médicas",
+      "categoria": "gerencia",
+      "grupo_isco": 1,
+      "aplica_sector": "publico",
+      "nivel_tabulador_apn": "Alto Nivel",
+      "origen": "sponsor-idanz-2026-09"
+    },
+    {
+      "nombre": "Directora de Administración y Finanzas",
+      "categoria": "gerencia",
+      "grupo_isco": 1,
+      "aplica_sector": "publico",
+      "nivel_tabulador_apn": "Alto Nivel",
+      "origen": "sponsor-idanz-2026-09"
+    },
+    {
+      "nombre": "Directora de Planificación y Presupuesto",
+      "categoria": "gerencia",
+      "grupo_isco": 1,
+      "aplica_sector": "publico",
+      "nivel_tabulador_apn": "Alto Nivel",
+      "origen": "sponsor-idanz-2026-09"
+    },
+    {
+      "nombre": "Jefe de Almacén",
+      "categoria": "logistica",
+      "grupo_isco": 1,
+      "aplica_sector": "publico",
+      "nivel_tabulador_apn": null,
+      "origen": "sponsor-idanz-2026-09"
+    },
+    {
+      "nombre": "Jefe de Bienestar Social",
+      "categoria": "coordinacion",
+      "grupo_isco": 1,
+      "aplica_sector": "publico",
+      "nivel_tabulador_apn": null,
+      "origen": "sponsor-idanz-2026-09"
+    },
+    {
+      "nombre": "Jefe de Control Posterior",
+      "categoria": "finanzas",
+      "grupo_isco": 1,
+      "aplica_sector": "publico",
+      "nivel_tabulador_apn": null,
+      "origen": "sponsor-idanz-2026-09"
+    },
+    {
+      "nombre": "Jefe de Deporte de Discapacidad",
+      "categoria": "coordinacion",
+      "grupo_isco": 1,
+      "aplica_sector": "publico",
+      "nivel_tabulador_apn": null,
+      "origen": "sponsor-idanz-2026-09"
+    },
+    {
+      "nombre": "Jefe de Deporte Estudiantil",
+      "categoria": "coordinacion",
+      "grupo_isco": 1,
+      "aplica_sector": "publico",
+      "nivel_tabulador_apn": null,
+      "origen": "sponsor-idanz-2026-09"
+    },
+    {
+      "nombre": "Jefe de Deporte Laboral, Penitenciario e Indígena",
+      "categoria": "coordinacion",
+      "grupo_isco": 1,
+      "aplica_sector": "publico",
+      "nivel_tabulador_apn": null,
+      "origen": "sponsor-idanz-2026-09"
+    },
+    {
+      "nombre": "Jefe de Determinación de Responsabilidades",
+      "categoria": "coordinacion",
+      "grupo_isco": 1,
+      "aplica_sector": "publico",
+      "nivel_tabulador_apn": null,
+      "origen": "sponsor-idanz-2026-09"
+    },
+    {
+      "nombre": "Jefe de Gestión Patrimonial",
+      "categoria": "coordinacion",
+      "grupo_isco": 1,
+      "aplica_sector": "publico",
+      "nivel_tabulador_apn": null,
+      "origen": "sponsor-idanz-2026-09"
+    },
+    {
+      "nombre": "Jefe de la Sala Situacional",
+      "categoria": "coordinacion",
+      "grupo_isco": 1,
+      "aplica_sector": "publico",
+      "nivel_tabulador_apn": null,
+      "origen": "sponsor-idanz-2026-09"
+    },
+    {
+      "nombre": "Jefe de Mantenimiento de Inmuebles",
+      "categoria": "coordinacion",
+      "grupo_isco": 1,
+      "aplica_sector": "publico",
+      "nivel_tabulador_apn": null,
+      "origen": "sponsor-idanz-2026-09"
+    },
+    {
+      "nombre": "Jefe de Mantenimiento de Instalaciones Deportivas",
+      "categoria": "coordinacion",
+      "grupo_isco": 1,
+      "aplica_sector": "publico",
+      "nivel_tabulador_apn": null,
+      "origen": "sponsor-idanz-2026-09"
+    },
+    {
+      "nombre": "Jefe de Metodología",
+      "categoria": "coordinacion",
+      "grupo_isco": 1,
+      "aplica_sector": "publico",
+      "nivel_tabulador_apn": null,
+      "origen": "sponsor-idanz-2026-09"
+    },
+    {
+      "nombre": "Jefe de Municipalización",
+      "categoria": "coordinacion",
+      "grupo_isco": 1,
+      "aplica_sector": "publico",
+      "nivel_tabulador_apn": null,
+      "origen": "sponsor-idanz-2026-09"
+    },
+    {
+      "nombre": "Jefe de Nómina de Recursos Humanos",
+      "categoria": "talento_humano",
+      "grupo_isco": 1,
+      "aplica_sector": "publico",
+      "nivel_tabulador_apn": null,
+      "origen": "sponsor-idanz-2026-09"
+    },
+    {
+      "nombre": "Jefe de Presupuesto",
+      "categoria": "finanzas",
+      "grupo_isco": 1,
+      "aplica_sector": "publico",
+      "nivel_tabulador_apn": null,
+      "origen": "sponsor-idanz-2026-09"
+    },
+    {
+      "nombre": "Jefe de Protocolo",
+      "categoria": "coordinacion",
+      "grupo_isco": 1,
+      "aplica_sector": "publico",
+      "nivel_tabulador_apn": null,
+      "origen": "sponsor-idanz-2026-09"
+    },
+    {
+      "nombre": "Jefe de Registro de Bienes",
+      "categoria": "logistica",
+      "grupo_isco": 1,
+      "aplica_sector": "publico",
+      "nivel_tabulador_apn": null,
+      "origen": "sponsor-idanz-2026-09"
+    },
+    {
+      "nombre": "Jefe de Supervisión y Fiscalización",
+      "categoria": "coordinacion",
+      "grupo_isco": 1,
+      "aplica_sector": "publico",
+      "nivel_tabulador_apn": null,
+      "origen": "sponsor-idanz-2026-09"
+    },
+    {
+      "nombre": "Jefe de Transporte",
+      "categoria": "logistica",
+      "grupo_isco": 1,
+      "aplica_sector": "publico",
+      "nivel_tabulador_apn": null,
+      "origen": "sponsor-idanz-2026-09"
+    },
+    {
+      "nombre": "Jefe de Unidad Técnica (RRHH)",
+      "categoria": "talento_humano",
+      "grupo_isco": 1,
+      "aplica_sector": "publico",
+      "nivel_tabulador_apn": null,
+      "origen": "sponsor-idanz-2026-09"
+    },
+    {
+      "nombre": "Jefe del Departamento de Archivo",
+      "categoria": "administracion",
+      "grupo_isco": 1,
+      "aplica_sector": "publico",
+      "nivel_tabulador_apn": null,
+      "origen": "sponsor-idanz-2026-09"
+    },
+    {
+      "nombre": "Jefe del Departamento de Compras",
+      "categoria": "logistica",
+      "grupo_isco": 1,
+      "aplica_sector": "publico",
+      "nivel_tabulador_apn": null,
+      "origen": "sponsor-idanz-2026-09"
+    },
+    {
+      "nombre": "Jefe del Departamento de Contabilidad",
+      "categoria": "finanzas",
+      "grupo_isco": 1,
+      "aplica_sector": "publico",
+      "nivel_tabulador_apn": null,
+      "origen": "sponsor-idanz-2026-09"
+    },
+    {
+      "nombre": "Jefe del Departamento de Evaluación de Presupuesto",
+      "categoria": "finanzas",
+      "grupo_isco": 1,
+      "aplica_sector": "publico",
+      "nivel_tabulador_apn": null,
+      "origen": "sponsor-idanz-2026-09"
+    },
+    {
+      "nombre": "Jefe del Departamento de la Oficina de Atención al Ciudadano",
+      "categoria": "coordinacion",
+      "grupo_isco": 1,
+      "aplica_sector": "publico",
+      "nivel_tabulador_apn": null,
+      "origen": "sponsor-idanz-2026-09"
+    },
+    {
+      "nombre": "Jefe del Departamento de Planificación, Control y Gestión",
+      "categoria": "coordinacion",
+      "grupo_isco": 1,
+      "aplica_sector": "publico",
+      "nivel_tabulador_apn": null,
+      "origen": "sponsor-idanz-2026-09"
+    },
+    {
+      "nombre": "Jefe del Departamento de Proyectos",
+      "categoria": "coordinacion",
+      "grupo_isco": 1,
+      "aplica_sector": "publico",
+      "nivel_tabulador_apn": null,
+      "origen": "sponsor-idanz-2026-09"
+    },
+    {
+      "nombre": "Presidente del IDANZ",
+      "categoria": "gerencia",
+      "grupo_isco": 1,
+      "aplica_sector": "publico",
+      "nivel_tabulador_apn": "Alto Nivel",
+      "origen": "sponsor-idanz-2026-09"
+    },
+    {
+      "nombre": "Vicepresidente",
+      "categoria": "gerencia",
+      "grupo_isco": 1,
+      "aplica_sector": "publico",
+      "nivel_tabulador_apn": "Alto Nivel",
+      "origen": "sponsor-idanz-2026-09"
+    },
+    {
+      "nombre": "Entrenador Deportivo",
+      "categoria": "deporte",
+      "grupo_isco": 3,
+      "aplica_sector": "ambos",
+      "nivel_tabulador_apn": null,
+      "origen": "sponsor-idanz-2026-09"
+    },
+    {
+      "nombre": "Abogado I",
+      "categoria": "legal",
+      "grupo_isco": 2,
+      "aplica_sector": "publico",
+      "nivel_tabulador_apn": null,
+      "origen": "sponsor-idanz-2026-09-27"
+    },
+    {
+      "nombre": "Abogado III",
+      "categoria": "legal",
+      "grupo_isco": 2,
+      "aplica_sector": "publico",
+      "nivel_tabulador_apn": null,
+      "origen": "sponsor-idanz-2026-09-27"
+    },
+    {
+      "nombre": "Abogado IV",
+      "categoria": "legal",
+      "grupo_isco": 2,
+      "aplica_sector": "publico",
+      "nivel_tabulador_apn": null,
+      "origen": "sponsor-idanz-2026-09-27"
+    },
+    {
+      "nombre": "Analista Administrativo IV",
+      "categoria": "administracion",
+      "grupo_isco": 4,
+      "aplica_sector": "publico",
+      "nivel_tabulador_apn": null,
+      "origen": "sponsor-idanz-2026-09-27"
+    },
+    {
+      "nombre": "Analista de Evaluación de Presupuesto IV",
+      "categoria": "finanzas",
+      "grupo_isco": 2,
+      "aplica_sector": "publico",
+      "nivel_tabulador_apn": null,
+      "origen": "sponsor-idanz-2026-09-27"
+    },
+    {
+      "nombre": "Analista de Informática y Sistema I",
+      "categoria": "tecnologia",
+      "grupo_isco": 2,
+      "aplica_sector": "publico",
+      "nivel_tabulador_apn": null,
+      "origen": "sponsor-idanz-2026-09-27"
+    },
+    {
+      "nombre": "Analista de Informática y Sistema IV",
+      "categoria": "tecnologia",
+      "grupo_isco": 2,
+      "aplica_sector": "publico",
+      "nivel_tabulador_apn": null,
+      "origen": "sponsor-idanz-2026-09-27"
+    },
+    {
+      "nombre": "Analista de Personal IV",
+      "categoria": "talento_humano",
+      "grupo_isco": 2,
+      "aplica_sector": "publico",
+      "nivel_tabulador_apn": null,
+      "origen": "sponsor-idanz-2026-09-27"
+    },
+    {
+      "nombre": "Analista de Presupuesto IV",
+      "categoria": "finanzas",
+      "grupo_isco": 2,
+      "aplica_sector": "publico",
+      "nivel_tabulador_apn": null,
+      "origen": "sponsor-idanz-2026-09-27"
+    },
+    {
+      "nombre": "Analista de Tesorería II",
+      "categoria": "finanzas",
+      "grupo_isco": 2,
+      "aplica_sector": "publico",
+      "nivel_tabulador_apn": null,
+      "origen": "sponsor-idanz-2026-09-27"
+    },
+    {
+      "nombre": "Asistente Administrativo I",
+      "categoria": "administracion",
+      "grupo_isco": 4,
+      "aplica_sector": "publico",
+      "nivel_tabulador_apn": null,
+      "origen": "sponsor-idanz-2026-09-27"
+    },
+    {
+      "nombre": "Asistente Administrativo II",
+      "categoria": "administracion",
+      "grupo_isco": 4,
+      "aplica_sector": "publico",
+      "nivel_tabulador_apn": null,
+      "origen": "sponsor-idanz-2026-09-27"
+    },
+    {
+      "nombre": "Asistente Administrativo III",
+      "categoria": "administracion",
+      "grupo_isco": 4,
+      "aplica_sector": "publico",
+      "nivel_tabulador_apn": null,
+      "origen": "sponsor-idanz-2026-09-27"
+    },
+    {
+      "nombre": "Asistente Administrativo IV",
+      "categoria": "administracion",
+      "grupo_isco": 4,
+      "aplica_sector": "publico",
+      "nivel_tabulador_apn": null,
+      "origen": "sponsor-idanz-2026-09-27"
+    },
+    {
+      "nombre": "Auditor II",
+      "categoria": "finanzas",
+      "grupo_isco": 2,
+      "aplica_sector": "publico",
+      "nivel_tabulador_apn": null,
+      "origen": "sponsor-idanz-2026-09-27"
+    },
+    {
+      "nombre": "Auditor III",
+      "categoria": "finanzas",
+      "grupo_isco": 2,
+      "aplica_sector": "publico",
+      "nivel_tabulador_apn": null,
+      "origen": "sponsor-idanz-2026-09-27"
+    },
+    {
+      "nombre": "Auxiliar de Oficina",
+      "categoria": "administracion",
+      "grupo_isco": 4,
+      "aplica_sector": "publico",
+      "nivel_tabulador_apn": null,
+      "origen": "sponsor-idanz-2026-09-27"
+    },
+    {
+      "nombre": "Auxiliar de Oficina I",
+      "categoria": "administracion",
+      "grupo_isco": 4,
+      "aplica_sector": "publico",
+      "nivel_tabulador_apn": null,
+      "origen": "sponsor-idanz-2026-09-27"
+    },
+    {
+      "nombre": "Contador III",
+      "categoria": "finanzas",
+      "grupo_isco": 2,
+      "aplica_sector": "publico",
+      "nivel_tabulador_apn": null,
+      "origen": "sponsor-idanz-2026-09-27"
+    },
+    {
+      "nombre": "Contador IV",
+      "categoria": "finanzas",
+      "grupo_isco": 2,
+      "aplica_sector": "publico",
+      "nivel_tabulador_apn": null,
+      "origen": "sponsor-idanz-2026-09-27"
+    },
+    {
+      "nombre": "Inspector de Obras de Ingeniería IV",
+      "categoria": "ingenieria",
+      "grupo_isco": 3,
+      "aplica_sector": "publico",
+      "nivel_tabulador_apn": null,
+      "origen": "sponsor-idanz-2026-09-27"
+    },
+    {
+      "nombre": "Metodólogo Deportivo",
+      "categoria": "deporte",
+      "grupo_isco": 3,
+      "aplica_sector": "publico",
+      "nivel_tabulador_apn": null,
+      "origen": "sponsor-idanz-2026-09-27"
+    },
+    {
+      "nombre": "Metodólogo IV",
+      "categoria": "deporte",
+      "grupo_isco": 3,
+      "aplica_sector": "publico",
+      "nivel_tabulador_apn": null,
+      "origen": "sponsor-idanz-2026-09-27"
+    },
+    {
+      "nombre": "Planificador Deportivo",
+      "categoria": "deporte",
+      "grupo_isco": 3,
+      "aplica_sector": "publico",
+      "nivel_tabulador_apn": null,
+      "origen": "sponsor-idanz-2026-09-27"
+    },
+    {
+      "nombre": "Planificador Deportivo (Discapacidad)",
+      "categoria": "deporte",
+      "grupo_isco": 3,
+      "aplica_sector": "publico",
+      "nivel_tabulador_apn": null,
+      "origen": "sponsor-idanz-2026-09-27"
+    },
+    {
+      "nombre": "Planificador Deportivo I",
+      "categoria": "deporte",
+      "grupo_isco": 3,
+      "aplica_sector": "publico",
+      "nivel_tabulador_apn": null,
+      "origen": "sponsor-idanz-2026-09-27"
+    },
+    {
+      "nombre": "Planificador Deportivo II",
+      "categoria": "deporte",
+      "grupo_isco": 3,
+      "aplica_sector": "publico",
+      "nivel_tabulador_apn": null,
+      "origen": "sponsor-idanz-2026-09-27"
+    },
+    {
+      "nombre": "Planificador Deportivo IV",
+      "categoria": "deporte",
+      "grupo_isco": 3,
+      "aplica_sector": "publico",
+      "nivel_tabulador_apn": null,
+      "origen": "sponsor-idanz-2026-09-27"
+    },
+    {
+      "nombre": "Planificador IV",
+      "categoria": "deporte",
+      "grupo_isco": 3,
+      "aplica_sector": "publico",
+      "nivel_tabulador_apn": null,
+      "origen": "sponsor-idanz-2026-09-27"
+    },
+    {
+      "nombre": "Promotor Deportivo",
+      "categoria": "deporte",
+      "grupo_isco": 3,
+      "aplica_sector": "publico",
+      "nivel_tabulador_apn": null,
+      "origen": "sponsor-idanz-2026-09-27"
+    },
+    {
+      "nombre": "Promotor Deportivo I",
+      "categoria": "deporte",
+      "grupo_isco": 3,
+      "aplica_sector": "publico",
+      "nivel_tabulador_apn": null,
+      "origen": "sponsor-idanz-2026-09-27"
+    },
+    {
+      "nombre": "Secretaria Ejecutiva I",
+      "categoria": "administracion",
+      "grupo_isco": 4,
+      "aplica_sector": "publico",
+      "nivel_tabulador_apn": null,
+      "origen": "sponsor-idanz-2026-09-27"
+    },
+    {
+      "nombre": "Secretaria Ejecutiva II",
+      "categoria": "administracion",
+      "grupo_isco": 4,
+      "aplica_sector": "publico",
+      "nivel_tabulador_apn": null,
+      "origen": "sponsor-idanz-2026-09-27"
+    },
+    {
+      "nombre": "Secretaria II",
+      "categoria": "administracion",
+      "grupo_isco": 4,
+      "aplica_sector": "publico",
+      "nivel_tabulador_apn": null,
+      "origen": "sponsor-idanz-2026-09-27"
+    },
+    {
+      "nombre": "Supervisor de Servicios Generales I",
+      "categoria": "coordinacion",
+      "grupo_isco": 3,
+      "aplica_sector": "publico",
+      "nivel_tabulador_apn": null,
+      "origen": "sponsor-idanz-2026-09-27"
+    },
+    {
+      "nombre": "Supervisor de Servicios Generales II",
+      "categoria": "coordinacion",
+      "grupo_isco": 3,
+      "aplica_sector": "publico",
+      "nivel_tabulador_apn": null,
+      "origen": "sponsor-idanz-2026-09-27"
+    },
+    {
+      "nombre": "Supervisor de Servicios Generales IV",
+      "categoria": "coordinacion",
+      "grupo_isco": 3,
+      "aplica_sector": "publico",
+      "nivel_tabulador_apn": null,
+      "origen": "sponsor-idanz-2026-09-27"
+    },
+    {
+      "nombre": "Supervisor Deportivo",
+      "categoria": "deporte",
+      "grupo_isco": 3,
+      "aplica_sector": "publico",
+      "nivel_tabulador_apn": null,
+      "origen": "sponsor-idanz-2026-09-27"
+    },
+    {
+      "nombre": "Abogado(a)",
+      "categoria": "legal",
+      "grupo_isco": 2,
+      "aplica_sector": "ambos",
+      "nivel_tabulador_apn": null,
+      "origen": "sponsor-idanz-2026-09-27"
+    },
+    {
+      "nombre": "Analista de Personal",
+      "categoria": "talento_humano",
+      "grupo_isco": 2,
+      "aplica_sector": "ambos",
+      "nivel_tabulador_apn": null,
+      "origen": "sponsor-idanz-2026-09-27"
+    },
+    {
+      "nombre": "Asistente de Informática",
+      "categoria": "tecnologia",
+      "grupo_isco": 3,
+      "aplica_sector": "ambos",
+      "nivel_tabulador_apn": null,
+      "origen": "sponsor-idanz-2026-09-27"
+    },
+    {
+      "nombre": "Diseñador(a) Gráfico(a)",
+      "categoria": "comunicacion",
+      "grupo_isco": 2,
+      "aplica_sector": "ambos",
+      "nivel_tabulador_apn": null,
+      "origen": "sponsor-idanz-2026-09-27"
+    },
+    {
+      "nombre": "Metodólogo",
+      "categoria": "deporte",
+      "grupo_isco": 3,
+      "aplica_sector": "ambos",
+      "nivel_tabulador_apn": null,
+      "origen": "sponsor-idanz-2026-09-27"
+    },
+    {
+      "nombre": "Planificador",
+      "categoria": "administracion",
+      "grupo_isco": 2,
+      "aplica_sector": "ambos",
+      "nivel_tabulador_apn": null,
+      "origen": "sponsor-idanz-2026-09-27"
+    },
+    {
+      "nombre": "Supervisor de Seguridad",
+      "categoria": "seguridad",
+      "grupo_isco": 3,
+      "aplica_sector": "ambos",
+      "nivel_tabulador_apn": null,
+      "origen": "sponsor-idanz-2026-09-27"
+    },
+    {
+      "nombre": "Trabajador(a) Social",
+      "categoria": "talento_humano",
+      "grupo_isco": 2,
+      "aplica_sector": "ambos",
+      "nivel_tabulador_apn": null,
+      "origen": "sponsor-idanz-2026-09-27"
+    },
+    {
+      "nombre": "Asistente de Fisioterapia",
+      "categoria": "salud",
+      "grupo_isco": 3,
+      "aplica_sector": "ambos",
+      "nivel_tabulador_apn": null,
+      "origen": "sponsor-idanz-2026-09-27"
+    },
+    {
+      "nombre": "Asistente de Odontología I",
+      "categoria": "salud",
+      "grupo_isco": 3,
+      "aplica_sector": "ambos",
+      "nivel_tabulador_apn": null,
+      "origen": "sponsor-idanz-2026-09-27"
+    },
+    {
+      "nombre": "Asistente de Odontología III",
+      "categoria": "salud",
+      "grupo_isco": 3,
+      "aplica_sector": "ambos",
+      "nivel_tabulador_apn": null,
+      "origen": "sponsor-idanz-2026-09-27"
+    },
+    {
+      "nombre": "Auxiliar de Laboratorio",
+      "categoria": "salud",
+      "grupo_isco": 3,
+      "aplica_sector": "ambos",
+      "nivel_tabulador_apn": null,
+      "origen": "sponsor-idanz-2026-09-27"
+    },
+    {
+      "nombre": "Fisioterapeuta",
+      "categoria": "salud",
+      "grupo_isco": 2,
+      "aplica_sector": "ambos",
+      "nivel_tabulador_apn": null,
+      "origen": "sponsor-idanz-2026-09-27"
+    },
+    {
+      "nombre": "Fisioterapeuta I",
+      "categoria": "salud",
+      "grupo_isco": 2,
+      "aplica_sector": "ambos",
+      "nivel_tabulador_apn": null,
+      "origen": "sponsor-idanz-2026-09-27"
+    },
+    {
+      "nombre": "Fisioterapeuta IV",
+      "categoria": "salud",
+      "grupo_isco": 2,
+      "aplica_sector": "ambos",
+      "nivel_tabulador_apn": null,
+      "origen": "sponsor-idanz-2026-09-27"
+    },
+    {
+      "nombre": "Médico Fisiatra",
+      "categoria": "salud",
+      "grupo_isco": 2,
+      "aplica_sector": "ambos",
+      "nivel_tabulador_apn": null,
+      "origen": "sponsor-idanz-2026-09-27"
+    },
+    {
+      "nombre": "Médico General",
+      "categoria": "salud",
+      "grupo_isco": 2,
+      "aplica_sector": "ambos",
+      "nivel_tabulador_apn": null,
+      "origen": "sponsor-idanz-2026-09-27"
+    },
+    {
+      "nombre": "Médico Pediatra",
+      "categoria": "salud",
+      "grupo_isco": 2,
+      "aplica_sector": "ambos",
+      "nivel_tabulador_apn": null,
+      "origen": "sponsor-idanz-2026-09-27"
+    },
+    {
+      "nombre": "Médico Traumatólogo",
+      "categoria": "salud",
+      "grupo_isco": 2,
+      "aplica_sector": "ambos",
+      "nivel_tabulador_apn": null,
+      "origen": "sponsor-idanz-2026-09-27"
+    },
+    {
+      "nombre": "Psicólogo(a)",
+      "categoria": "salud",
+      "grupo_isco": 2,
+      "aplica_sector": "ambos",
+      "nivel_tabulador_apn": null,
+      "origen": "sponsor-idanz-2026-09-27"
+    },
+    {
+      "nombre": "Registro y Control",
+      "categoria": "salud",
+      "grupo_isco": 4,
+      "aplica_sector": "ambos",
+      "nivel_tabulador_apn": null,
+      "origen": "sponsor-idanz-2026-09-27"
+    },
+    {
+      "nombre": "Técnico de Equipos Médicos",
+      "categoria": "salud",
+      "grupo_isco": 3,
+      "aplica_sector": "ambos",
+      "nivel_tabulador_apn": null,
+      "origen": "sponsor-idanz-2026-09-27"
+    },
+    {
+      "nombre": "Aseador(a)",
+      "categoria": "operativo_elemental",
+      "grupo_isco": 9,
+      "aplica_sector": "ambos",
+      "nivel_tabulador_apn": null,
+      "origen": "sponsor-idanz-2026-09-27"
+    },
+    {
+      "nombre": "Mantenimiento de Áreas Verdes",
+      "categoria": "operativo_elemental",
+      "grupo_isco": 9,
+      "aplica_sector": "ambos",
+      "nivel_tabulador_apn": null,
+      "origen": "sponsor-idanz-2026-09-27"
+    },
+    {
+      "nombre": "Seguridad",
+      "categoria": "seguridad",
+      "grupo_isco": 5,
+      "aplica_sector": "ambos",
+      "nivel_tabulador_apn": null,
+      "origen": "sponsor-idanz-2026-09-27"
+    },
+    {
+      "nombre": "Atleta",
+      "categoria": "deporte",
+      "grupo_isco": 3,
+      "aplica_sector": "ambos",
+      "nivel_tabulador_apn": null,
+      "origen": "sponsor-idanz-2026-09-27"
+    },
+    {
+      "nombre": "Atleta Olímpico(a)",
+      "categoria": "deporte",
+      "grupo_isco": 3,
+      "aplica_sector": "ambos",
+      "nivel_tabulador_apn": null,
+      "origen": "sponsor-idanz-2026-09-27"
     }
   ]
 }

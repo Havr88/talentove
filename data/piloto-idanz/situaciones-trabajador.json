@@ -1,0 +1,133 @@
+{
+  "_meta": {
+    "dataset": "piloto-idanz-situaciones-trabajador",
+    "descripcion": "Catálogo de SITUACIONES ADMINISTRATIVAS del trabajador del legacy institucional (vocabulario APN/SIGEP). Reemplaza el enum fijo employees.employee_status. La presencia de 'SE DESCONOCE' y 'CARGO A CREAR' indica que la lista proviene de una migración de datos legacy.",
+    "fuente": "Sponsor (2026-09-27): 'Descripciones que pueden ser usadas'",
+    "decisiones_modelado": [
+      "Situaciones TEMPORALES derivables (vacaciones, permiso, reposos, licencia sindical, pre y post parto) se SINCronizan automáticamente desde solicitudes aprobadas del motor de solicitudes; el resto es manual de RRHH",
+      "ENCARGADURÍA / COMISIÓN DE SERVICIO / DESIGNADO NO son situaciones del trabajador sino condiciones de la ASIGNACIÓN — se conservan en el catálogo por compatibilidad con el legacy y se resuelven en assignments.condicion",
+      "CARGO A CREAR NO es situación: es marcador del NOMENCLADOR DE CARGOS (positions.por_crear) para cargos pendientes de creación oficial",
+      "FIN DE CONTRATO puede derivarse de contracts.fecha_fin",
+      "Toda cambio de situación se registra en audit_log (y el historial alimenta reportes de nómina y asistencia)"
+    ],
+    "pendientes": [
+      "Confirmar con RRHH qué situaciones cobran nómina y cuáles no (reglas paramétricas por situación)"
+    ]
+  },
+  "situaciones": [
+    {
+      "nombre": "ACTIVO",
+      "categoria": "activa",
+      "origen": "manual",
+      "efecto": "cobra nómina y marca asistencia normalmente"
+    },
+    {
+      "nombre": "AVERIGUACIÓN ADMINISTRATIVA",
+      "categoria": "temporal",
+      "origen": "manual",
+      "efecto": "proceso disciplinario; reglas de sueldo/suspensión paramétricas (LOTTT)"
+    },
+    {
+      "nombre": "TRANSFERIDO",
+      "categoria": "temporal",
+      "origen": "automatica",
+      "efecto": "deriva de staff_movements aprobado"
+    },
+    {
+      "nombre": "VACACIONES",
+      "categoria": "temporal",
+      "origen": "automatica",
+      "efecto": "derivada de leave_request de vacaciones aprobada"
+    },
+    {
+      "nombre": "PRE Y POST (PARTO)",
+      "categoria": "temporal",
+      "origen": "automatica",
+      "efecto": "derivada de licencia de maternidad aprobada"
+    },
+    {
+      "nombre": "PERMISO",
+      "categoria": "temporal",
+      "origen": "automatica",
+      "efecto": "derivada de leave_request de permiso aprobada"
+    },
+    {
+      "nombre": "REPOSO MÉDICO",
+      "categoria": "temporal",
+      "origen": "automatica",
+      "efecto": "derivada de reposo con aval IVSS aprobado"
+    },
+    {
+      "nombre": "REPOSO MÉDICO CONTINUO",
+      "categoria": "temporal",
+      "origen": "automatica",
+      "efecto": "reposo extendido consecutivo"
+    },
+    {
+      "nombre": "LICENCIA SINDICAL",
+      "categoria": "temporal",
+      "origen": "automatica",
+      "efecto": "derivada de licencia sindical aprobada"
+    },
+    {
+      "nombre": "AUSENTE",
+      "categoria": "temporal",
+      "origen": "manual",
+      "efecto": "ausencia sin justificación registrada"
+    },
+    {
+      "nombre": "ENCARGADURÍA",
+      "categoria": "otra",
+      "origen": "asignacion",
+      "efecto": "NO es situación del trabajador: es condicion de la ASIGNACIÓN ('encargado'); se mantiene en el catálogo por compatibilidad con el legacy"
+    },
+    {
+      "nombre": "COMISIÓN DE SERVICIO",
+      "categoria": "otra",
+      "origen": "asignacion",
+      "efecto": "NO es situación: es condicion de la ASIGNACIÓN ('comision_de_servicio'); compatible legacy"
+    },
+    {
+      "nombre": "DESIGNADO",
+      "categoria": "otra",
+      "origen": "asignacion",
+      "efecto": "NO es situación: es condicion de la ASIGNACIÓN ('designado'); compatible legacy"
+    },
+    {
+      "nombre": "ABANDONO",
+      "categoria": "egreso",
+      "origen": "manual",
+      "efecto": "abandono del trabajo — causal de retiro (LOTTT); dispara proceso de egreso"
+    },
+    {
+      "nombre": "DESTITUIDO",
+      "categoria": "egreso",
+      "origen": "manual",
+      "efecto": "destitución (régimen público); dispara egreso"
+    },
+    {
+      "nombre": "RENUNCIA",
+      "categoria": "egreso",
+      "origen": "manual",
+      "efecto": "dispara offboarding + liquidación"
+    },
+    {
+      "nombre": "FIN DE CONTRATO",
+      "categoria": "egreso",
+      "origen": "automatica",
+      "efecto": "vencimiento de contrato determinado — puede derivarse de contracts.fecha_fin"
+    },
+    {
+      "nombre": "FALLECIDO",
+      "categoria": "egreso",
+      "origen": "manual",
+      "efecto": "estado final; dispara liquidación a beneficiarios"
+    },
+    {
+      "nombre": "SE DESCONOCE",
+      "categoria": "otra",
+      "origen": "manual",
+      "efecto": "estado de MIGRACIÓN: legacy con dato faltante — cola de revisión de la carga masiva"
+    }
+  ]
+}
