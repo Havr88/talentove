@@ -8,7 +8,7 @@ on:
 
 jobs:
   test:
-    name: Lint, Typecheck and Test
+    name: Typecheck and Test
     runs-on: ubuntu-latest
     timeout-minutes: 15
     steps:
@@ -32,5 +32,5 @@ jobs:
       - name: Typecheck
         run: pnpm typecheck
 
-      - name: Run tests with coverage
-        run: pnpm test:coverage
+      - name: Run tests (domain + server)
+        run: pnpm -r test
