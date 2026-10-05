@@ -14,5 +14,10 @@
     "test:coverage": "pnpm --filter @talento-ve/domain test:coverage",
     "typecheck": "pnpm -r typecheck"
   },
-  "devDependencies": {}
+  "devDependencies": {},
+  "pnpm": {
+    "onlyBuiltDependencies": [
+      "esbuild"
+    ]
+  }
 }
