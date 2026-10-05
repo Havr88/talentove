@@ -1,0 +1,122 @@
+{% extends "layouts/base.njk" %}
+
+{% block content %}
+<div style="margin-bottom: 1.5rem;">
+  <a href="/trabajadores/{{ employee.id }}" style="color: var(--text-muted); font-size: 0.875rem; text-decoration: none;">
+    &larr; Volver al Expediente de {{ employee.nombres }} {{ employee.apellidos }}
+  </a>
+  <div style="display: flex; justify-content: space-between; align-items: flex-start; margin-top: 0.5rem; flex-wrap: wrap; gap: 1rem;">
+    <div>
+      <h1 style="font-size: 1.5rem; font-weight: 700; color: var(--text-color);">
+        Control y Custodia de Activos Asignados
+      </h1>
+      <p style="color: var(--text-muted); font-size: 0.875rem;">
+        Trabajador: <strong>{{ employee.cedulaTipo }}-{{ employee.cedulaNumero }} &bull; {{ employee.nombres }} {{ employee.apellidos }}</strong>
+      </p>
+    </div>
+  </div>
+</div>
+
+{% if success %}
+  <div class="alert-success" style="padding: 1rem; background: #ecfdf5; border: 1px solid #10b981; border-radius: 6px; color: #065f46; margin-bottom: 1rem;">
+    {{ success }}
+  </div>
+{% endif %}
+
+<div style="display: grid; grid-template-columns: 2fr 1fr; gap: 1.5rem;">
+  <!-- Lista de Activos Asignados -->
+  <div class="card" style="background: white; border: 1px solid var(--border-color); border-radius: var(--radius-md); padding: 1.5rem;">
+    <h3 style="font-size: 1.1rem; font-weight: 700; margin-bottom: 1rem; color: var(--text-color);">
+      Inventario de Activos y Equipos en Custodia
+    </h3>
+
+    {% if assets.length == 0 %}
+      <p style="color: var(--text-muted); font-size: 0.875rem;">No hay activos registrados bajo la custodia de este trabajador.</p>
+    {% else %}
+      <div style="overflow-x: auto;">
+        <table style="width: 100%; border-collapse: collapse; font-size: 0.875rem;">
+          <thead>
+            <tr style="border-bottom: 2px solid var(--border-color); color: var(--text-muted); text-align: left;">
+              <th scope="col" style="padding: 0.6rem 0.5rem;">Tipo / Descripción</th>
+              <th scope="col" style="padding: 0.6rem 0.5rem;">Serial / Código</th>
+              <th scope="col" style="padding: 0.6rem 0.5rem;">Asignado el</th>
+              <th scope="col" style="padding: 0.6rem 0.5rem;">Estado</th>
+              <th scope="col" style="padding: 0.6rem 0.5rem; text-align: center;">Acción</th>
+            </tr>
+          </thead>
+          <tbody>
+            {% for a in assets %}
+              <tr style="border-bottom: 1px solid var(--border-color);">
+                <td style="padding: 0.6rem 0.5rem;">
+                  <div style="font-weight: 600;">{{ a.description }}</div>
+                  <small style="color: var(--text-muted);">{{ a.assetType }}</small>
+                </td>
+                <td style="padding: 0.6rem 0.5rem; font-family: monospace;">{{ a.serialNumber or '-' }}</td>
+                <td style="padding: 0.6rem 0.5rem;">{{ a.assignedDate }}</td>
+                <td style="padding: 0.6rem 0.5rem;">
+                  {% if a.status == 'assigned' %}
+                    <span style="background: #e0f2fe; color: #0369a1; padding: 0.2rem 0.5rem; border-radius: 4px; font-weight: 600; font-size: 0.75rem;">En Custodia</span>
+                  {% else %}
+                    <span style="background: #dcfce7; color: #166534; padding: 0.2rem 0.5rem; border-radius: 4px; font-weight: 600; font-size: 0.75rem;">Devuelto ({{ a.returnDate }})</span>
+                  {% endif %}
+                </td>
+                <td style="padding: 0.6rem 0.5rem; text-align: center;">
+                  {% if a.status == 'assigned' %}
+                    <form method="POST" action="/trabajadores/{{ employee.id }}/activos/{{ a.id }}/devolver" style="display: inline;">
+                      <button type="submit" class="btn btn-outline" style="padding: 0.25rem 0.5rem; font-size: 0.75rem;">
+                        📥 Devolver
+                      </button>
+                    </form>
+                  {% else %}
+                    <span style="color: var(--text-muted); font-size: 0.75rem;">Finiquitado</span>
+                  {% endif %}
+                </td>
+              </tr>
+            {% endfor %}
+          </tbody>
+        </table>
+      </div>
+    {% endif %}
+  </div>
+
+  <!-- Formulario de Asignación -->
+  <div class="card" style="background: white; border: 1px solid var(--border-color); border-radius: var(--radius-md); padding: 1.5rem; height: fit-content;">
+    <h3 style="font-size: 1.05rem; font-weight: 700; margin-bottom: 1rem; color: var(--text-color);">
+      Asignar Nuevo Activo
+    </h3>
+
+    <form method="POST" action="/trabajadores/{{ employee.id }}/activos/asignar">
+      <div style="margin-bottom: 0.85rem;">
+        <label style="display: block; font-size: 0.8rem; font-weight: 600; margin-bottom: 0.25rem;">Tipo de Activo:</label>
+        <select name="assetType" class="form-control" style="width: 100%; padding: 0.4rem; border: 1px solid var(--border-color); border-radius: 4px;">
+          <option value="Laptop / Equipo de Cómputo">Laptop / Computadora</option>
+          <option value="Teléfono Móvil Corporativo">Teléfono Móvil Corporativo</option>
+          <option value="Uniforme e Indumentaria">Uniforme e Indumentaria</option>
+          <option value="Equipo de Protección Personal (EPP)">Equipo de Protección Personal (EPP)</option>
+          <option value="Llaves / Token de Seguridad">Llaves / Token de Acceso</option>
+          <option value="Herramientas de Trabajo">Herramientas de Trabajo</option>
+        </select>
+      </div>
+
+      <div style="margin-bottom: 0.85rem;">
+        <label style="display: block; font-size: 0.8rem; font-weight: 600; margin-bottom: 0.25rem;">Descripción del Bien:</label>
+        <input type="text" name="description" placeholder="Ej: Laptop Lenovo ThinkPad T14" required class="form-control" style="width: 100%; padding: 0.4rem; border: 1px solid var(--border-color); border-radius: 4px;">
+      </div>
+
+      <div style="margin-bottom: 0.85rem;">
+        <label style="display: block; font-size: 0.8rem; font-weight: 600; margin-bottom: 0.25rem;">Serial / Número de Placa:</label>
+        <input type="text" name="serialNumber" placeholder="Ej: PF-392819" class="form-control" style="width: 100%; padding: 0.4rem; border: 1px solid var(--border-color); border-radius: 4px;">
+      </div>
+
+      <div style="margin-bottom: 1.25rem;">
+        <label style="display: block; font-size: 0.8rem; font-weight: 600; margin-bottom: 0.25rem;">Condición de Entrega:</label>
+        <input type="text" name="conditionOnAssign" value="Operativo / Excelente estado" required class="form-control" style="width: 100%; padding: 0.4rem; border: 1px solid var(--border-color); border-radius: 4px;">
+      </div>
+
+      <button type="submit" class="btn btn-primary" style="width: 100%; justify-content: center;">
+        ➕ Asignar al Trabajador
+      </button>
+    </form>
+  </div>
+</div>
+{% endblock %}

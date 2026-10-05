@@ -38,7 +38,8 @@
       accent-color: var(--primary-color);
       -webkit-font-smoothing: antialiased;
       -moz-osx-font-smoothing: grayscale;
-      min-height: 100vh;
+      height: 100vh;
+      overflow: hidden;
       display: flex;
       flex-direction: column;
     }
@@ -46,7 +47,7 @@
     a:hover { color: var(--primary-dark); }
     :focus-visible { outline: 2px solid var(--primary-light); outline-offset: 2px; }
 
-    /* Header & Navigation */
+    /* Header & Navigation (Permanente) */
     header.navbar {
       background: linear-gradient(135deg, var(--primary-dark) 0%, var(--primary-color) 100%);
       color: white;
@@ -58,6 +59,7 @@
       position: sticky;
       top: 0;
       z-index: 100;
+      flex-shrink: 0;
       box-shadow: var(--shadow-md);
     }
     .brand {
@@ -117,14 +119,21 @@
     }
     .btn-logout:hover { background: rgba(255, 255, 255, 0.2); border-color: rgba(255,255,255,0.4); }
 
-    /* Layout Structure */
-    .app-layout { display: flex; flex: 1; }
+    /* Layout Structure (Viewport Fijo y Contenido Scrollable) */
+    .app-layout {
+      display: flex;
+      flex: 1;
+      overflow: hidden;
+      min-height: 0;
+    }
     aside.sidebar {
       width: var(--sidebar-width);
       background: var(--card-bg);
       border-right: 1px solid var(--border-color);
       padding: 1.25rem 0.75rem;
       flex-shrink: 0;
+      overflow-y: auto;
+      height: 100%;
     }
     .sidebar-section-title {
       font-size: 0.7rem;
@@ -158,12 +167,109 @@
     }
     .sidebar li a svg, .sidebar li a .icon { font-size: 1.15rem; }
 
+    /* Tree Navigation Styles */
+    .tree-nav {
+      display: flex;
+      flex-direction: column;
+      gap: 0.25rem;
+    }
+    .tree-group {
+      margin-bottom: 0.2rem;
+    }
+    .tree-group summary {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 0.5rem 0.75rem;
+      color: var(--text-color);
+      font-weight: 600;
+      font-size: 0.84rem;
+      cursor: pointer;
+      list-style: none;
+      border-radius: var(--radius-md);
+      user-select: none;
+      transition: all 0.15s ease;
+    }
+    .tree-group summary::-webkit-details-marker {
+      display: none;
+    }
+    .tree-group summary:hover {
+      background-color: var(--surface-alt);
+      color: var(--primary-color);
+    }
+    .tree-header-content {
+      display: flex;
+      align-items: center;
+      gap: 0.65rem;
+    }
+    .tree-chevron {
+      font-size: 0.65rem;
+      color: var(--text-muted);
+      transition: transform 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+    }
+    .tree-group[open] > summary .tree-chevron {
+      transform: rotate(90deg);
+    }
+    .tree-sublist {
+      list-style: none;
+      margin: 0.2rem 0 0.35rem 1.1rem;
+      padding: 0 0 0 0.65rem;
+      border-left: 2px solid var(--border-color);
+      display: flex;
+      flex-direction: column;
+      gap: 0.15rem;
+    }
+    .tree-subitem a {
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+      padding: 0.38rem 0.65rem;
+      color: var(--text-muted);
+      text-decoration: none;
+      font-size: 0.815rem;
+      font-weight: 500;
+      border-radius: var(--radius-sm);
+      transition: all 0.15s ease;
+    }
+    .tree-subitem a:hover {
+      color: var(--primary-color);
+      background-color: var(--surface-alt);
+      transform: translateX(2px);
+    }
+    .tree-subitem.active a {
+      color: var(--primary-color);
+      background-color: var(--primary-subtle);
+      font-weight: 600;
+    }
+    .tree-link-direct {
+      display: flex;
+      align-items: center;
+      gap: 0.65rem;
+      padding: 0.5rem 0.75rem;
+      color: var(--text-muted);
+      text-decoration: none;
+      font-weight: 600;
+      font-size: 0.84rem;
+      border-radius: var(--radius-md);
+      transition: all 0.15s ease;
+    }
+    .tree-link-direct:hover {
+      background-color: var(--surface-alt);
+      color: var(--primary-color);
+    }
+    .tree-link-direct.active {
+      background-color: var(--primary-subtle);
+      color: var(--primary-color);
+    }
+
     main.content {
       flex: 1;
       padding: 2rem 2.25rem;
       max-width: 1300px;
       margin: 0 auto;
       width: 100%;
+      overflow-y: auto;
+      height: 100%;
     }
     aside.rail {
       width: var(--rail-width);
@@ -171,6 +277,27 @@
       border-left: 1px solid var(--border-color);
       padding: 1.75rem 1.25rem;
       flex-shrink: 0;
+      overflow-y: auto;
+      height: 100%;
+    }
+
+    /* Scrollbars elegantes e integrados */
+    aside.sidebar::-webkit-scrollbar,
+    main.content::-webkit-scrollbar,
+    aside.rail::-webkit-scrollbar {
+      width: 6px;
+      height: 6px;
+    }
+    aside.sidebar::-webkit-scrollbar-thumb,
+    main.content::-webkit-scrollbar-thumb,
+    aside.rail::-webkit-scrollbar-thumb {
+      background: rgba(148, 163, 184, 0.4);
+      border-radius: 9999px;
+    }
+    aside.sidebar::-webkit-scrollbar-thumb:hover,
+    main.content::-webkit-scrollbar-thumb:hover,
+    aside.rail::-webkit-scrollbar-thumb:hover {
+      background: rgba(100, 116, 139, 0.6);
     }
     .rail-title {
       font-size: 0.75rem;
@@ -282,8 +409,9 @@
       cursor: pointer;
       text-decoration: none;
       box-shadow: var(--shadow-sm);
-      transition: all 0.15s ease;
+      transition: background-color 0.15s ease, box-shadow 0.15s ease, transform 0.15s ease, border-color 0.15s ease;
       white-space: nowrap;
+      touch-action: manipulation;
     }
     .btn:hover {
       background-color: var(--primary-dark);
@@ -471,30 +599,225 @@
       align-items: center;
       gap: 0.65rem;
     }
+    /* --- QRH Component & Form Styles --- */
+    .page-header {
+      display: flex;
+      flex-direction: column;
+      gap: 1rem;
+      margin-bottom: 2rem;
+      width: 100%;
+    }
+    @media (min-width: 640px) {
+      .page-header {
+        flex-direction: row;
+        align-items: center;
+        justify-content: space-between;
+      }
+    }
+    .page-header-content {
+      display: flex;
+      align-items: center;
+      gap: 1rem;
+    }
+    .page-header-icon {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      width: 3.25rem;
+      height: 3.25rem;
+      border-radius: 0.85rem;
+      background-color: #eff6ff;
+      color: #2563eb;
+      font-size: 1.6rem;
+      flex-shrink: 0;
+      box-shadow: inset 0 0 0 1px rgba(37, 99, 235, 0.15);
+    }
+    .page-header-title {
+      font-size: 1.75rem;
+      font-weight: 800;
+      letter-spacing: -0.025em;
+      color: var(--text-color);
+      line-height: 1.2;
+    }
+    .page-header-subtitle {
+      font-size: 0.925rem;
+      color: var(--text-muted);
+      margin-top: 0.25rem;
+    }
+    .page-header-actions {
+      display: flex;
+      align-items: center;
+      gap: 0.75rem;
+      flex-shrink: 0;
+      flex-wrap: wrap;
+    }
+    .qrh-feature-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+      gap: 1.5rem;
+      width: 100%;
+    }
+    .qrh-feature-card {
+      background: #ffffff;
+      border: 1px solid var(--border-color);
+      border-radius: 0.85rem;
+      padding: 1.75rem;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      transition: all 0.25s cubic-bezier(0.16, 1, 0.3, 1);
+      box-shadow: 0 1px 3px rgba(0,0,0,0.04);
+      height: 100%;
+    }
+    .qrh-feature-card:hover {
+      transform: translateY(-4px);
+      box-shadow: 0 12px 24px -6px rgba(0,0,0,0.08);
+      border-color: #cbd5e1;
+    }
+    .qrh-feature-icon {
+      font-size: 2rem;
+      margin-bottom: 1rem;
+      display: inline-block;
+    }
+    .qrh-feature-title {
+      font-size: 1.2rem;
+      font-weight: 700;
+      color: var(--text-color);
+      margin-bottom: 0.5rem;
+    }
+    .qrh-feature-desc {
+      font-size: 0.875rem;
+      color: var(--text-muted);
+      line-height: 1.5;
+      margin-bottom: 1.5rem;
+    }
+    .qrh-table-card {
+      background: #ffffff;
+      border: 1px solid var(--border-color);
+      border-radius: 0.85rem;
+      box-shadow: 0 1px 3px rgba(0,0,0,0.04);
+      overflow: hidden;
+      margin-bottom: 2rem;
+    }
+    .qrh-table {
+      width: 100%;
+      border-collapse: collapse;
+      text-align: left;
+      font-size: 0.875rem;
+    }
+    .qrh-table th {
+      background: #f8fafc;
+      padding: 0.85rem 1.25rem;
+      font-weight: 600;
+      color: #475569;
+      border-bottom: 1px solid var(--border-color);
+      font-size: 0.775rem;
+      text-transform: uppercase;
+      letter-spacing: 0.04em;
+    }
+    .qrh-table td {
+      padding: 1rem 1.25rem;
+      border-bottom: 1px solid #f1f5f9;
+      color: #1e293b;
+      vertical-align: middle;
+    }
+    .qrh-table tr:hover td {
+      background-color: #f8fafc;
+    }
 
     /* Responsive adjustments */
     @media (max-width: 900px) {
-      .app-layout { flex-direction: column; }
-      aside.sidebar { width: 100%; border-right: none; border-bottom: 1px solid var(--border-color); padding: 0.75rem; }
+      html, body {
+        height: auto;
+        overflow: auto;
+      }
+      header.navbar {
+        position: sticky;
+        top: 0;
+      }
+      .app-layout {
+        flex-direction: column;
+        overflow: visible;
+      }
+      aside.sidebar {
+        width: 100%;
+        height: auto;
+        border-right: none;
+        border-bottom: 1px solid var(--border-color);
+        padding: 0.75rem;
+        overflow-x: auto;
+      }
       .sidebar ul { flex-direction: row; overflow-x: auto; gap: 0.5rem; }
       .sidebar li a { padding: 0.5rem 0.75rem; white-space: nowrap; }
-      aside.rail { width: 100%; border-left: none; border-top: 1px solid var(--border-color); }
-      main.content { padding: 1.25rem 1rem; }
+      aside.rail {
+        width: 100%;
+        height: auto;
+        border-left: none;
+        border-top: 1px solid var(--border-color);
+      }
+      main.content {
+        padding: 1.25rem 1rem;
+        height: auto;
+        overflow: visible;
+      }
+      footer {
+        position: sticky;
+        bottom: 0;
+      }
     }
 
+    /* Footer Permanente (espejo del header) */
     footer {
-      text-align: center;
-      padding: 1.25rem 1rem;
-      font-size: 0.825rem;
-      color: var(--text-muted);
-      border-top: 1px solid var(--border-color);
-      background: var(--card-bg);
-      margin-top: auto;
+      background: linear-gradient(135deg, var(--primary-dark) 0%, var(--primary-color) 100%);
+      color: white;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 1rem;
+      min-height: 44px;
+      padding: 0.35rem 1.75rem;
+      flex-shrink: 0;
+      z-index: 90;
+      box-shadow: 0 -2px 8px rgba(0, 0, 0, 0.08);
     }
+    footer .brand {
+      font-size: 0.95rem;
+    }
+    footer p {
+      margin: 0;
+      font-size: 0.8rem;
+      opacity: 0.85;
+      text-align: right;
+    }
+    @media (max-width: 768px) {
+      footer { flex-direction: column; justify-content: center; gap: 0.25rem; padding: 0.5rem 1rem; }
+      footer p { text-align: center; }
+    }
+
+    /* Accesibilidad y calidad tipográfica (auditoría UI 2026-10-05) */
+    @media (prefers-reduced-motion: reduce) {
+      *, *::before, *::after {
+        transition-duration: 0.01ms !important;
+        animation-duration: 0.01ms !important;
+        animation-iteration-count: 1 !important;
+        scroll-behavior: auto !important;
+      }
+    }
+    h1, h2, h3, h4 { text-wrap: balance; }
+    .data-table, .card table { font-variant-numeric: tabular-nums; }
+    .data-table td, .data-table th, .card table td, .card table th { overflow-wrap: break-word; }
+    .table-scroll { overflow-x: auto; -webkit-overflow-scrolling: touch; }
+    .skip-link {
+      position: absolute; left: -9999px; top: 0; z-index: 200;
+      background: var(--primary-dark); color: white; padding: 0.6rem 1rem; border-radius: 0 0 6px 0;
+    }
+    .skip-link:focus { left: 0; }
   </style>
   <script src="https://unpkg.com/htmx.org@2.0.4" integrity="sha384-HGfztofotfshcF7+8n44JQL2oJmReNpAssUSEmWfmErMMrrvOOaz+fZcOi56EDa6" crossorigin="anonymous"></script>
 </head>
 <body>
+  <a class="skip-link" href="#contenido">Saltar al contenido</a>
+
   <header class="navbar">
     <a href="/" class="brand">
       <span class="flag-badge">🇻🇪</span>
@@ -518,25 +841,107 @@
   <div class="app-layout">
     {% if currentUser %}
       <aside class="sidebar">
-        <div class="sidebar-section-title">Operaciones RRHH</div>
-        <ul>
-          <li class="active"><a href="/"><span>📊</span><span>Panel Principal</span></a></li>
-          <li><a href="/trabajadores"><span>👥</span><span>Trabajadores</span></a></li>
-          <li><a href="/asistencia"><span>⏱️</span><span>Control Asistencia</span></a></li>
-          <li><a href="/solicitudes"><span>📝</span><span>Solicitudes y Cartas</span></a></li>
-          <li><a href="/nomina"><span>💵</span><span>Cálculo de Nómina</span></a></li>
-        </ul>
+        <div class="sidebar-section-title">Navegación</div>
+        <nav class="tree-nav">
+          <a href="/" class="tree-link-direct">
+            <span>📊</span>
+            <span>Panel Principal</span>
+          </a>
 
-        {% if currentUser.role == "superadmin" %}
-          <div class="sidebar-section-title" style="margin-top: 1.25rem;">Sistema</div>
-          <ul>
-            <li><a href="/configuracion"><span>⚙️</span><span>Configuración</span></a></li>
-          </ul>
-        {% endif %}
+          <!-- Personal y Estructura -->
+          <details class="tree-group" open>
+            <summary>
+              <span class="tree-header-content">
+                <span>👥</span>
+                <span>Personal y Estructura</span>
+              </span>
+              <span class="tree-chevron">▶</span>
+            </summary>
+            <ul class="tree-sublist">
+              <li class="tree-subitem"><a href="/trabajadores"><span>📋</span><span>Lista de Personal</span></a></li>
+              <li class="tree-subitem"><a href="/trabajadores/nuevo"><span>➕</span><span>Nuevo Trabajador</span></a></li>
+              <li class="tree-subitem"><a href="/ubicaciones"><span>📍</span><span>Ubicaciones Físicas</span></a></li>
+              <li class="tree-subitem"><a href="/departamentos"><span>🏛️</span><span>Departamentos</span></a></li>
+              <li class="tree-subitem"><a href="/cargos"><span>💼</span><span>Gestión de Cargos</span></a></li>
+            </ul>
+          </details>
+
+          <!-- Expedientes Digitales -->
+          <details class="tree-group" open>
+            <summary>
+              <span class="tree-header-content">
+                <span>📁</span>
+                <span>Expedientes Digitales</span>
+              </span>
+              <span class="tree-chevron">▶</span>
+            </summary>
+            <ul class="tree-sublist">
+              <li class="tree-subitem"><a href="/expedientes/buscar"><span>🔍</span><span>Búsqueda de Expedientes</span></a></li>
+              <li class="tree-subitem"><a href="/expedientes/cargar"><span>📤</span><span>Carga de Documentos</span></a></li>
+            </ul>
+          </details>
+
+          <!-- Tiempo y Asistencia -->
+          <details class="tree-group" open>
+            <summary>
+              <span class="tree-header-content">
+                <span>⏱️</span>
+                <span>Tiempo y Asistencia</span>
+              </span>
+              <span class="tree-chevron">▶</span>
+            </summary>
+            <ul class="tree-sublist">
+              <li class="tree-subitem"><a href="/asistencia"><span>📅</span><span>Planillas Semanales</span></a></li>
+              <li class="tree-subitem"><a href="/asistencia/nueva"><span>✍️</span><span>Cargar Asistencia</span></a></li>
+              <li class="tree-subitem"><a href="/feriados"><span>🇻🇪</span><span>Feriados y Decretos</span></a></li>
+            </ul>
+          </details>
+
+          <!-- Nómina LOTTT & Pagos -->
+          <details class="tree-group" open>
+            <summary>
+              <span class="tree-header-content">
+                <span>💵</span>
+                <span>Nómina y Pagos</span>
+              </span>
+              <span class="tree-chevron">▶</span>
+            </summary>
+            <ul class="tree-sublist">
+              <li class="tree-subitem"><a href="/nomina"><span>🧾</span><span>Períodos de Nómina</span></a></li>
+              <li class="tree-subitem"><a href="/nomina/nueva"><span>⚡</span><span>Calcular Nómina</span></a></li>
+            </ul>
+          </details>
+
+          <!-- Bandeja de Aprobaciones RRHH -->
+          <a href="/aprobaciones" class="tree-link-direct">
+            <span>✅</span>
+            <span>Bandeja Aprobaciones</span>
+          </a>
+
+          <!-- Perfil Institucional -->
+          <a href="/institucion" class="tree-link-direct">
+            <span>🏢</span>
+            <span>Perfil Institución</span>
+          </a>
+
+          <!-- Portal Autoservicio -->
+          <a href="/mi-portal" class="tree-link-direct">
+            <span>👤</span>
+            <span>Portal Autoservicio</span>
+          </a>
+
+          {% if currentUser.role == "superadmin" %}
+            <div class="sidebar-section-title" style="margin-top: 1rem;">Administración</div>
+            <a href="/configuracion" class="tree-link-direct">
+              <span>⚙️</span>
+              <span>Configuración</span>
+            </a>
+          {% endif %}
+        </nav>
       </aside>
     {% endif %}
 
-    <main class="content">
+    <main class="content" id="contenido">
       {% block content %}{% endblock %}
     </main>
 
@@ -551,7 +956,41 @@
   </div>
 
   <footer>
-    <p>{{ instanceName | default("TalentoVe") }} &bull; Plataforma RRHH Auto-Alojada &bull; Licencia AGPL-3.0</p>
+    <span class="brand">
+      <span class="flag-badge">🇻🇪</span>
+      <span>{{ instanceName | default("TalentoVe") }}</span>
+    </span>
+    <p>Plataforma RRHH Auto-Alojada &bull; Licencia AGPL-3.0</p>
   </footer>
+  <div id="invio-toast" role="status" aria-live="polite" style="display:none; position:fixed; bottom:20px; right:20px; background:#1e293b; color:#fff; padding:0.75rem 1.25rem; border-radius:8px; box-shadow:0 10px 15px -3px rgba(0,0,0,0.1); font-size:0.875rem; font-weight:600; z-index:9999; align-items:center; gap:0.5rem;">
+    <span style="color:#22c55e;">✓</span>
+    <span id="invio-toast-msg">Guardando...</span>
+  </div>
+  <script>
+    // Atajos de productividad adaptados de Invio (Ctrl+S / Cmd+S y Ctrl+Enter)
+    document.addEventListener('keydown', function(e) {
+      if ((e.ctrlKey || e.metaKey) && e.key === 's') {
+        const form = document.querySelector('form:not([action="/auth/logout"]):not([action="/install"])');
+        if (form) {
+          e.preventDefault();
+          const toast = document.getElementById('invio-toast');
+          const toastMsg = document.getElementById('invio-toast-msg');
+          if (toast && toastMsg) {
+            toastMsg.textContent = 'Enviando formulario (Ctrl+S)...';
+            toast.style.display = 'flex';
+          }
+          form.requestSubmit();
+        }
+      }
+      if ((e.ctrlKey || e.metaKey) && e.key === 'Enter') {
+        const addBtn = document.querySelector('[data-action="add-row"], .btn-add-item');
+        if (addBtn) {
+          e.preventDefault();
+          addBtn.click();
+        }
+      }
+    });
+  </script>
+  {% block scripts %}{% endblock %}
 </body>
 </html>

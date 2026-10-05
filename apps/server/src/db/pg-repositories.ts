@@ -30,6 +30,13 @@ import type {
   Territory,
   User,
 } from './types.js';
+import {
+  MemoryPayrollRepository,
+  MemoryDigitalCredentialRepository,
+  MemoryHolidayRepository,
+  MemoryBankPaymentRepository,
+  MemoryAssignedAssetRepository,
+  MemorySstRepository, MemoryJobPostingRepository, MemoryJobApplicationRepository, MemoryTrainingRepository, MemoryPerformanceRepository } from './memory-repositories.js';
 
 export class PgSettingsRepository implements ISettingsRepository {
   constructor(private pool: Pool) {}
@@ -443,6 +450,32 @@ export class PgPositionRepository implements IPositionRepository {
     );
 
     const r = rows[0]!;
+    return {
+      id: r.id,
+      codigo: r.codigo ?? undefined,
+      name: r.name,
+      categoria: r.categoria,
+      grupoIsco: r.grupo_isco,
+      aplicaSector: r.aplica_sector,
+      nivelTabuladorApn: r.nivel_tabulador_apn ?? undefined,
+      activo: r.activo,
+    };
+  }
+
+  async findById(id: number): Promise<Position | null> {
+    const { rows } = await this.pool.query<{
+      id: number;
+      codigo: string | null;
+      name: string;
+      categoria: string;
+      grupo_isco: string;
+      aplica_sector: Position['aplicaSector'];
+      nivel_tabulador_apn: string | null;
+      activo: boolean;
+    }>('SELECT * FROM positions WHERE id = $1', [id]);
+
+    const r = rows[0];
+    if (!r) return null;
     return {
       id: r.id,
       codigo: r.codigo ?? undefined,
@@ -1725,6 +1758,16 @@ export function createPgRepositories(pool: Pool): Repositories {
     movements: new PgContractMovementRepository(pool),
     requests: new PgEmployeeRequestRepository(pool),
     attendance: new PgAttendanceRepository(pool),
+    payroll: new MemoryPayrollRepository(),
+    credentials: new MemoryDigitalCredentialRepository(),
+    holidays: new MemoryHolidayRepository(),
+    bankPayments: new MemoryBankPaymentRepository(),
+    assets: new MemoryAssignedAssetRepository(),
+    sst: new MemorySstRepository(),
+    jobPostings: new MemoryJobPostingRepository(),
+    jobApplications: new MemoryJobApplicationRepository(),
+    training: new MemoryTrainingRepository(),
+    performance: new MemoryPerformanceRepository(),
   };
 }
 

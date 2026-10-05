@@ -24,8 +24,12 @@
     </div>
     <div style="display: flex; gap: 0.6rem; flex-wrap: wrap;">
       <a href="/trabajadores/{{ employee.id }}/editar" class="btn btn-outline">✏️ Editar Datos</a>
+      <a href="/trabajadores/{{ employee.id }}/carnet" class="btn btn-outline" style="border-color: #3b82f6; color: #1d4ed8;">🪪 Carnet CR-80</a>
       <a href="/trabajadores/{{ employee.id }}/constancia/pdf" target="_blank" class="btn btn-accent">📄 Constancia PDF</a>
-      <a href="/solicitudes/nueva?employeeId={{ employee.id }}" class="btn btn-primary">📝 Nueva Solicitud</a>
+      <a href="/trabajadores/{{ employee.id }}/riesgos-lopcymat" class="btn btn-outline" style="border-color: #0284c7; color: #0369a1;">🛡️ LOPCYMAT</a>
+      <a href="/trabajadores/{{ employee.id }}/activos" class="btn btn-outline" style="border-color: #10b981; color: #047857;">📦 Activos</a>
+      <a href="/trabajadores/{{ employee.id }}/liquidacion" class="btn btn-outline" style="border-color: #ef4444; color: #b91c1c;">⚖️ Liquidación</a>
+      <a href="/solicitudes/nueva?employeeId={{ employee.id }}" class="btn btn-primary">📝 Solicitud</a>
     </div>
   </div>
 </div>
@@ -45,6 +49,10 @@
       👤 Datos Personales y de Contacto
     </h3>
     <table style="width: 100%; border-collapse: collapse; font-size: 0.9rem;">
+      <tr>
+        <td style="padding: 0.4rem 0; color: var(--text-muted); width: 40%;">Grado de Instrucción:</td>
+        <td style="padding: 0.4rem 0; font-weight: 500;">{{ employee.gradoInstruccion | default('—', true) }}</td>
+      </tr>
       <tr>
         <td style="padding: 0.4rem 0; color: var(--text-muted); width: 40%;">Fecha de Nacimiento:</td>
         <td style="padding: 0.4rem 0; font-weight: 500;">{{ employee.fechaNacimiento }}</td>
@@ -120,6 +128,132 @@
   </div>
 </div>
 
+<!-- Sección de Documentos Probatorios del Expediente -->
+<div class="card" style="margin-bottom: 1.5rem;">
+  <h3 style="font-size: 1.1rem; color: var(--primary-color);">🎓 Documentos Probatorios del Expediente</h3>
+  <p style="color: var(--text-muted); font-size: 0.82rem; margin: 0.25rem 0 0.9rem;">
+    Los requisitos obligatorios se calculan según el grado de instrucción y la normativa (LOPCYMAT).
+    Títulos y certificados en JPG o PDF con sus metadatos.
+  </p>
+
+  {% set secciones = [] %}
+  {% for t in docTypes %}{% if t.seccion not in secciones %}{% set secciones = secciones.concat([t.seccion]) %}{% endif %}{% endfor %}
+
+  {% for seccion_actual in secciones %}
+    <h4 style="font-size: 0.92rem; margin: 1rem 0 0.4rem; color: var(--primary-dark);">{{ seccion_actual }}</h4>
+    <div class="table-scroll">
+    <table style="width: 100%; border-collapse: collapse; font-size: 0.85rem;">
+      <thead>
+        <tr style="background: #fafafa; border-bottom: 1px solid var(--border-color); text-align: left;">
+          <th scope="col" style="padding: 0.45rem 0.75rem;">Documento</th>
+          <th scope="col" style="padding: 0.45rem 0.75rem;">Obligatoriedad</th>
+          <th scope="col" style="padding: 0.45rem 0.75rem;">Estado / Metadatos</th>
+          <th scope="col" style="padding: 0.45rem 0.75rem; text-align: right;">Adjuntar</th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for t in docTypes %}
+          {% if t.seccion == seccion_actual %}
+          <tr style="border-bottom: 1px solid var(--border-color);">
+            <td style="padding: 0.45rem 0.75rem; font-weight: 500;">
+              {{ t.nombre }}
+              <div style="font-size: 0.72rem; color: var(--text-muted);">{{ t.base_legal }}</div>
+            </td>
+            <td style="padding: 0.45rem 0.75rem;">
+              {% set esRequerido = (t.id in requeridos) or (t.requerido == 'siempre') %}
+              {% if esRequerido %}
+                <span style="padding: 0.1rem 0.45rem; border-radius: 4px; font-size: 0.72rem; background: #ffebee; color: #c62828;">Obligatorio</span>
+              {% else %}
+                <span style="padding: 0.1rem 0.45rem; border-radius: 4px; font-size: 0.72rem; background: #eceff1; color: #546e7a;">Opcional</span>
+              {% endif %}
+            </td>
+            <td style="padding: 0.45rem 0.75rem;">
+              {% set adjuntos = workerDocs | selectattr('tipoDoc', '==', t.id) | list %}
+              {% if adjuntos | length > 0 %}
+                {% for doc in adjuntos %}
+                  <div style="margin-bottom: 0.2rem;">
+                    <a href="/documentos/{{ doc.id }}/ver" target="_blank" style="color: #2e7d32; font-size: 0.8rem; font-weight: 600; text-decoration: none;">✓ {{ doc.fileName }}</a>
+                    <span style="color: var(--text-muted); font-size: 0.72rem;"> ({{ doc.size }}, {{ doc.date }})</span>
+                    {% if doc.metadataParsed %}
+                      <div style="font-size: 0.72rem; color: var(--text-muted); margin-left: 0.9rem;">
+                        {% for campo in t.campos %}{% if doc.metadataParsed[campo.key] %}{{ campo.label }}: <b>{{ doc.metadataParsed[campo.key] }}</b> · {% endif %}{% endfor %}
+                      </div>
+                    {% endif %}
+                  </div>
+                {% endfor %}
+              {% elif esRequerido %}
+                <span style="padding: 0.1rem 0.45rem; border-radius: 4px; font-size: 0.72rem; background: #fff3e0; color: #e65100;">⚠ Falta (obligatorio)</span>
+              {% else %}
+                <span style="color: var(--text-muted); font-size: 0.75rem;">Sin adjuntar</span>
+              {% endif %}
+            </td>
+            <td style="padding: 0.45rem 0.75rem; text-align: right;">
+              <details>
+                <summary style="cursor: pointer; font-size: 0.78rem; color: #1565c0;">📎 Adjuntar</summary>
+                <form class="form-doc-trabajador" data-worker="{{ employee.id }}" data-tipo="{{ t.id }}" style="margin-top: 0.5rem; text-align: left;">
+                  {% for campo in t.campos %}
+                    <div style="margin-bottom: 0.3rem;">
+                      <label style="font-size: 0.7rem; font-weight: 600; color: var(--text-muted);">{{ campo.label }}</label>
+                      {% if campo.tipo == 'fecha' %}
+                      <input type="date" name="md_{{ campo.key }}" style="padding: 0.25rem 0.4rem; font-size: 0.78rem; width: 170px;">
+                      {% elif campo.tipo == 'numero' %}
+                      <input type="number" name="md_{{ campo.key }}" style="padding: 0.25rem 0.4rem; font-size: 0.78rem; width: 170px;">
+                      {% else %}
+                      <input type="text" name="md_{{ campo.key }}" style="padding: 0.25rem 0.4rem; font-size: 0.78rem; width: 170px;">
+                      {% endif %}
+                    </div>
+                  {% endfor %}
+                  <input type="file" accept=".jpg,.jpeg,.pdf" required style="font-size: 0.78rem; max-width: 200px;">
+                  <button type="submit" class="btn" style="padding: 0.25rem 0.6rem; font-size: 0.78rem;">Subir</button>
+                  <span class="doc-status" role="status" aria-live="polite" style="font-size: 0.75rem; color: var(--text-muted);"></span>
+                </form>
+              </details>
+            </td>
+          </tr>
+          {% endif %}
+        {% endfor %}
+      </tbody>
+    </table>
+    </div>
+  {% endfor %}
+
+  <script>
+    document.querySelectorAll('.form-doc-trabajador').forEach(function (form) {
+      form.addEventListener('submit', async function (ev) {
+        ev.preventDefault();
+        var fileInput = form.querySelector('input[type=file]');
+        var status = form.querySelector('.doc-status');
+        var file = fileInput.files[0];
+        if (!file) { status.textContent = 'Seleccione un archivo'; return; }
+        if (!['image/jpeg', 'application/pdf'].includes(file.type)) { status.textContent = 'Solo JPG o PDF'; return; }
+        if (file.size > 5 * 1024 * 1024) { status.textContent = 'Máximo 5 MB'; return; }
+        status.textContent = 'Subiendo…';
+        form.querySelector('button[type=submit]').disabled = true;
+        var dataBase64 = await new Promise(function (ok) {
+          var fr = new FileReader();
+          fr.onload = function () { ok(String(fr.result).split(',')[1]); };
+          fr.readAsDataURL(file);
+        });
+        var metadata = {};
+        form.querySelectorAll('[name^=md_]').forEach(function (inp) {
+          if (inp.value && inp.value.trim() !== '') metadata[inp.name.slice(3)] = inp.value.trim();
+        });
+        try {
+          var r = await fetch('/api/trabajadores/' + form.dataset.worker + '/documentos', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json', 'x-csrf-token': '{{ csrfToken }}' },
+            body: JSON.stringify({ fileName: file.name, mimeType: file.type, dataBase64: dataBase64, tipoDoc: form.dataset.tipo, metadata: metadata }),
+          });
+          var body = await r.json();
+          if (!r.ok || !body.success) { status.textContent = body.error || 'Error al subir'; form.querySelector('button[type=submit]').disabled = false; return; }
+          status.textContent = '✓ Subido — recargando…';
+          setTimeout(function () { window.location.reload(); }, 700);
+        } catch (e) { status.textContent = 'Error de red'; }
+      });
+    });
+  </script>
+</div>
+
 <!-- Sección de Cargas Familiares -->
 <div class="card" style="margin-bottom: 1.5rem;">
   <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1rem;">
@@ -174,23 +308,54 @@
     </form>
   </div>
 
+  <div class="table-scroll">
   <table style="width: 100%; border-collapse: collapse; font-size: 0.9rem;">
     <thead>
       <tr style="background: #fafafa; border-bottom: 1px solid var(--border-color); text-align: left;">
-        <th style="padding: 0.6rem 1rem;">Nombre Completo</th>
-        <th style="padding: 0.6rem 1rem;">Parentesco</th>
-        <th style="padding: 0.6rem 1rem;">Cédula</th>
-        <th style="padding: 0.6rem 1rem;">Fecha Nacimiento</th>
-        <th style="padding: 0.6rem 1rem; text-align: right;">Acciones</th>
+        <th scope="col" style="padding: 0.6rem 1rem;">Nombre Completo</th>
+        <th scope="col" style="padding: 0.6rem 1rem;">Parentesco</th>
+        <th scope="col" style="padding: 0.6rem 1rem;">Cédula</th>
+        <th scope="col" style="padding: 0.6rem 1rem;">Fecha Nacimiento</th>
+        <th scope="col" style="padding: 0.6rem 1rem;">Requisitos Documentales (JPG/PDF)</th>
+        <th scope="col" style="padding: 0.6rem 1rem; text-align: right;">Acciones</th>
       </tr>
     </thead>
     <tbody>
       {% for dep in dependents %}
+        {% set reqDocs = [] %}
+        {% if dep.parentesco == 'hijo' %}{% set reqDocs = reqDocs.concat(['Partida de Nacimiento']) %}{% endif %}
+        {% if dep.parentesco == 'conyuge' %}{% set reqDocs = reqDocs.concat(['Acta de Matrimonio']) %}{% endif %}
+        {% if dep.discapacidad %}{% set reqDocs = reqDocs.concat(['Certificado CONAPDIS']) %}{% endif %}
         <tr style="border-bottom: 1px solid var(--border-color);">
           <td style="padding: 0.6rem 1rem; font-weight: 500;">{{ dep.nombres }} {{ dep.apellidos }}</td>
           <td style="padding: 0.6rem 1rem; text-transform: capitalize;">{{ dep.parentesco }}</td>
           <td style="padding: 0.6rem 1rem;">{{ dep.cedula or 'Menor sin cédula' }}</td>
           <td style="padding: 0.6rem 1rem;">{{ dep.fechaNacimiento }}</td>
+          <td style="padding: 0.6rem 1rem;">
+            {% if reqDocs | length == 0 %}
+              <span style="color: var(--text-muted); font-size: 0.8rem;">Sin documento obligatorio</span>
+            {% endif %}
+            {% for req in reqDocs %}
+              {% set attached = dependentDocs | selectattr('dependentId', '==', dep.id) | selectattr('tipoDoc', '==', req) | list %}
+              {% if attached | length > 0 %}
+                <span style="display: inline-block; margin: 0.15rem 0.3rem 0.15rem 0; padding: 0.1rem 0.45rem; border-radius: 4px; font-size: 0.75rem; background: #e8f5e9; color: #2e7d32;">✓ {{ req }}</span>
+                {% for doc in attached %}
+                  <a href="/documentos/{{ doc.id }}/ver" target="_blank" style="font-size: 0.75rem; color: #1565c0; text-decoration: none;">({{ doc.size }})</a>
+                {% endfor %}
+              {% else %}
+                <span style="display: inline-block; margin: 0.15rem 0.3rem 0.15rem 0; padding: 0.1rem 0.45rem; border-radius: 4px; font-size: 0.75rem; background: #fff3e0; color: #e65100;">⚠ Falta: {{ req }}</span>
+              {% endif %}
+            {% endfor %}
+            <details style="display: inline-block; margin-left: 0.4rem;">
+              <summary style="cursor: pointer; font-size: 0.78rem; color: #1565c0;">📎 Adjuntar</summary>
+              <form class="form-adjuntar" data-worker="{{ employee.id }}" data-carga="{{ dep.id }}" style="margin-top: 0.5rem;">
+                <input type="hidden" name="tipoDoc" value="{{ reqDocs[0] if reqDocs | length > 0 else 'Documento del dependiente' }}">
+                <input type="file" accept=".jpg,.jpeg,.pdf" required style="font-size: 0.78rem; max-width: 220px;">
+                <button type="submit" class="btn" style="padding: 0.25rem 0.6rem; font-size: 0.78rem;">Subir</button>
+                <span class="adj-status" role="status" aria-live="polite" style="font-size: 0.75rem; color: var(--text-muted);"></span>
+              </form>
+            </details>
+          </td>
           <td style="padding: 0.6rem 1rem; text-align: right;">
             <form action="/trabajadores/{{ employee.id }}/cargas/{{ dep.id }}/eliminar" method="POST" style="display: inline;">
               <input type="hidden" name="_csrf" value="{{ csrfToken }}">
@@ -202,13 +367,49 @@
         </tr>
       {% else %}
         <tr>
-          <td colspan="5" style="padding: 1.5rem; text-align: center; color: var(--text-muted);">
+          <td colspan="6" style="padding: 1.5rem; text-align: center; color: var(--text-muted);">
             No tiene cargas familiares registradas.
           </td>
         </tr>
       {% endfor %}
     </tbody>
   </table>
+  </div>
+
+  <script>
+    document.querySelectorAll('.form-adjuntar').forEach(function (form) {
+      form.addEventListener('submit', async function (ev) {
+        ev.preventDefault();
+        var fileInput = form.querySelector('input[type=file]');
+        var status = form.querySelector('.adj-status');
+        var file = fileInput.files[0];
+        if (!file) { status.textContent = 'Seleccione un archivo'; return; }
+        if (!['image/jpeg', 'application/pdf'].includes(file.type)) { status.textContent = 'Solo JPG o PDF'; return; }
+        if (file.size > 5 * 1024 * 1024) { status.textContent = 'Máximo 5 MB'; return; }
+        status.textContent = 'Subiendo…';
+        form.querySelector('button[type=submit]').disabled = true;
+        var dataBase64 = await new Promise(function (ok) {
+          var fr = new FileReader();
+          fr.onload = function () { ok(String(fr.result).split(',')[1]); };
+          fr.readAsDataURL(file);
+        });
+        try {
+          var r = await fetch('/api/trabajadores/' + form.dataset.worker + '/cargas/' + form.dataset.carga + '/documentos', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json', 'x-csrf-token': '{{ csrfToken }}' },
+            body: JSON.stringify({ fileName: file.name, mimeType: file.type, dataBase64: dataBase64, tipoDoc: form.querySelector('[name=tipoDoc]').value }),
+          });
+          var body = await r.json();
+          if (!r.ok || !body.success) { status.textContent = body.error || 'Error al subir'; form.querySelector('button[type=submit]').disabled = false; return; }
+          status.textContent = '✓ Subido (' + body.data.size + ') — recargando…';
+          form.querySelector('button[type=submit]').disabled = false;
+          setTimeout(function () { window.location.reload(); }, 700);
+        } catch (e) {
+          status.textContent = 'Error de red';
+        }
+      });
+    });
+  </script>
 </div>
 
 <!-- Sección de Historial de Movimientos Contractuales -->
@@ -264,12 +465,12 @@
   <table style="width: 100%; border-collapse: collapse; font-size: 0.9rem;">
     <thead>
       <tr style="background: #fafafa; border-bottom: 1px solid var(--border-color); text-align: left;">
-        <th style="padding: 0.6rem 1rem;">Fecha</th>
-        <th style="padding: 0.6rem 1rem;">Movimiento</th>
-        <th style="padding: 0.6rem 1rem;">Cargo Nuevo</th>
-        <th style="padding: 0.6rem 1rem;">Unidad Nueva</th>
-        <th style="padding: 0.6rem 1rem;">Salario Nuevo</th>
-        <th style="padding: 0.6rem 1rem;">Motivo</th>
+        <th scope="col" style="padding: 0.6rem 1rem;">Fecha</th>
+        <th scope="col" style="padding: 0.6rem 1rem;">Movimiento</th>
+        <th scope="col" style="padding: 0.6rem 1rem;">Cargo Nuevo</th>
+        <th scope="col" style="padding: 0.6rem 1rem;">Unidad Nueva</th>
+        <th scope="col" style="padding: 0.6rem 1rem;">Salario Nuevo</th>
+        <th scope="col" style="padding: 0.6rem 1rem;">Motivo</th>
       </tr>
     </thead>
     <tbody>

@@ -1,0 +1,109 @@
+{% extends "layouts/base.njk" %}
+
+{% block content %}
+<div class="page-header">
+  <div class="page-header-content">
+    <div class="page-header-icon">✅</div>
+    <div>
+      <h1 class="page-header-title">Bandeja de Aprobaciones</h1>
+      <p class="page-header-subtitle">Gestión centralizada de trámites, permisos, vacaciones y anticipos del personal.</p>
+    </div>
+  </div>
+</div>
+
+<!-- KPIs de Solicitudes -->
+<div class="kpi-grid">
+  <div class="kpi-card kpi-warning">
+    <div class="kpi-label">Pendientes por Revisar</div>
+    <div class="kpi-value">{{ pendingCount | default(0) }}</div>
+    <div class="kpi-subtext" style="color: var(--text-muted); font-size: 0.8rem; margin-top: 0.25rem;">Requieren acción de coordinación / RRHH</div>
+  </div>
+  <div class="kpi-card kpi-success">
+    <div class="kpi-label">Aprobadas este Mes</div>
+    <div class="kpi-value">{{ approvedCount | default(0) }}</div>
+    <div class="kpi-subtext" style="color: var(--text-muted); font-size: 0.8rem; margin-top: 0.25rem;">Trámites procesados exitosamente</div>
+  </div>
+  <div class="kpi-card">
+    <div class="kpi-label">Rechazadas</div>
+    <div class="kpi-value">{{ rejectedCount | default(0) }}</div>
+    <div class="kpi-subtext" style="color: var(--text-muted); font-size: 0.8rem; margin-top: 0.25rem;">Con observaciones emitidas</div>
+  </div>
+</div>
+
+<!-- Listado de Solicitudes Pendientes -->
+<div class="card">
+  <div class="card-header">
+    <h3 class="card-title">⏳ Solicitudes Pendientes de Aprobación</h3>
+  </div>
+
+  {% if pendingRequests and pendingRequests.length > 0 %}
+    <div class="table-responsive">
+      <table class="qrh-table">
+        <thead>
+          <tr>
+            <th>Trabajador</th>
+            <th>Trámite</th>
+            <th>Período Solicitado</th>
+            <th>Días / Monto</th>
+            <th>Justificación</th>
+            <th>Fecha Registro</th>
+            <th scope="col" style="text-align: right;">Acciones</th>
+          </tr>
+        </thead>
+        <tbody>
+          {% for req in pendingRequests %}
+          <tr>
+            <td>
+              <div style="font-weight: 700; color: var(--text-color);">{{ req.workerName }}</div>
+              <div style="font-size: 0.775rem; color: var(--text-muted);">{{ req.workerCedula }} &bull; {{ req.workerDepartment }}</div>
+            </td>
+            <td>
+              <span class="badge" style="background: #e0f2fe; color: #0284c7; padding: 0.2rem 0.5rem; border-radius: 4px; font-weight: 700; font-size: 0.75rem;">
+                {{ req.tipo }}
+              </span>
+            </td>
+            <td style="font-size: 0.85rem;">{{ req.fechaDesde }} al {{ req.fechaHasta }}</td>
+            <td style="font-weight: 600;">
+              {% if req.montoSolicitado %}
+                Bs. {{ req.montoSolicitado }}
+              {% else %}
+                {{ req.diasSolicitados | default(1) }} días hábiles
+              {% endif %}
+            </td>
+            <td style="max-width: 250px; font-size: 0.825rem; color: var(--text-medium);">
+              {{ req.motivo }}
+            </td>
+            <td style="color: var(--text-muted); font-size: 0.8rem;">{{ req.createdAt }}</td>
+            <td style="text-align: right;">
+              <div style="display: inline-flex; gap: 0.4rem;">
+                <!-- Formulario Aprobar -->
+                <form action="/aprobaciones/{{ req.id }}/aprobar" method="POST" style="margin:0;">
+                  {% if csrfToken %}<input type="hidden" name="_csrf" value="{{ csrfToken }}">{% endif %}
+                  <button type="submit" class="btn btn-sm" style="background: #16a34a; color: white; border: none; border-radius: 4px; padding: 0.35rem 0.65rem; font-weight: 600; font-size: 0.8rem; cursor: pointer;">
+                    ✓ Aprobar
+                  </button>
+                </form>
+
+                <!-- Formulario Rechazar -->
+                <form action="/aprobaciones/{{ req.id }}/rechazar" method="POST" style="margin:0;">
+                  {% if csrfToken %}<input type="hidden" name="_csrf" value="{{ csrfToken }}">{% endif %}
+                  <button type="submit" class="btn btn-sm" style="background: #fee2e2; color: #dc2626; border: 1px solid #fca5a5; border-radius: 4px; padding: 0.35rem 0.65rem; font-weight: 600; font-size: 0.8rem; cursor: pointer;">
+                    ✕ Rechazar
+                  </button>
+                </form>
+              </div>
+            </td>
+          </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+    </div>
+  {% else %}
+    <div style="text-align: center; padding: 3rem 1rem;">
+      <div style="font-size: 2.5rem; margin-bottom: 0.75rem;">🎉</div>
+      <h4 style="font-size: 1.1rem; font-weight: 700; margin-bottom: 0.25rem;">Bandeja al día</h4>
+      <p style="color: var(--text-muted); font-size: 0.875rem;">No tienes solicitudes pendientes de aprobación en este momento.</p>
+    </div>
+  {% endif %}
+</div>
+{% endblock %}

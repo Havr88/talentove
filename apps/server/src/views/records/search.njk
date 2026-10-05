@@ -1,0 +1,117 @@
+{% extends "layouts/base.njk" %}
+
+{% block content %}
+<div class="page-header">
+  <div class="page-header-content">
+    <div class="page-header-icon" style="background: #e0f2fe; color: #0284c7;">🔍</div>
+    <div>
+      <h1 class="page-header-title">Búsqueda de Expedientes</h1>
+      <p class="page-header-subtitle">Busca un trabajador para ver los documentos de su expediente.</p>
+    </div>
+  </div>
+  <div class="page-header-actions">
+    <a href="/expedientes/cargar" class="btn btn-primary" style="background: #ea580c; border-color: #ea580c;">
+      📤 Cargar Documento
+    </a>
+  </div>
+</div>
+
+<!-- Selector de Trabajador -->
+<div class="card">
+  <form method="GET" action="/expedientes/buscar" style="display: flex; gap: 1rem; align-items: flex-end; flex-wrap: wrap;">
+    <div style="flex: 1; min-width: 250px;">
+      <label for="workerId" style="display: block; font-size: 0.85rem; font-weight: 600; margin-bottom: 0.35rem;">
+        Seleccionar o Buscar Trabajador:
+      </label>
+      <select id="workerId" name="workerId" class="form-control" onchange="this.form.submit()">
+        <option value="">-- Elige un trabajador para consultar su expediente --</option>
+        {% for w in allWorkers %}
+          <option value="{{ w.id }}" {% if selectedWorker and selectedWorker.id == w.id %}selected{% endif %}>
+            {{ w.cedulaTipo }}-{{ w.cedulaNumero }} &bull; {{ w.nombres }} {{ w.apellidos }}
+          </option>
+        {% endfor %}
+      </select>
+    </div>
+    <button type="submit" class="btn btn-primary">🔍 Consultar</button>
+  </form>
+</div>
+
+{% if not selectedWorker %}
+  <div class="card" style="text-align: center; padding: 3rem 1.5rem; border-style: dashed; color: var(--text-muted);">
+    <div style="font-size: 2.5rem; margin-bottom: 0.75rem;">📁</div>
+    <h3 style="font-size: 1.15rem; font-weight: 700; color: var(--text-color); margin-bottom: 0.25rem;">Esperando Selección</h3>
+    <p style="font-size: 0.875rem;">Por favor, busca y selecciona un trabajador en el menú superior para ver los documentos de su expediente digital.</p>
+  </div>
+{% else %}
+  <!-- Ficha del Trabajador Seleccionado -->
+  <div class="card" style="border-left: 4px solid var(--primary-light);">
+    <div style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 1rem;">
+      <div style="display: flex; align-items: center; gap: 1rem;">
+        <div class="page-header-icon" style="background: #eff6ff; color: #2563eb;">👤</div>
+        <div>
+          <h2 style="font-size: 1.35rem; font-weight: 700; color: var(--text-color); margin: 0;">
+            {{ selectedWorker.nombres }} {{ selectedWorker.apellidos }}
+          </h2>
+          <p style="color: var(--text-muted); font-size: 0.875rem; margin-top: 0.25rem;">
+            Cédula: <strong>{{ selectedWorker.cedulaTipo }}-{{ selectedWorker.cedulaNumero }}</strong> &bull; Estado: <strong style="color: #16a34a;">{{ selectedWorker.status | upper }}</strong>
+          </p>
+        </div>
+      </div>
+      <div style="display: flex; gap: 0.5rem;">
+        <a href="/trabajadores/{{ selectedWorker.id }}" class="btn btn-outline btn-sm">Ver Expediente Completo</a>
+        <a href="/expedientes/cargar?workerId={{ selectedWorker.id }}" class="btn btn-accent btn-sm">➕ Adjuntar Archivo</a>
+      </div>
+    </div>
+  </div>
+
+  <!-- Documentos Digitales del Expediente -->
+  <div class="qrh-table-card">
+    <div style="padding: 1.25rem 1.5rem; border-bottom: 1px solid var(--border-color); display: flex; justify-content: space-between; align-items: center;">
+      <h3 style="font-size: 1.1rem; font-weight: 700; margin: 0; color: var(--text-color);">Documentos Digitalizados</h3>
+      <span class="qrh-badge">{{ documents.length }} archivos</span>
+    </div>
+
+    <table class="qrh-table">
+      <thead>
+        <tr>
+          <th>Documento / Nombre</th>
+          <th>Tipo / Categoría</th>
+          <th>Fecha Registro</th>
+          <th>Tamaño</th>
+          <th scope="col" style="text-align: right;">Acciones</th>
+        </tr>
+      </thead>
+      <tbody>
+        {% if documents.length == 0 %}
+          <tr>
+            <td colspan="5" style="text-align: center; color: var(--text-muted); padding: 2.5rem;">
+              No se han cargado documentos en el expediente de este trabajador todavía.
+            </td>
+          </tr>
+        {% else %}
+          {% for doc in documents %}
+            <tr>
+              <td style="font-weight: 600;">
+                <div style="display: flex; align-items: center; gap: 0.5rem;">
+                  <span>📄</span>
+                  <span>{{ doc.name }}</span>
+                </div>
+              </td>
+              <td>
+                <span class="qrh-badge" style="background: #e0f2fe; color: #0369a1;">{{ doc.type }}</span>
+              </td>
+              <td style="color: var(--text-muted); font-size: 0.825rem;">{{ doc.date }}</td>
+              <td style="font-family: monospace; font-size: 0.8rem; color: var(--text-muted);">{{ doc.size }}</td>
+              <td style="text-align: right;">
+                <a href="{{ doc.downloadUrl or '#' }}" class="btn btn-outline btn-sm">
+                  <span>Descargar</span>
+                </a>
+              </td>
+            </tr>
+          {% endfor %}
+        {% endif %}
+      </tbody>
+    </table>
+  </div>
+{% endif %}
+{% endblock %}

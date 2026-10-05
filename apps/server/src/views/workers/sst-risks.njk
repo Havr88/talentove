@@ -1,0 +1,112 @@
+{% extends "layouts/base.njk" %}
+
+{% block content %}
+<div style="margin-bottom: 1.5rem;">
+  <a href="/trabajadores/{{ employee.id }}" style="color: var(--text-muted); font-size: 0.875rem; text-decoration: none;">
+    &larr; Volver al Expediente de {{ employee.nombres }} {{ employee.apellidos }}
+  </a>
+  <div style="display: flex; justify-content: space-between; align-items: flex-start; margin-top: 0.5rem; flex-wrap: wrap; gap: 1rem;">
+    <div>
+      <h1 style="font-size: 1.5rem; font-weight: 700; color: var(--text-color);">
+        Notificación de Riesgos Laborales (LOPCYMAT Art. 56)
+      </h1>
+      <p style="color: var(--text-muted); font-size: 0.875rem;">
+        Trabajador: <strong>{{ employee.cedulaTipo }}-{{ employee.cedulaNumero }} &bull; {{ employee.nombres }} {{ employee.apellidos }}</strong> &bull; Cargo: <strong>{{ notification.positionTitle }}</strong>
+      </p>
+    </div>
+    <div style="display: flex; gap: 0.75rem;">
+      <a href="/trabajadores/{{ employee.id }}/riesgos-lopcymat/pdf" target="_blank" class="btn btn-accent">
+        📄 Descargar Acta Oficial PDF
+      </a>
+    </div>
+  </div>
+</div>
+
+{% if success %}
+  <div class="alert-success" style="padding: 1rem; background: #ecfdf5; border: 1px solid #10b981; border-radius: 6px; color: #065f46; margin-bottom: 1rem;">
+    {{ success }}
+  </div>
+{% endif %}
+
+<div style="display: grid; grid-template-columns: 2fr 1fr; gap: 1.5rem;">
+  <div>
+    <!-- Riesgos Identificados -->
+    <div class="card" style="background: white; border: 1px solid var(--border-color); border-radius: var(--radius-md); padding: 1.5rem; margin-bottom: 1.5rem;">
+      <h3 style="font-size: 1.1rem; color: #b91c1c; font-weight: 700; margin-bottom: 1rem; display: flex; align-items: center; gap: 0.5rem;">
+        <span>⚠️</span> 1. Riesgos Específicos Inherentes al Puesto
+      </h3>
+      <ul style="padding-left: 1.25rem; font-size: 0.9rem; line-height: 1.6; color: #334155;">
+        {% for risk in notification.risksIdentified %}
+          <li style="margin-bottom: 0.5rem;">{{ risk }}</li>
+        {% endfor %}
+      </ul>
+    </div>
+
+    <!-- Medidas Preventivas -->
+    <div class="card" style="background: white; border: 1px solid var(--border-color); border-radius: var(--radius-md); padding: 1.5rem; margin-bottom: 1.5rem;">
+      <h3 style="font-size: 1.1rem; color: #0284c7; font-weight: 700; margin-bottom: 1rem; display: flex; align-items: center; gap: 0.5rem;">
+        <span>🛡️</span> 2. Medidas Preventivas y Protocolos COVENIN
+      </h3>
+      <ul style="padding-left: 1.25rem; font-size: 0.9rem; line-height: 1.6; color: #334155;">
+        {% for m in notification.preventiveMeasures %}
+          <li style="margin-bottom: 0.5rem;">{{ m }}</li>
+        {% endfor %}
+      </ul>
+    </div>
+
+    <!-- EPP Requerido -->
+    <div class="card" style="background: white; border: 1px solid var(--border-color); border-radius: var(--radius-md); padding: 1.5rem;">
+      <h3 style="font-size: 1.1rem; color: #16a34a; font-weight: 700; margin-bottom: 1rem; display: flex; align-items: center; gap: 0.5rem;">
+        <span>🥽</span> 3. Equipos de Protección y Ergonomía
+      </h3>
+      <ul style="padding-left: 1.25rem; font-size: 0.9rem; line-height: 1.6; color: #334155;">
+        {% for epp in notification.eppRequired %}
+          <li style="margin-bottom: 0.5rem;">{{ epp }}</li>
+        {% endfor %}
+      </ul>
+    </div>
+  </div>
+
+  <!-- Estado y Firma -->
+  <div>
+    <div class="card" style="background: white; border: 1px solid var(--border-color); border-radius: var(--radius-md); padding: 1.5rem;">
+      <h3 style="font-size: 1.05rem; font-weight: 700; color: var(--text-color); margin-bottom: 1rem;">
+        Estado de la Notificación
+      </h3>
+
+      <div style="margin-bottom: 1.25rem;">
+        <span style="font-size: 0.8rem; text-transform: uppercase; color: var(--text-muted); font-weight: 700;">Firma del Trabajador:</span>
+        <div style="margin-top: 0.25rem;">
+          {% if notification.signedByWorker %}
+            <span style="display: inline-block; padding: 0.25rem 0.6rem; border-radius: 9999px; background: #dcfce7; color: #166534; font-weight: 700; font-size: 0.8rem;">
+              ✅ Notificado y Aceptado
+            </span>
+            <div style="font-size: 0.8rem; color: var(--text-muted); margin-top: 0.25rem;">
+              Fecha: {{ notification.acknowledgedAt }}
+            </div>
+          {% else %}
+            <span style="display: inline-block; padding: 0.25rem 0.6rem; border-radius: 9999px; background: #fef3c7; color: #92400e; font-weight: 700; font-size: 0.8rem;">
+              ⏳ Pendiente de Reconocimiento
+            </span>
+          {% endif %}
+        </div>
+      </div>
+
+      {% if not notification.signedByWorker %}
+        <form method="POST" action="/trabajadores/{{ employee.id }}/riesgos-lopcymat/reconocer">
+          <input type="hidden" name="notificationId" value="{{ notification.id }}">
+          <button type="submit" class="btn btn-primary" style="width: 100%; justify-content: center;">
+            ✍️ Registrar Acuse de Recibo
+          </button>
+        </form>
+      {% endif %}
+
+      <hr style="border: 0; border-top: 1px solid var(--border-color); margin: 1.25rem 0;">
+
+      <div style="font-size: 0.78rem; color: var(--text-muted); line-height: 1.5;">
+        <strong>Marco Legal LOPCYMAT:</strong> El empleador tiene la obligación estricta de notificar por escrito los riesgos al ingresar el trabajador o al cambiar sus labores (Art. 56 numeral 3 y 4). La omisión constituye infracción muy grave conforme al Art. 119.
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock %}

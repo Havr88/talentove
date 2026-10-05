@@ -1,0 +1,156 @@
+{% extends "layouts/base.njk" %}
+
+{% block content %}
+<div style="margin-bottom: 1.5rem;">
+  <a href="/trabajadores/{{ employee.id }}" style="color: var(--text-muted); font-size: 0.875rem; text-decoration: none;">
+    &larr; Volver al Expediente de {{ employee.nombres }} {{ employee.apellidos }}
+  </a>
+  <div style="display: flex; justify-content: space-between; align-items: flex-start; margin-top: 0.5rem; flex-wrap: wrap; gap: 1rem;">
+    <div>
+      <h1 style="font-size: 1.5rem; font-weight: 700; color: var(--text-color);">
+        Liquidación de Prestaciones Sociales (LOTTT Art. 142) & Offboarding
+      </h1>
+      <p style="color: var(--text-muted); font-size: 0.875rem;">
+        Trabajador: <strong>{{ employee.cedulaTipo }}-{{ employee.cedulaNumero }} &bull; {{ employee.nombres }} {{ employee.apellidos }}</strong> &bull; Ingreso: <strong>{{ contract.hireDate }}</strong>
+      </p>
+    </div>
+  </div>
+</div>
+
+<div style="display: grid; grid-template-columns: 1fr 2fr; gap: 1.5rem;">
+  <!-- Formulario de Parámetros de Egreso -->
+  <div class="card" style="background: white; border: 1px solid var(--border-color); border-radius: var(--radius-md); padding: 1.5rem; height: fit-content;">
+    <h3 style="font-size: 1.1rem; font-weight: 700; margin-bottom: 1rem; color: var(--text-color);">
+      Parámetros de Liquidación
+    </h3>
+
+    <form method="POST" action="/trabajadores/{{ employee.id }}/liquidacion/calcular">
+      <div style="margin-bottom: 1rem;">
+        <label style="display: block; font-size: 0.85rem; font-weight: 600; margin-bottom: 0.25rem;">Fecha de Cese / Egreso:</label>
+        <input type="date" name="terminationDate" value="{{ params.terminationDate or todayIso }}" required class="form-control" style="width: 100%; padding: 0.5rem; border: 1px solid var(--border-color); border-radius: 4px;">
+      </div>
+
+      <div style="margin-bottom: 1rem;">
+        <label style="display: block; font-size: 0.85rem; font-weight: 600; margin-bottom: 0.25rem;">Motivo del Cese:</label>
+        <select name="reason" class="form-control" style="width: 100%; padding: 0.5rem; border: 1px solid var(--border-color); border-radius: 4px;">
+          <option value="resignation" {% if params.reason == 'resignation' %}selected{% endif %}>Renuncia Voluntaria (Art. 142)</option>
+          <option value="unjustified_dismissal" {% if params.reason == 'unjustified_dismissal' %}selected{% endif %}>Despido Injustificado (+ Doblete Art. 92)</option>
+          <option value="justified_dismissal" {% if params.reason == 'justified_dismissal' %}selected{% endif %}>Despido Justificado (Art. 79)</option>
+          <option value="contract_expiration" {% if params.reason == 'contract_expiration' %}selected{% endif %}>Vencimiento de Contrato Determinado</option>
+          <option value="mutual_agreement" {% if params.reason == 'mutual_agreement' %}selected{% endif %}>Mutuo Acuerdo</option>
+        </select>
+      </div>
+
+      <div style="margin-bottom: 1rem;">
+        <label style="display: block; font-size: 0.85rem; font-weight: 600; margin-bottom: 0.25rem;">Días de Salario Pendiente (opcional):</label>
+        <input type="number" name="unpaidSalaryDays" value="{{ params.unpaidSalaryDays or 0 }}" min="0" class="form-control" style="width: 100%; padding: 0.5rem; border: 1px solid var(--border-color); border-radius: 4px;">
+      </div>
+
+      <div style="margin-bottom: 1rem;">
+        <label style="display: block; font-size: 0.85rem; font-weight: 600; margin-bottom: 0.25rem;">Días de Vacaciones Pendientes Acumuladas:</label>
+        <input type="number" name="pendingVacationDays" value="{{ params.pendingVacationDays or 0 }}" min="0" class="form-control" style="width: 100%; padding: 0.5rem; border: 1px solid var(--border-color); border-radius: 4px;">
+      </div>
+
+      <div style="margin-bottom: 1.25rem;">
+        <label style="display: block; font-size: 0.85rem; font-weight: 600; margin-bottom: 0.25rem;">Otras Deducciones (Bs., préstamos/activos):</label>
+        <input type="number" step="0.01" name="otherDeductions" value="{{ params.otherDeductions or 0 }}" min="0" class="form-control" style="width: 100%; padding: 0.5rem; border: 1px solid var(--border-color); border-radius: 4px;">
+      </div>
+
+      <button type="submit" class="btn btn-primary" style="width: 100%; justify-content: center;">
+        ⚙️ Recalcular Liquidación
+      </button>
+    </form>
+  </div>
+
+  <!-- Resultados del Cálculo -->
+  <div>
+    {% if calculation %}
+      <!-- Resumen de Bases -->
+      <div style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 1rem; margin-bottom: 1.5rem;">
+        <div class="card" style="background: white; border: 1px solid var(--border-color); border-radius: var(--radius-md); padding: 1rem;">
+          <div style="font-size: 0.75rem; text-transform: uppercase; color: var(--text-muted); font-weight: 700;">Antigüedad Exacta</div>
+          <div style="font-size: 1.05rem; font-weight: 700; color: var(--text-color); margin-top: 0.25rem;">
+            {{ calculation.duration.years }}a {{ calculation.duration.months }}m {{ calculation.duration.days }}d
+          </div>
+        </div>
+        <div class="card" style="background: white; border: 1px solid var(--border-color); border-radius: var(--radius-md); padding: 1rem;">
+          <div style="font-size: 0.75rem; text-transform: uppercase; color: var(--text-muted); font-weight: 700;">Salario Diario Integral</div>
+          <div style="font-size: 1.2rem; font-weight: 700; color: #0284c7; margin-top: 0.25rem;">
+            {{ calculation.dailyComprehensiveSalary.toFixed(2) }} Bs
+          </div>
+        </div>
+        <div class="card" style="background: #ecfdf5; border: 1px solid #a7f3d0; border-radius: var(--radius-md); padding: 1rem;">
+          <div style="font-size: 0.75rem; text-transform: uppercase; color: #047857; font-weight: 700;">Neto Liquidación</div>
+          <div style="font-size: 1.25rem; font-weight: 800; color: #065f46; margin-top: 0.25rem;">
+            {{ calculation.netSettlement.toFixed(2) }} Bs
+          </div>
+        </div>
+      </div>
+
+      <!-- Tabla de Conceptos -->
+      <div class="card" style="background: white; border: 1px solid var(--border-color); border-radius: var(--radius-lg); padding: 1.5rem; margin-bottom: 1.5rem;">
+        <h3 style="font-size: 1.1rem; font-weight: 600; margin-bottom: 1rem; color: var(--text-color);">
+          Desglose Legal de Conceptos (LOTTT Art. 142)
+        </h3>
+
+        <table style="width: 100%; border-collapse: collapse; font-size: 0.875rem;">
+          <thead>
+            <tr style="border-bottom: 2px solid var(--border-color); color: var(--text-muted); text-align: left;">
+              <th scope="col" style="padding: 0.6rem 0.5rem;">Concepto</th>
+              <th scope="col" style="padding: 0.6rem 0.5rem; text-align: right;">Días</th>
+              <th scope="col" style="padding: 0.6rem 0.5rem; text-align: right;">Monto</th>
+            </tr>
+          </thead>
+          <tbody>
+            {% for c in calculation.concepts %}
+              <tr style="border-bottom: 1px solid var(--border-color);">
+                <td style="padding: 0.6rem 0.5rem; font-weight: 500;">{{ c.name }}</td>
+                <td style="padding: 0.6rem 0.5rem; text-align: right; font-family: monospace;">{{ c.days }}</td>
+                <td style="padding: 0.6rem 0.5rem; text-align: right; font-family: monospace; font-weight: 600; color: {% if c.amount < 0 %}#b91c1c{% else %}#0f172a{% endif %};">
+                  {{ c.amount.toFixed(2) }} Bs
+                </td>
+              </tr>
+            {% endfor %}
+          </tbody>
+          <tfoot>
+            <tr style="font-weight: 800; font-size: 1rem; border-top: 2px solid var(--text-color);">
+              <td style="padding: 0.75rem 0.5rem;">Total Finiquito Neto:</td>
+              <td style="padding: 0.75rem 0.5rem;"></td>
+              <td style="padding: 0.75rem 0.5rem; text-align: right; font-family: monospace; color: #047857;">
+                {{ calculation.netSettlement.toFixed(2) }} Bs
+              </td>
+            </tr>
+          </tfoot>
+        </table>
+      </div>
+
+      <!-- Acciones de Descarga Oficial -->
+      <div style="display: flex; gap: 1rem; flex-wrap: wrap;">
+        <form method="POST" action="/trabajadores/{{ employee.id }}/liquidacion/finiquito/pdf" target="_blank" style="flex: 1;">
+          <input type="hidden" name="terminationDate" value="{{ params.terminationDate }}">
+          <input type="hidden" name="reason" value="{{ params.reason }}">
+          <input type="hidden" name="unpaidSalaryDays" value="{{ params.unpaidSalaryDays }}">
+          <input type="hidden" name="pendingVacationDays" value="{{ params.pendingVacationDays }}">
+          <input type="hidden" name="otherDeductions" value="{{ params.otherDeductions }}">
+          <button type="submit" class="btn btn-primary" style="width: 100%; justify-content: center;">
+            📄 Descargar Finiquito Legal LOTTT (PDF)
+          </button>
+        </form>
+
+        <form method="POST" action="/trabajadores/{{ employee.id }}/liquidacion/forma14-100/pdf" target="_blank" style="flex: 1;">
+          <input type="hidden" name="terminationDate" value="{{ params.terminationDate }}">
+          <input type="hidden" name="reason" value="{{ params.reason }}">
+          <button type="submit" class="btn btn-accent" style="width: 100%; justify-content: center;">
+            🏛️ Descargar Forma 14-100 IVSS (PDF)
+          </button>
+        </form>
+      </div>
+    {% else %}
+      <div class="card" style="background: white; border: 1px dashed var(--border-color); border-radius: var(--radius-md); padding: 2.5rem; text-align: center; color: var(--text-muted);">
+        <p style="font-size: 1.1rem; margin-bottom: 0.5rem;">Selecciona los parámetros de fecha de cese y motivo en el formulario izquierdo para calcular el finiquito de prestaciones.</p>
+        <span style="font-size: 0.85rem;">Incluye garantía LOTTT Art. 142, vacaciones/bono vacacional y utilidades fraccionadas e indemnización Art. 92 en caso de despido.</span>
+      </div>
+    {% endif %}
+  </div>
+</div>
+{% endblock %}

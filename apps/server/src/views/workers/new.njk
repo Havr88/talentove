@@ -27,7 +27,7 @@
         </div>
         <div class="form-group">
           <label for="cedulaNumero">Cédula de Identidad *</label>
-          <input type="text" id="cedulaNumero" name="cedulaNumero" class="form-control" required value="{{ values.cedulaNumero | default('') }}" placeholder="12345678">
+          <input type="text" id="cedulaNumero" name="cedulaNumero" class="form-control" required inputmode="numeric" pattern="[0-9]+" autocomplete="off" value="{{ values.cedulaNumero | default('') }}" placeholder="12345678…">
         </div>
         <div class="form-group">
           <label for="rif">RIF (Opcional)</label>
@@ -38,18 +38,18 @@
       <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1rem;">
         <div class="form-group">
           <label for="nombres">Nombres *</label>
-          <input type="text" id="nombres" name="nombres" class="form-control" required value="{{ values.nombres | default('') }}">
+          <input type="text" id="nombres" name="nombres" class="form-control" required autocomplete="given-name" value="{{ values.nombres | default('') }}">
         </div>
         <div class="form-group">
           <label for="apellidos">Apellidos *</label>
-          <input type="text" id="apellidos" name="apellidos" class="form-control" required value="{{ values.apellidos | default('') }}">
+          <input type="text" id="apellidos" name="apellidos" class="form-control" required autocomplete="family-name" value="{{ values.apellidos | default('') }}">
         </div>
       </div>
 
       <div style="display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 1rem;">
         <div class="form-group">
           <label for="fechaNacimiento">Fecha de Nacimiento *</label>
-          <input type="date" id="fechaNacimiento" name="fechaNacimiento" class="form-control" required value="{{ values.fechaNacimiento | default('') }}">
+          <input type="date" id="fechaNacimiento" name="fechaNacimiento" class="form-control" required autocomplete="bday" value="{{ values.fechaNacimiento | default('') }}">
         </div>
         <div class="form-group">
           <label for="sexo">Sexo *</label>
@@ -73,11 +73,11 @@
       <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1rem;">
         <div class="form-group">
           <label for="correo">Correo Electrónico</label>
-          <input type="email" id="correo" name="correo" class="form-control" value="{{ values.correo | default('') }}">
+          <input type="email" id="correo" name="correo" class="form-control" autocomplete="email" spellcheck="false" value="{{ values.correo | default('') }}">
         </div>
         <div class="form-group">
           <label for="telefono">Teléfono de Contacto</label>
-          <input type="text" id="telefono" name="telefono" class="form-control" value="{{ values.telefono | default('') }}" placeholder="+58 412-1234567">
+          <input type="tel" id="telefono" name="telefono" class="form-control" autocomplete="tel" inputmode="tel" value="{{ values.telefono | default('') }}" placeholder="+58 412-1234567">
         </div>
       </div>
 
@@ -92,7 +92,7 @@
         </div>
         <div class="form-group">
           <label for="direccion">Dirección de Habitación *</label>
-          <input type="text" id="direccion" name="direccion" class="form-control" required value="{{ values.direccion | default('') }}" placeholder="Municipio, sector, calle, edificio...">
+          <input type="text" id="direccion" name="direccion" class="form-control" required autocomplete="street-address" value="{{ values.direccion | default('') }}" placeholder="Municipio, sector, calle, edificio...">
         </div>
       </div>
 
@@ -100,12 +100,57 @@
 
       <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1rem;">
         <div class="form-group">
-          <label for="cargo">Denominación del Cargo *</label>
-          <input type="text" id="cargo" name="cargo" class="form-control" required value="{{ values.cargo | default('') }}" placeholder="Ej. Analista de Nómina">
+          <label for="positionId">Denominación del Cargo * (nomenclador institucional)</label>
+          <select id="positionId" name="positionId" class="form-control" required>
+            <option value="">— Seleccione el cargo —</option>
+            {% set currentCat = '' %}
+            {% for pos in positions %}
+              {% if pos.categoria != currentCat %}
+                {% if currentCat != '' %}</optgroup>{% endif %}
+                {% set currentCat = pos.categoria %}
+                <optgroup label="{{ pos.categoria }}">
+              {% endif %}
+              <option value="{{ pos.id }}">{{ pos.name }}</option>
+            {% endfor %}
+            {% if currentCat != '' %}</optgroup>{% endif %}
+          </select>
         </div>
         <div class="form-group">
-          <label for="unidad">Unidad Organizativa / Departamento *</label>
-          <input type="text" id="unidad" name="unidad" class="form-control" required value="{{ values.unidad | default('') }}" placeholder="Ej. Recursos Humanos">
+          <label for="orgUnitId">Unidad Organizativa / Departamento * (organigrama)</label>
+          <select id="orgUnitId" name="orgUnitId" class="form-control" required>
+            <option value="">— Seleccione la unidad —</option>
+            {% for u in orgUnits %}
+              <option value="{{ u.id }}">{{ u.name }}</option>
+            {% endfor %}
+          </select>
+        </div>
+      </div>
+
+      <div style="display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 1rem;">
+        <div class="form-group">
+          <label for="gradoInstruccion">Grado de Instrucción (prima de profesionalización)</label>
+          <select id="gradoInstruccion" name="gradoInstruccion" class="form-control">
+            <option value="">— Sin especificar —</option>
+            <option value="BACH">Bachiller (0%)</option>
+            <option value="TSU">T.S.U. (20%)</option>
+            <option value="PROF">Profesional Universitario (25%)</option>
+            <option value="ESPEC">Especialista (30%)</option>
+            <option value="MGS">Magíster (35%)</option>
+            <option value="DOCT">Doctor(a) (40%)</option>
+          </select>
+        </div>
+        <div class="form-group">
+          <label for="condicionLaboral">Condición Laboral (constancias)</label>
+          <select id="condicionLaboral" name="condicionLaboral" class="form-control">
+            <option value="">— Sin especificar —</option>
+            {% for c in condiciones %}
+              <option value="{{ c.etiqueta }}">{{ c.etiqueta }}</option>
+            {% endfor %}
+          </select>
+        </div>
+        <div class="form-group">
+          <label for="fechaIngresoApn">Ingreso Adm. Pública (antigüedad total)</label>
+          <input type="date" id="fechaIngresoApn" name="fechaIngresoApn" class="form-control" value="{{ values.fechaIngresoApn | default('') }}">
         </div>
       </div>
 
@@ -126,8 +171,14 @@
           </select>
         </div>
         <div class="form-group">
-          <label for="fechaIngreso">Fecha de Ingreso *</label>
+          <label for="fechaIngreso">Fecha de Ingreso a la Institución *</label>
           <input type="date" id="fechaIngreso" name="fechaIngreso" class="form-control" required value="{{ values.fechaIngreso | default('') }}">
+        </div>
+      </div>
+      <div style="display: grid; grid-template-columns: 1fr; gap: 1rem;" id="fechaFinWrap">
+        <div class="form-group">
+          <label for="fechaFin">Fecha de Fin de Contrato (solo tiempo determinado)</label>
+          <input type="date" id="fechaFin" name="fechaFin" class="form-control" value="{{ values.fechaFin | default('') }}">
         </div>
       </div>
 
@@ -144,6 +195,44 @@
           </select>
         </div>
       </div>
+
+      <h3 style="font-size: 1.1rem; border-bottom: 2px solid var(--border-color); padding-bottom: 0.5rem; margin-top: 2rem; margin-bottom: 1.25rem;">3. Cuenta Bancaria (pago de nómina — opcional)</h3>
+
+      <div style="display: grid; grid-template-columns: 2fr 1fr 1fr; gap: 1rem;">
+        <div class="form-group">
+          <label for="bancoCodigo">Banco (código SUDEBAN)</label>
+          <select id="bancoCodigo" name="bancoCodigo" class="form-control" data-bancos>
+            <option value="">— Sin cuenta registrada —</option>
+            {% for b in bancos %}
+              <option value="{{ b.codigo }}" data-nombre="{{ b.nombre }}">{{ b.codigo }} — {{ b.nombre }}</option>
+            {% endfor %}
+          </select>
+        </div>
+        <div class="form-group">
+          <label for="tipoCuenta">Tipo de Cuenta</label>
+          <select id="tipoCuenta" name="tipoCuenta" class="form-control">
+            <option value="corriente">Corriente</option>
+            <option value="ahorro">Ahorro</option>
+            <option value="pago_movil">Pago Móvil</option>
+          </select>
+        </div>
+        <div class="form-group">
+          <label for="numeroCuenta">Número (20 dígitos)</label>
+          <input type="text" id="numeroCuenta" name="numeroCuenta" class="form-control" maxlength="20" inputmode="numeric" pattern="[0-9]+" autocomplete="off" placeholder="0102 0123 456789012345" value="{{ values.numeroCuenta | default('') }}">
+        </div>
+      </div>
+      <input type="hidden" name="bancoNombre" id="bancoNombre" value="">
+
+      <script>
+        document.getElementById('tipoContrato').addEventListener('change', function () {
+          document.getElementById('fechaFinWrap').style.display = this.value === 'determinado' ? '' : 'none';
+        });
+        var selBanco = document.getElementById('bancoCodigo');
+        selBanco.addEventListener('change', function () {
+          var opt = selBanco.selectedOptions[0];
+          document.getElementById('bancoNombre').value = opt ? (opt.dataset.nombre || '') : '';
+        });
+      </script>
 
       <div style="margin-top: 2rem; display: flex; justify-content: flex-end; gap: 0.75rem;">
         <a href="/trabajadores" class="btn btn-outline">Cancelar</a>

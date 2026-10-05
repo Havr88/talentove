@@ -1,0 +1,153 @@
+{% extends "layouts/base.njk" %}
+
+{% block content %}
+<div class="row">
+  <div class="col s12">
+    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 24px;">
+      <div>
+        <h4 style="margin: 0; font-weight: 700; color: #1a237e;">Evaluación de Desempeño</h4>
+        <p style="margin: 4px 0 0; color: #546e7a;">Medición periódica por cumplimiento de metas y competencias laborales</p>
+      </div>
+      <div>
+        <a href="#modal-nueva-evaluacion" class="btn waves-effect waves-light modal-trigger" style="background-color: #1565c0; border-radius: 6px;">
+          <i class="material-icons left">rate_review</i>Nueva Evaluación
+        </a>
+      </div>
+    </div>
+  </div>
+
+  <div class="col s12">
+    <div class="card z-depth-1" style="border-radius: 8px;">
+      <div class="card-content" style="padding: 24px;">
+        <span class="card-title" style="font-weight: 600; font-size: 1.2rem; color: #263238; margin-bottom: 20px;">
+          <i class="material-icons left" style="color: #1565c0;">assessment</i>Historial de Evaluaciones de Rendimiento
+        </span>
+
+        <table class="striped highlight responsive-table">
+          <thead>
+            <tr style="border-bottom: 2px solid #cfd8dc;">
+              <th>Trabajador</th>
+              <th>Período</th>
+              <th>Score Metas (60%)</th>
+              <th>Score Competencias (40%)</th>
+              <th>Calificación Final</th>
+              <th>Nivel de Mérito</th>
+              <th>Elegibilidad</th>
+            </tr>
+          </thead>
+          <tbody>
+            {% if evaluations.length > 0 %}
+              {% for ev in evaluations %}
+              <tr>
+                <td style="font-weight: 600; color: #37474f;">{{ ev.workerName }} ({{ ev.workerCedula }})</td>
+                <td><span class="chip grey lighten-3" style="font-weight: 600;">{{ ev.period }}</span></td>
+                <td>{{ ev.goalsScore }} / 5.0</td>
+                <td>{{ ev.competenciesScore }} / 5.0</td>
+                <td style="font-weight: 700; font-size: 1.1rem; color: #1565c0;">{{ ev.finalScore }} / 5.0</td>
+                <td>
+                  {% if ev.meritLevel == 'excepcional' %}
+                    <span class="chip green lighten-4 green-text text-darken-4" style="font-weight: 700;">Excepcional</span>
+                  {% elif ev.meritLevel == 'destacado' %}
+                    <span class="chip blue lighten-4 blue-text text-darken-4" style="font-weight: 600;">Destacado</span>
+                  {% elif ev.meritLevel == 'competente' %}
+                    <span class="chip amber lighten-4 amber-text text-darken-4">Competente</span>
+                  {% else %}
+                    <span class="chip red lighten-4 red-text text-darken-4">Necesita Mejora</span>
+                  {% endif %}
+                </td>
+                <td>
+                  {% if ev.isEligibleForBonus %}
+                    <span class="badge green white-text" style="border-radius: 4px; margin-right: 4px;">Bono Productividad</span>
+                  {% endif %}
+                  {% if ev.isEligibleForPromotion %}
+                    <span class="badge blue white-text" style="border-radius: 4px;">Promoción</span>
+                  {% endif %}
+                </td>
+              </tr>
+              {% endfor %}
+            {% else %}
+              <tr>
+                <td colspan="7" class="center-align grey-text" style="padding: 32px;">
+                  No hay evaluaciones de desempeño registradas para este ciclo.
+                </td>
+              </tr>
+            {% endif %}
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Modal Nueva Evaluación -->
+<div id="modal-nueva-evaluacion" class="modal modal-fixed-footer" style="border-radius: 8px; max-width: 700px;">
+  <form action="/talento/desempeno/evaluar" method="POST">
+    <div class="modal-content">
+      <h5 style="font-weight: 700; color: #1a237e; margin-top: 0;">Registrar Evaluación de Desempeño</h5>
+      <div class="row">
+        <div class="input-field col s12 m8">
+          <select name="workerId" class="browser-default" style="margin-top: 8px; border: 1px solid #cfd8dc; border-radius: 4px; padding: 8px;" required>
+            {% for emp in employees %}
+            <option value="{{ emp.id }}">{{ emp.nombres }} {{ emp.apellidos }} ({{ emp.cedulaTipo }}-{{ emp.cedulaNumero }})</option>
+            {% endfor %}
+          </select>
+          <label class="active" style="transform: translateY(-24px);">Trabajador</label>
+        </div>
+        <div class="input-field col s12 m4">
+          <input id="period" name="period" type="text" value="2026-S1" required class="validate">
+          <label for="period" class="active">Ciclo / Período</label>
+        </div>
+
+        <div class="col s12">
+          <h6 style="font-weight: 600; color: #37474f; margin-top: 16px;">1. Cumplimiento de Metas y Objetivos (Peso 60%)</h6>
+        </div>
+        <div class="input-field col s12 m6">
+          <input id="goal1Title" name="goal1Title" type="text" value="Cumplimiento del plan operativo" required>
+          <label for="goal1Title" class="active">Meta Principal</label>
+        </div>
+        <div class="input-field col s6 m3">
+          <input id="goal1Target" name="goal1Target" type="number" value="100" required>
+          <label for="goal1Target" class="active">Meta Esperada (%)</label>
+        </div>
+        <div class="input-field col s6 m3">
+          <input id="goal1Achieved" name="goal1Achieved" type="number" value="95" required>
+          <label for="goal1Achieved" class="active">Logrado (%)</label>
+        </div>
+
+        <div class="col s12">
+          <h6 style="font-weight: 600; color: #37474f; margin-top: 16px;">2. Competencias Conductuales e Institucionales (Peso 40%)</h6>
+        </div>
+        <div class="input-field col s12 m6">
+          <label class="active" style="transform: translateY(-24px);">Trabajo en Equipo y Cooperación (1-5)</label>
+          <select name="comp1Score" class="browser-default" style="margin-top: 8px; border: 1px solid #cfd8dc; border-radius: 4px; padding: 8px;">
+            <option value="5">5 - Excepcional</option>
+            <option value="4" selected>4 - Destacado</option>
+            <option value="3">3 - Competente / Esperado</option>
+            <option value="2">2 - Necesita Mejora</option>
+            <option value="1">1 - Deficiente</option>
+          </select>
+        </div>
+        <div class="input-field col s12 m6">
+          <label class="active" style="transform: translateY(-24px);">Compromiso y Ética Laboral (1-5)</label>
+          <select name="comp2Score" class="browser-default" style="margin-top: 8px; border: 1px solid #cfd8dc; border-radius: 4px; padding: 8px;">
+            <option value="5">5 - Excepcional</option>
+            <option value="4" selected>4 - Destacado</option>
+            <option value="3">3 - Competente / Esperado</option>
+            <option value="2">2 - Necesita Mejora</option>
+            <option value="1">1 - Deficiente</option>
+          </select>
+        </div>
+
+        <div class="input-field col s12">
+          <textarea id="comments" name="comments" class="materialize-textarea" placeholder="Observaciones cualitativas del supervisor"></textarea>
+          <label for="comments" class="active">Comentarios y Recomendaciones</label>
+        </div>
+      </div>
+    </div>
+    <div class="modal-footer" style="padding: 0 24px 20px;">
+      <a href="#!" class="modal-close btn-flat grey-text">Cancelar</a>
+      <button type="submit" class="btn waves-effect waves-light" style="background-color: #1565c0; border-radius: 6px;">Procesar Evaluación</button>
+    </div>
+  </form>
+</div>
+{% endblock %}

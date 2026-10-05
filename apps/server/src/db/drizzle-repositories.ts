@@ -33,8 +33,22 @@ import type {
   Session,
   Territory,
   User,
+  PayrollBatch,
+  PayrollReceiptRecord,
+  IPayrollRepository,
+  DigitalCredential,
+  IDigitalCredentialRepository,
+  HolidayRecord,
+  IHolidayRepository,
+  BankPaymentFileRecord,
+  IBankPaymentRepository,
+  AssignedAssetRecord,
+  IAssignedAssetRepository,
+  SstRiskNotificationRecord,
+  ISstRepository,
 } from './types.js';
 import * as schema from './schema.js';
+import { MemorySstRepository, MemoryJobPostingRepository, MemoryJobApplicationRepository, MemoryTrainingRepository, MemoryPerformanceRepository } from './memory-repositories.js';
 
 export class DrizzleSettingsRepository implements ISettingsRepository {
   constructor(private db: ReturnType<typeof drizzle>) {}
@@ -328,6 +342,20 @@ export class DrizzlePositionRepository implements IPositionRepository {
     return {
       ...data,
       id,
+    };
+  }
+
+  async findById(id: number): Promise<Position | null> {
+    const rows = await this.db.select().from(schema.positionsTable).where(eq(schema.positionsTable.id, id)).limit(1);
+    if (rows.length === 0) return null;
+    const r = rows[0]!;
+    return {
+      id: r.id,
+      name: r.name,
+      categoria: r.categoria,
+      grupoIsco: r.grupoIsco,
+      aplicaSector: r.aplicaSector as any,
+      activo: r.activo,
     };
   }
 
@@ -1066,6 +1094,635 @@ export class DrizzleAttendanceRepository implements IAttendanceRepository {
   }
 }
 
+export class DrizzlePayrollRepository implements IPayrollRepository {
+  constructor(private db: ReturnType<typeof drizzle>) {}
+
+  async listBatches(): Promise<PayrollBatch[]> {
+    const rows = await this.db
+      .select()
+      .from(schema.payrollsTable)
+      .orderBy(desc(schema.payrollsTable.year), desc(schema.payrollsTable.month), desc(schema.payrollsTable.createdAt));
+    return rows.map((r) => ({
+      id: r.id,
+      title: r.title,
+      periodType: r.periodType,
+      year: r.year,
+      month: r.month,
+      startDate: r.startDate,
+      endDate: r.endDate,
+      status: r.status,
+      totalEarnings: r.totalEarnings,
+      totalDeductions: r.totalDeductions,
+      totalNet: r.totalNet,
+      exchangeRateBcv: r.exchangeRateBcv,
+      processedBy: r.processedBy ?? undefined,
+      createdAt: r.createdAt,
+      updatedAt: r.updatedAt,
+    }));
+  }
+
+  async findBatchById(id: string): Promise<PayrollBatch | null> {
+    const rows = await this.db.select().from(schema.payrollsTable).where(eq(schema.payrollsTable.id, id)).limit(1);
+    if (rows.length === 0) return null;
+    const r = rows[0]!;
+    return {
+      id: r.id,
+      title: r.title,
+      periodType: r.periodType,
+      year: r.year,
+      month: r.month,
+      startDate: r.startDate,
+      endDate: r.endDate,
+      status: r.status,
+      totalEarnings: r.totalEarnings,
+      totalDeductions: r.totalDeductions,
+      totalNet: r.totalNet,
+      exchangeRateBcv: r.exchangeRateBcv,
+      processedBy: r.processedBy ?? undefined,
+      createdAt: r.createdAt,
+      updatedAt: r.updatedAt,
+    };
+  }
+
+  async createBatch(batch: Omit<PayrollBatch, 'id' | 'createdAt' | 'updatedAt'>): Promise<PayrollBatch> {
+    const id = randomUUID();
+    const now = new Date().toISOString();
+    await this.db.insert(schema.payrollsTable).values({
+      id,
+      title: batch.title,
+      periodType: batch.periodType,
+      year: batch.year,
+      month: batch.month,
+      startDate: batch.startDate,
+      endDate: batch.endDate,
+      status: batch.status,
+      totalEarnings: batch.totalEarnings,
+      totalDeductions: batch.totalDeductions,
+      totalNet: batch.totalNet,
+      exchangeRateBcv: batch.exchangeRateBcv,
+      processedBy: batch.processedBy ?? null,
+      createdAt: now,
+      updatedAt: now,
+    });
+    const created = await this.findBatchById(id);
+    return created!;
+  }
+
+  async updateBatchStatus(id: string, status: string): Promise<PayrollBatch | null> {
+    const now = new Date().toISOString();
+    await this.db.update(schema.payrollsTable).set({ status, updatedAt: now }).where(eq(schema.payrollsTable.id, id));
+    return this.findBatchById(id);
+  }
+
+  async listReceiptsByBatchId(batchId: string): Promise<PayrollReceiptRecord[]> {
+    const rows = await this.db
+      .select()
+      .from(schema.payrollReceiptsTable)
+      .where(eq(schema.payrollReceiptsTable.payrollId, batchId));
+    return rows.map((r) => ({
+      id: r.id,
+      payrollId: r.payrollId,
+      employeeId: r.employeeId,
+      snapshot: r.snapshot,
+      baseSalary: r.baseSalary,
+      educationPremium: r.educationPremium,
+      seniorityPremium: r.seniorityPremium,
+      kidsPremium: r.kidsPremium,
+      overtimePay: r.overtimePay,
+      nightBonusPay: r.nightBonusPay,
+      cestaTicket: r.cestaTicket,
+      totalEarnings: r.totalEarnings,
+      ivssDeduction: r.ivssDeduction,
+      faovDeduction: r.faovDeduction,
+      spfDeduction: r.spfDeduction,
+      absenceDeduction: r.absenceDeduction,
+      totalDeductions: r.totalDeductions,
+      netPay: r.netPay,
+      netPayUsd: r.netPayUsd,
+      status: r.status,
+      createdAt: r.createdAt,
+    }));
+  }
+
+  async listReceiptsByEmployeeId(employeeId: string): Promise<PayrollReceiptRecord[]> {
+    const rows = await this.db
+      .select()
+      .from(schema.payrollReceiptsTable)
+      .where(eq(schema.payrollReceiptsTable.employeeId, employeeId))
+      .orderBy(desc(schema.payrollReceiptsTable.createdAt));
+    return rows.map((r) => ({
+      id: r.id,
+      payrollId: r.payrollId,
+      employeeId: r.employeeId,
+      snapshot: r.snapshot,
+      baseSalary: r.baseSalary,
+      educationPremium: r.educationPremium,
+      seniorityPremium: r.seniorityPremium,
+      kidsPremium: r.kidsPremium,
+      overtimePay: r.overtimePay,
+      nightBonusPay: r.nightBonusPay,
+      cestaTicket: r.cestaTicket,
+      totalEarnings: r.totalEarnings,
+      ivssDeduction: r.ivssDeduction,
+      faovDeduction: r.faovDeduction,
+      spfDeduction: r.spfDeduction,
+      absenceDeduction: r.absenceDeduction,
+      totalDeductions: r.totalDeductions,
+      netPay: r.netPay,
+      netPayUsd: r.netPayUsd,
+      status: r.status,
+      createdAt: r.createdAt,
+    }));
+  }
+
+  async findReceiptById(id: string): Promise<PayrollReceiptRecord | null> {
+    const rows = await this.db
+      .select()
+      .from(schema.payrollReceiptsTable)
+      .where(eq(schema.payrollReceiptsTable.id, id))
+      .limit(1);
+    if (rows.length === 0) return null;
+    const r = rows[0]!;
+    return {
+      id: r.id,
+      payrollId: r.payrollId,
+      employeeId: r.employeeId,
+      snapshot: r.snapshot,
+      baseSalary: r.baseSalary,
+      educationPremium: r.educationPremium,
+      seniorityPremium: r.seniorityPremium,
+      kidsPremium: r.kidsPremium,
+      overtimePay: r.overtimePay,
+      nightBonusPay: r.nightBonusPay,
+      cestaTicket: r.cestaTicket,
+      totalEarnings: r.totalEarnings,
+      ivssDeduction: r.ivssDeduction,
+      faovDeduction: r.faovDeduction,
+      spfDeduction: r.spfDeduction,
+      absenceDeduction: r.absenceDeduction,
+      totalDeductions: r.totalDeductions,
+      netPay: r.netPay,
+      netPayUsd: r.netPayUsd,
+      status: r.status,
+      createdAt: r.createdAt,
+    };
+  }
+
+  async saveReceipts(receipts: Omit<PayrollReceiptRecord, 'id' | 'createdAt'>[]): Promise<PayrollReceiptRecord[]> {
+    const saved: PayrollReceiptRecord[] = [];
+    const now = new Date().toISOString();
+    for (const r of receipts) {
+      const id = randomUUID();
+      await this.db.insert(schema.payrollReceiptsTable).values({
+        id,
+        payrollId: r.payrollId,
+        employeeId: r.employeeId,
+        snapshot: r.snapshot,
+        baseSalary: r.baseSalary,
+        educationPremium: r.educationPremium,
+        seniorityPremium: r.seniorityPremium,
+        kidsPremium: r.kidsPremium,
+        overtimePay: r.overtimePay,
+        nightBonusPay: r.nightBonusPay,
+        cestaTicket: r.cestaTicket,
+        totalEarnings: r.totalEarnings,
+        ivssDeduction: r.ivssDeduction,
+        faovDeduction: r.faovDeduction,
+        spfDeduction: r.spfDeduction,
+        absenceDeduction: r.absenceDeduction,
+        totalDeductions: r.totalDeductions,
+        netPay: r.netPay,
+        netPayUsd: r.netPayUsd,
+        status: r.status,
+        createdAt: now,
+      });
+      saved.push({
+        ...r,
+        id,
+        createdAt: now,
+      });
+    }
+    return saved;
+  }
+}
+
+export class DrizzleDigitalCredentialRepository implements IDigitalCredentialRepository {
+  constructor(private db: ReturnType<typeof drizzle>) {}
+
+  async findByEmployeeId(employeeId: string): Promise<DigitalCredential | null> {
+    const rows = await this.db
+      .select()
+      .from(schema.digitalCredentialsTable)
+      .where(and(eq(schema.digitalCredentialsTable.employeeId, employeeId), eq(schema.digitalCredentialsTable.status, 'activa')))
+      .limit(1);
+    if (rows.length === 0) return null;
+    const r = rows[0]!;
+    return {
+      id: r.id,
+      employeeId: r.employeeId,
+      verificationToken: r.verificationToken,
+      issuedAt: r.issuedAt,
+      expiresAt: r.expiresAt,
+      bloodType: r.bloodType,
+      emergencyContact: r.emergencyContact,
+      emergencyPhone: r.emergencyPhone,
+      status: r.status as 'activa' | 'revocada' | 'suspendida',
+      qrCodeDataUri: r.qrCodeDataUri ?? undefined,
+      createdAt: r.createdAt,
+    };
+  }
+
+  async findByToken(token: string): Promise<DigitalCredential | null> {
+    const rows = await this.db
+      .select()
+      .from(schema.digitalCredentialsTable)
+      .where(eq(schema.digitalCredentialsTable.verificationToken, token))
+      .limit(1);
+    if (rows.length === 0) return null;
+    const r = rows[0]!;
+    return {
+      id: r.id,
+      employeeId: r.employeeId,
+      verificationToken: r.verificationToken,
+      issuedAt: r.issuedAt,
+      expiresAt: r.expiresAt,
+      bloodType: r.bloodType,
+      emergencyContact: r.emergencyContact,
+      emergencyPhone: r.emergencyPhone,
+      status: r.status as 'activa' | 'revocada' | 'suspendida',
+      qrCodeDataUri: r.qrCodeDataUri ?? undefined,
+      createdAt: r.createdAt,
+    };
+  }
+
+  async create(data: Omit<DigitalCredential, 'id' | 'createdAt'>): Promise<DigitalCredential> {
+    const id = randomUUID();
+    const now = new Date().toISOString();
+    await this.db.insert(schema.digitalCredentialsTable).values({
+      id,
+      employeeId: data.employeeId,
+      verificationToken: data.verificationToken,
+      issuedAt: data.issuedAt,
+      expiresAt: data.expiresAt,
+      bloodType: data.bloodType,
+      emergencyContact: data.emergencyContact,
+      emergencyPhone: data.emergencyPhone,
+      status: data.status,
+      qrCodeDataUri: data.qrCodeDataUri ?? null,
+      createdAt: now,
+    });
+    return {
+      ...data,
+      id,
+      createdAt: now,
+    };
+  }
+
+  async updateStatus(id: string, status: 'activa' | 'revocada' | 'suspendida'): Promise<DigitalCredential | null> {
+    await this.db
+      .update(schema.digitalCredentialsTable)
+      .set({ status })
+      .where(eq(schema.digitalCredentialsTable.id, id));
+    const rows = await this.db
+      .select()
+      .from(schema.digitalCredentialsTable)
+      .where(eq(schema.digitalCredentialsTable.id, id))
+      .limit(1);
+    if (rows.length === 0) return null;
+    const r = rows[0]!;
+    return {
+      id: r.id,
+      employeeId: r.employeeId,
+      verificationToken: r.verificationToken,
+      issuedAt: r.issuedAt,
+      expiresAt: r.expiresAt,
+      bloodType: r.bloodType,
+      emergencyContact: r.emergencyContact,
+      emergencyPhone: r.emergencyPhone,
+      status: r.status as 'activa' | 'revocada' | 'suspendida',
+      qrCodeDataUri: r.qrCodeDataUri ?? undefined,
+      createdAt: r.createdAt,
+    };
+  }
+}
+
+export class DrizzleHolidayRepository implements IHolidayRepository {
+  constructor(private db: ReturnType<typeof drizzle>) {}
+
+  async list(year?: number): Promise<HolidayRecord[]> {
+    const rows = await this.db.select().from(schema.holidaysTable).orderBy(asc(schema.holidaysTable.date));
+    const all = rows.map((r) => ({
+      id: r.id,
+      date: r.date,
+      name: r.name,
+      type: r.type as 'nacional' | 'decreto' | 'bancario' | 'regional',
+      isWorkingDay: Boolean(r.isWorkingDay),
+      payRateMultiplier: r.payRateMultiplier,
+      description: r.description ?? undefined,
+      createdAt: r.createdAt,
+    }));
+    if (year) {
+      return all.filter((h) => h.date.startsWith(String(year)));
+    }
+    return all;
+  }
+
+  async findByDate(date: string): Promise<HolidayRecord | null> {
+    const rows = await this.db
+      .select()
+      .from(schema.holidaysTable)
+      .where(eq(schema.holidaysTable.date, date))
+      .limit(1);
+    if (rows.length === 0) return null;
+    const r = rows[0]!;
+    return {
+      id: r.id,
+      date: r.date,
+      name: r.name,
+      type: r.type as 'nacional' | 'decreto' | 'bancario' | 'regional',
+      isWorkingDay: Boolean(r.isWorkingDay),
+      payRateMultiplier: r.payRateMultiplier,
+      description: r.description ?? undefined,
+      createdAt: r.createdAt,
+    };
+  }
+
+  async create(data: Omit<HolidayRecord, 'id' | 'createdAt'>): Promise<HolidayRecord> {
+    const now = new Date().toISOString();
+    const result = await this.db.insert(schema.holidaysTable).values({
+      date: data.date,
+      name: data.name,
+      type: data.type,
+      isWorkingDay: data.isWorkingDay,
+      payRateMultiplier: data.payRateMultiplier,
+      description: data.description ?? null,
+      createdAt: now,
+    });
+    const id = Number(result.lastInsertRowid ?? 1);
+    return {
+      ...data,
+      id,
+      createdAt: now,
+    };
+  }
+}
+
+export class DrizzleBankPaymentRepository implements IBankPaymentRepository {
+  constructor(private db: ReturnType<typeof drizzle>) {}
+
+  async listByBatchId(batchId: string): Promise<BankPaymentFileRecord[]> {
+    const rows = await this.db
+      .select()
+      .from(schema.bankPaymentFilesTable)
+      .where(eq(schema.bankPaymentFilesTable.payrollBatchId, batchId))
+      .orderBy(desc(schema.bankPaymentFilesTable.createdAt));
+
+    return rows.map((r) => ({
+      id: r.id,
+      payrollBatchId: r.payrollBatchId,
+      bankCode: r.bankCode,
+      bankName: r.bankName,
+      fileName: r.fileName,
+      content: r.content,
+      totalRecords: r.totalRecords,
+      totalAmount: r.totalAmount,
+      hash: r.hash,
+      createdAt: r.createdAt,
+      createdBy: r.createdBy,
+    }));
+  }
+
+  async findById(id: string): Promise<BankPaymentFileRecord | null> {
+    const rows = await this.db
+      .select()
+      .from(schema.bankPaymentFilesTable)
+      .where(eq(schema.bankPaymentFilesTable.id, id))
+      .limit(1);
+
+    const r = rows[0];
+    if (!r) return null;
+    return {
+      id: r.id,
+      payrollBatchId: r.payrollBatchId,
+      bankCode: r.bankCode,
+      bankName: r.bankName,
+      fileName: r.fileName,
+      content: r.content,
+      totalRecords: r.totalRecords,
+      totalAmount: r.totalAmount,
+      hash: r.hash,
+      createdAt: r.createdAt,
+      createdBy: r.createdBy,
+    };
+  }
+
+  async save(record: BankPaymentFileRecord): Promise<void> {
+    await this.db.insert(schema.bankPaymentFilesTable).values({
+      id: record.id,
+      payrollBatchId: record.payrollBatchId,
+      bankCode: record.bankCode,
+      bankName: record.bankName,
+      fileName: record.fileName,
+      content: record.content,
+      totalRecords: record.totalRecords,
+      totalAmount: record.totalAmount,
+      hash: record.hash,
+      createdAt: record.createdAt,
+      createdBy: record.createdBy,
+    });
+  }
+}
+
+export class DrizzleAssignedAssetRepository implements IAssignedAssetRepository {
+  constructor(private db: ReturnType<typeof drizzle>) {}
+
+  async list(): Promise<AssignedAssetRecord[]> {
+    const rows = await this.db
+      .select()
+      .from(schema.assignedAssetsTable)
+      .orderBy(desc(schema.assignedAssetsTable.createdAt));
+
+    return rows.map((r) => ({
+      id: r.id,
+      employeeId: r.employeeId,
+      assetType: r.assetType as any,
+      assetCode: r.assetCode,
+      description: r.description,
+      serialNumber: r.serialNumber ?? undefined,
+      assignedDate: r.assignedDate,
+      status: r.status as any,
+      returnDate: r.returnDate ?? undefined,
+      notes: r.notes ?? undefined,
+      createdAt: r.createdAt,
+    }));
+  }
+
+  async listByEmployeeId(employeeId: string): Promise<AssignedAssetRecord[]> {
+    const rows = await this.db
+      .select()
+      .from(schema.assignedAssetsTable)
+      .where(eq(schema.assignedAssetsTable.employeeId, employeeId))
+      .orderBy(desc(schema.assignedAssetsTable.createdAt));
+
+    return rows.map((r) => ({
+      id: r.id,
+      employeeId: r.employeeId,
+      assetType: r.assetType as any,
+      assetCode: r.assetCode,
+      description: r.description,
+      serialNumber: r.serialNumber ?? undefined,
+      assignedDate: r.assignedDate,
+      status: r.status as any,
+      returnDate: r.returnDate ?? undefined,
+      notes: r.notes ?? undefined,
+      createdAt: r.createdAt,
+    }));
+  }
+
+  async findById(id: string): Promise<AssignedAssetRecord | null> {
+    const rows = await this.db
+      .select()
+      .from(schema.assignedAssetsTable)
+      .where(eq(schema.assignedAssetsTable.id, id))
+      .limit(1);
+
+    const r = rows[0];
+    if (!r) return null;
+    return {
+      id: r.id,
+      employeeId: r.employeeId,
+      assetType: r.assetType as any,
+      assetCode: r.assetCode,
+      description: r.description,
+      serialNumber: r.serialNumber ?? undefined,
+      assignedDate: r.assignedDate,
+      status: r.status as any,
+      returnDate: r.returnDate ?? undefined,
+      notes: r.notes ?? undefined,
+      createdAt: r.createdAt,
+    };
+  }
+
+  async create(asset: Omit<AssignedAssetRecord, 'id' | 'createdAt'>): Promise<AssignedAssetRecord> {
+    const id = randomUUID();
+    const now = new Date().toISOString();
+    await this.db.insert(schema.assignedAssetsTable).values({
+      id,
+      employeeId: asset.employeeId,
+      assetType: asset.assetType,
+      assetCode: asset.assetCode,
+      description: asset.description,
+      serialNumber: asset.serialNumber,
+      assignedDate: asset.assignedDate,
+      status: asset.status,
+      returnDate: asset.returnDate,
+      notes: asset.notes,
+      createdAt: now,
+    });
+
+    return {
+      ...asset,
+      id,
+      createdAt: now,
+    };
+  }
+
+  async updateStatus(id: string, status: AssignedAssetRecord['status'], returnDate?: string): Promise<AssignedAssetRecord | null> {
+    await this.db
+      .update(schema.assignedAssetsTable)
+      .set({
+        status,
+        ...(returnDate !== undefined ? { returnDate } : {}),
+      })
+      .where(eq(schema.assignedAssetsTable.id, id));
+
+    return this.findById(id);
+  }
+}
+
+export class DrizzleSstRepository implements ISstRepository {
+  constructor(private db: ReturnType<typeof drizzle>) {}
+
+  async listByEmployeeId(employeeId: string): Promise<SstRiskNotificationRecord[]> {
+    const rows = await this.db
+      .select()
+      .from(schema.sstRiskNotificationsTable)
+      .where(eq(schema.sstRiskNotificationsTable.employeeId, employeeId))
+      .orderBy(desc(schema.sstRiskNotificationsTable.createdAt));
+
+    return rows.map((r) => ({
+      id: r.id,
+      employeeId: r.employeeId,
+      positionName: r.positionName,
+      workArea: r.workArea,
+      riskFactors: JSON.parse(r.riskFactors),
+      preventiveMeasures: JSON.parse(r.preventiveMeasures),
+      eppRequired: JSON.parse(r.eppRequired),
+      isAcknowledged: Boolean(r.isAcknowledged),
+      signedAt: r.signedAt ?? undefined,
+      createdAt: r.createdAt,
+    }));
+  }
+
+  async findById(id: string): Promise<SstRiskNotificationRecord | null> {
+    const rows = await this.db
+      .select()
+      .from(schema.sstRiskNotificationsTable)
+      .where(eq(schema.sstRiskNotificationsTable.id, id))
+      .limit(1);
+
+    const r = rows[0];
+    if (!r) return null;
+    return {
+      id: r.id,
+      employeeId: r.employeeId,
+      positionName: r.positionName,
+      workArea: r.workArea,
+      riskFactors: JSON.parse(r.riskFactors),
+      preventiveMeasures: JSON.parse(r.preventiveMeasures),
+      eppRequired: JSON.parse(r.eppRequired),
+      isAcknowledged: Boolean(r.isAcknowledged),
+      signedAt: r.signedAt ?? undefined,
+      createdAt: r.createdAt,
+    };
+  }
+
+  async create(data: Omit<SstRiskNotificationRecord, 'id' | 'createdAt'>): Promise<SstRiskNotificationRecord> {
+    const id = randomUUID();
+    const now = new Date().toISOString();
+    await this.db.insert(schema.sstRiskNotificationsTable).values({
+      id,
+      employeeId: data.employeeId,
+      positionName: data.positionName,
+      workArea: data.workArea,
+      riskFactors: JSON.stringify(data.riskFactors),
+      preventiveMeasures: JSON.stringify(data.preventiveMeasures),
+      eppRequired: JSON.stringify(data.eppRequired),
+      isAcknowledged: data.isAcknowledged,
+      signedAt: data.signedAt,
+      createdAt: now,
+    });
+
+    return {
+      ...data,
+      id,
+      createdAt: now,
+    };
+  }
+
+  async acknowledge(id: string, signedAt: string): Promise<SstRiskNotificationRecord | null> {
+    await this.db
+      .update(schema.sstRiskNotificationsTable)
+      .set({
+        isAcknowledged: true,
+        signedAt,
+      })
+      .where(eq(schema.sstRiskNotificationsTable.id, id));
+
+    return this.findById(id);
+  }
+}
+
 /**
  * Crea e inicializa la suite completa de repositorios Drizzle para LibSQL / SQLite.
  */
@@ -1084,5 +1741,15 @@ export function createDrizzleRepositories(client: Client): Repositories {
     movements: new DrizzleContractMovementRepository(db),
     requests: new DrizzleEmployeeRequestRepository(db),
     attendance: new DrizzleAttendanceRepository(db),
+    payroll: new DrizzlePayrollRepository(db),
+    credentials: new DrizzleDigitalCredentialRepository(db),
+    holidays: new DrizzleHolidayRepository(db),
+    bankPayments: new DrizzleBankPaymentRepository(db),
+    assets: new DrizzleAssignedAssetRepository(db),
+    sst: new DrizzleSstRepository(db),
+    jobPostings: new MemoryJobPostingRepository(),
+    jobApplications: new MemoryJobApplicationRepository(),
+    training: new MemoryTrainingRepository(),
+    performance: new MemoryPerformanceRepository(),
   };
 }

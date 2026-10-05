@@ -1,0 +1,184 @@
+{% extends "layouts/base.njk" %}
+
+{% block content %}
+<div class="row">
+  <div class="col s12">
+    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px;">
+      <div>
+        <a href="/talento/vacantes" class="grey-text text-darken-1" style="display: inline-flex; align-items: center; margin-bottom: 8px;">
+          <i class="material-icons tiny" style="margin-right: 4px;">arrow_back</i>Volver a Vacantes
+        </a>
+        <h4 style="margin: 0; font-weight: 700; color: #1a237e;">Pipeline ATS: {{ posting.title }}</h4>
+        <p style="margin: 4px 0 0; color: #546e7a;">Código: <strong>{{ posting.code }}</strong> • Puestos: <strong>{{ posting.vacanciesCount }}</strong></p>
+      </div>
+      <div>
+        <a href="#modal-postular" class="btn waves-effect waves-light modal-trigger" style="background-color: #1565c0; border-radius: 6px;">
+          <i class="material-icons left">person_add</i>Registrar Candidato
+        </a>
+      </div>
+    </div>
+  </div>
+
+  <!-- Tablero Kanban -->
+  <div class="col s12" style="overflow-x: auto; padding-bottom: 24px;">
+    <div style="display: flex; gap: 16px; min-width: 1100px;">
+
+      <!-- Columna 1: Postulados -->
+      <div style="flex: 1; background: #f4f6f8; border-radius: 8px; padding: 12px; border-top: 4px solid #78909c;">
+        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px;">
+          <span style="font-weight: 700; color: #37474f;">POSTULADOS</span>
+          <span class="chip grey lighten-2" style="margin: 0; height: 24px; line-height: 24px;">{{ columns.postulado.length }}</span>
+        </div>
+        {% for app in columns.postulado %}
+        <div class="card z-depth-1" style="border-radius: 6px; margin-bottom: 12px; padding: 12px;">
+          <strong style="color: #263238; display: block;">{{ app.candidateName }}</strong>
+          <span class="grey-text" style="font-size: 0.85rem;">{{ app.candidateCedula }}</span>
+          <div style="margin-top: 8px; font-size: 0.8rem; color: #546e7a;">
+            <div><i class="material-icons tiny" style="vertical-align: middle;">phone</i> {{ app.candidatePhone }}</div>
+          </div>
+          <div style="margin-top: 12px; text-align: right;">
+            <form action="/talento/postulaciones/{{ app.id }}/mover" method="POST" style="display: inline;">
+              <input type="hidden" name="postingId" value="{{ posting.id }}">
+              <input type="hidden" name="nextStage" value="revision">
+              <button type="submit" class="btn-small waves-effect waves-light blue-grey darken-1" style="font-size: 0.75rem; border-radius: 4px; padding: 0 8px;">
+                Revisar <i class="material-icons right tiny">arrow_forward</i>
+              </button>
+            </form>
+          </div>
+        </div>
+        {% endfor %}
+      </div>
+
+      <!-- Columna 2: En Revisión -->
+      <div style="flex: 1; background: #f4f6f8; border-radius: 8px; padding: 12px; border-top: 4px solid #0288d1;">
+        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px;">
+          <span style="font-weight: 700; color: #0288d1;">EN REVISIÓN</span>
+          <span class="chip light-blue lighten-4 light-blue-text text-darken-4" style="margin: 0; height: 24px; line-height: 24px;">{{ columns.revision.length }}</span>
+        </div>
+        {% for app in columns.revision %}
+        <div class="card z-depth-1" style="border-radius: 6px; margin-bottom: 12px; padding: 12px;">
+          <strong style="color: #263238; display: block;">{{ app.candidateName }}</strong>
+          <span class="grey-text" style="font-size: 0.85rem;">{{ app.candidateCedula }}</span>
+          <div style="margin-top: 8px; font-size: 0.8rem; color: #546e7a;">
+            <div><i class="material-icons tiny" style="vertical-align: middle;">email</i> {{ app.candidateEmail }}</div>
+          </div>
+          <div style="margin-top: 12px; text-align: right;">
+            <form action="/talento/postulaciones/{{ app.id }}/mover" method="POST" style="display: inline;">
+              <input type="hidden" name="postingId" value="{{ posting.id }}">
+              <input type="hidden" name="nextStage" value="entrevista">
+              <button type="submit" class="btn-small waves-effect waves-light light-blue darken-2" style="font-size: 0.75rem; border-radius: 4px; padding: 0 8px;">
+                A Entrevista <i class="material-icons right tiny">arrow_forward</i>
+              </button>
+            </form>
+          </div>
+        </div>
+        {% endfor %}
+      </div>
+
+      <!-- Columna 3: Entrevista -->
+      <div style="flex: 1; background: #f4f6f8; border-radius: 8px; padding: 12px; border-top: 4px solid #f57c00;">
+        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px;">
+          <span style="font-weight: 700; color: #f57c00;">ENTREVISTA</span>
+          <span class="chip orange lighten-4 orange-text text-darken-4" style="margin: 0; height: 24px; line-height: 24px;">{{ columns.entrevista.length }}</span>
+        </div>
+        {% for app in columns.entrevista %}
+        <div class="card z-depth-1" style="border-radius: 6px; margin-bottom: 12px; padding: 12px;">
+          <strong style="color: #263238; display: block;">{{ app.candidateName }}</strong>
+          <span class="grey-text" style="font-size: 0.85rem;">{{ app.candidateCedula }}</span>
+          <div style="margin-top: 12px; text-align: right;">
+            <form action="/talento/postulaciones/{{ app.id }}/mover" method="POST" style="display: inline;">
+              <input type="hidden" name="postingId" value="{{ posting.id }}">
+              <input type="hidden" name="nextStage" value="oferta">
+              <button type="submit" class="btn-small waves-effect waves-light orange darken-2" style="font-size: 0.75rem; border-radius: 4px; padding: 0 8px;">
+                A Oferta <i class="material-icons right tiny">arrow_forward</i>
+              </button>
+            </form>
+          </div>
+        </div>
+        {% endfor %}
+      </div>
+
+      <!-- Columna 4: Oferta -->
+      <div style="flex: 1; background: #f4f6f8; border-radius: 8px; padding: 12px; border-top: 4px solid #7b1fa2;">
+        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px;">
+          <span style="font-weight: 700; color: #7b1fa2;">OFERTA FORMAL</span>
+          <span class="chip purple lighten-4 purple-text text-darken-4" style="margin: 0; height: 24px; line-height: 24px;">{{ columns.oferta.length }}</span>
+        </div>
+        {% for app in columns.oferta %}
+        <div class="card z-depth-1" style="border-radius: 6px; margin-bottom: 12px; padding: 12px; border: 1px solid #ce93d8;">
+          <strong style="color: #263238; display: block;">{{ app.candidateName }}</strong>
+          <span class="grey-text" style="font-size: 0.85rem;">{{ app.candidateCedula }}</span>
+          <div style="margin-top: 12px; text-align: right;">
+            <form action="/talento/postulaciones/{{ app.id }}/contratar" method="POST" style="display: inline;">
+              <input type="hidden" name="postingId" value="{{ posting.id }}">
+              <input type="hidden" name="salaryBs" value="{{ posting.salaryMinBs or '3500.00' }}">
+              <button type="submit" class="btn-small waves-effect waves-light green darken-2" style="font-size: 0.75rem; border-radius: 4px; padding: 0 8px; font-weight: 600;">
+                <i class="material-icons left tiny">how_to_reg</i>Contratar
+              </button>
+            </form>
+          </div>
+        </div>
+        {% endfor %}
+      </div>
+
+      <!-- Columna 5: Contratados -->
+      <div style="flex: 1; background: #e8f5e9; border-radius: 8px; padding: 12px; border-top: 4px solid #2e7d32;">
+        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px;">
+          <span style="font-weight: 700; color: #2e7d32;">CONTRATADOS</span>
+          <span class="chip green lighten-4 green-text text-darken-4" style="margin: 0; height: 24px; line-height: 24px;">{{ columns.contratado.length }}</span>
+        </div>
+        {% for app in columns.contratado %}
+        <div class="card z-depth-1" style="border-radius: 6px; margin-bottom: 12px; padding: 12px; border-left: 4px solid #2e7d32;">
+          <strong style="color: #1b5e20; display: block;">{{ app.candidateName }}</strong>
+          <span class="grey-text" style="font-size: 0.85rem;">{{ app.candidateCedula }}</span>
+          <div style="margin-top: 8px;">
+            <span class="badge green white-text" style="border-radius: 4px; float: none; display: inline-block;">Expediente Activo</span>
+          </div>
+        </div>
+        {% endfor %}
+      </div>
+
+    </div>
+  </div>
+</div>
+
+<!-- Modal Registrar Candidato -->
+<div id="modal-postular" class="modal modal-fixed-footer" style="border-radius: 8px; max-width: 650px;">
+  <form action="/talento/postulaciones/registrar" method="POST">
+    <input type="hidden" name="jobPostingId" value="{{ posting.id }}">
+    <div class="modal-content">
+      <h5 style="font-weight: 700; color: #1a237e; margin-top: 0;">Registrar Candidato en el Pipeline</h5>
+      <div class="row">
+        <div class="input-field col s12 m8">
+          <input id="candidateName" name="candidateName" type="text" required placeholder="Nombres y Apellidos completos" class="validate">
+          <label for="candidateName" class="active">Nombre del Candidato</label>
+        </div>
+        <div class="input-field col s12 m4">
+          <input id="candidateCedula" name="candidateCedula" type="text" required placeholder="V-12345678" class="validate">
+          <label for="candidateCedula" class="active">Cédula de Identidad</label>
+        </div>
+        <div class="input-field col s12 m6">
+          <input id="candidateEmail" name="candidateEmail" type="email" required placeholder="correo@ejemplo.com" class="validate">
+          <label for="candidateEmail" class="active">Correo Electrónico</label>
+        </div>
+        <div class="input-field col s12 m6">
+          <input id="candidatePhone" name="candidatePhone" type="text" required placeholder="0414-1234567" class="validate">
+          <label for="candidatePhone" class="active">Teléfono Principal</label>
+        </div>
+        <div class="input-field col s12">
+          <input id="candidateAddress" name="candidateAddress" type="text" placeholder="Dirección residencial del candidato" class="validate">
+          <label for="candidateAddress" class="active">Dirección de Habitación</label>
+        </div>
+        <div class="input-field col s12">
+          <textarea id="notes" name="notes" class="materialize-textarea" placeholder="Resumen de perfil o experiencia laboral previa"></textarea>
+          <label for="notes" class="active">Notas del Reclutador</label>
+        </div>
+      </div>
+    </div>
+    <div class="modal-footer" style="padding: 0 24px 20px;">
+      <a href="#!" class="modal-close btn-flat grey-text">Cancelar</a>
+      <button type="submit" class="btn waves-effect waves-light" style="background-color: #1565c0; border-radius: 6px;">Postular al Tablero</button>
+    </div>
+  </form>
+</div>
+{% endblock %}

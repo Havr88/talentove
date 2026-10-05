@@ -771,6 +771,166 @@ describe('TalentoVe Server - M0 Integration Tests', () => {
       expect(pdfRes.body.length).toBeGreaterThan(1000);
     });
   });
+
+  describe('Hitos M2b a M4: Nómina LOTTT/APN, Carnetización CR-80, Feriados y Autoservicio', () => {
+    it('Flujo Integral de Nómina M2b: procesar quincena, verificar retenciones de ley y descargar recibo en PDF', async () => {
+      const { app, repos, cookie, employee } = await setupM1bEnvironment();
+
+      // 1. Obtener vista principal de nómina
+      const nominaIndex = await request(app)
+        .get('/nomina')
+        .set('Cookie', [cookie]);
+      expect(nominaIndex.status).toBe(200);
+      expect(nominaIndex.text).toContain('Nómina LOTTT & APN');
+
+      // 2. Procesar cálculo de nómina
+      const processRes = await request(app)
+        .post('/nomina/procesar')
+        .set('Cookie', [cookie])
+        .send({
+          periodStart: '2026-09-01',
+          periodEnd: '2026-09-15',
+          periodType: 'FORTNIGHT',
+          minimumWageVES: '130.00',
+        });
+
+      expect(processRes.status).toBe(302);
+      const location = processRes.header['location'] as string;
+      const batchId = location.split('/nomina/')[1];
+      expect(batchId).toBeDefined();
+
+      // 3. Consultar lote y verificar montos
+      const batchView = await request(app)
+        .get(`/nomina/${batchId}`)
+        .set('Cookie', [cookie]);
+      expect(batchView.status).toBe(200);
+      expect(batchView.text).toContain('Lote de Nómina: 2026-09-01');
+      expect(batchView.text).toContain(employee.nombres);
+
+      // Verificar en base de datos
+      const batch = await repos.payroll.findBatchById(batchId!);
+      expect(batch).toBeDefined();
+      expect(batch?.totalEarnings).toBeGreaterThan(0);
+      expect(batch?.totalDeductions).toBeGreaterThan(0);
+      expect(batch?.totalNet).toBeGreaterThan(0);
+
+      const receipts = await repos.payroll.listReceiptsByBatchId(batchId!);
+      expect(receipts.length).toBeGreaterThan(0);
+      const workerReceipt = receipts.find((r) => r.employeeId === employee.id);
+      expect(workerReceipt).toBeDefined();
+      expect(workerReceipt?.ivssDeduction).toBeGreaterThan(0);
+      expect(workerReceipt?.faovDeduction).toBeGreaterThan(0);
+      expect(workerReceipt?.spfDeduction).toBeGreaterThan(0);
+
+      // 4. Descargar PDF oficial del recibo de pago
+      const pdfRes = await request(app)
+        .get(`/nomina/recibos/${workerReceipt!.id}/pdf`)
+        .set('Cookie', [cookie]);
+
+      expect(pdfRes.status).toBe(200);
+      expect(pdfRes.header['content-type']).toBe('application/pdf');
+      expect(pdfRes.body).toBeInstanceOf(Buffer);
+      expect(pdfRes.body.length).toBeGreaterThan(1000);
+    });
+
+    it('Hito M2c: Emisión de Carnet CR-80 con QR y verificación pública en tiempo real', async () => {
+      const { app, repos, cookie, employee } = await setupM1bEnvironment();
+
+      // 1. Ver carnet digital institucional
+      const carnetRes = await request(app)
+        .get(`/trabajadores/${employee.id}/carnet`)
+        .set('Cookie', [cookie]);
+
+      expect(carnetRes.status).toBe(200);
+      expect(carnetRes.text).toContain('Carnet de Identificación Laboral (Formato CR-80)');
+      expect(carnetRes.text).toContain(employee.nombres);
+      expect(carnetRes.text).toContain(employee.cedulaNumero);
+      expect(carnetRes.text).toContain('data:image/png;base64'); // QR generado
+
+      // 2. Verificar credencial en base de datos
+      const cred = await repos.credentials.findByEmployeeId(employee.id);
+      expect(cred).toBeDefined();
+      expect(cred?.status).toBe('activa');
+      expect(cred?.verificationToken).toBeDefined();
+
+      // 3. Endpoint público de validación por QR (sin auth)
+      const verifyRes = await request(app)
+        .get(`/verificar/carnet/${cred!.verificationToken}`);
+
+      expect(verifyRes.status).toBe(200);
+      expect(verifyRes.text).toContain('CREDENCIAL LABORAL VIGENTE');
+      expect(verifyRes.text).toContain(employee.nombres);
+      expect(verifyRes.text).toContain(employee.cedulaNumero);
+
+      // 4. Verificar token inválido
+      const invalidRes = await request(app).get('/verificar/carnet/token-inexistente-123');
+      expect(invalidRes.status).toBe(200);
+      expect(invalidRes.text).toContain('CREDENCIAL NO VÁLIDA O REVOCADA');
+    });
+
+    it('Hito M3: Gestión de Feriados y Decretos Especiales', async () => {
+      const { app, repos, cookie } = await setupM1bEnvironment();
+
+      // 1. Listar feriados precargados
+      const feriadosRes = await request(app)
+        .get('/feriados')
+        .set('Cookie', [cookie]);
+
+      expect(feriadosRes.status).toBe(200);
+      expect(feriadosRes.text).toContain('Calendario Nacional y Decretos Especiales');
+      expect(feriadosRes.text).toContain('Año Nuevo');
+
+      // 2. Registrar decreto especial del Ejecutivo
+      const postRes = await request(app)
+        .post('/feriados')
+        .set('Cookie', [cookie])
+        .send({
+          date: '2026-10-15',
+          name: 'Decreto Especial Día de Júbilo Tecnológico',
+          type: 'decreto',
+        });
+
+      expect(postRes.status).toBe(302);
+
+      const savedHoliday = await repos.holidays.findByDate('2026-10-15');
+      expect(savedHoliday).toBeDefined();
+      expect(savedHoliday?.name).toBe('Decreto Especial Día de Júbilo Tecnológico');
+    });
+
+    it('Hito M4: Portal de Autoservicio del Trabajador y Solicitud de Vacaciones', async () => {
+      const { app, repos, cookie, employee } = await setupM1bEnvironment();
+
+      // 1. Acceder al portal de autoservicio
+      const portalRes = await request(app)
+        .get(`/mi-portal?workerId=${employee.id}`)
+        .set('Cookie', [cookie]);
+
+      expect(portalRes.status).toBe(200);
+      expect(portalRes.text).toContain('Portal de Autoservicio del Trabajador');
+      expect(portalRes.text).toContain(employee.nombres);
+
+      // 2. Radicar solicitud de vacaciones
+      const vacRes = await request(app)
+        .post('/mi-portal/vacaciones')
+        .set('Cookie', [cookie])
+        .send({
+          workerId: employee.id,
+          startDate: '2026-11-01',
+          endDate: '2026-11-15',
+          notes: 'Vacaciones anuales reglamentarias',
+        });
+
+      expect(vacRes.status).toBe(302);
+
+      // Verificar que se creó la solicitud en el repositorio
+      const requests = await repos.requests.listByEmployeeId(employee.id);
+      const vacReq = requests.find((r) => r.tipo === 'vacaciones');
+      expect(vacReq).toBeDefined();
+      expect(vacReq?.fechaDesde).toBe('2026-11-01');
+      expect(vacReq?.fechaHasta).toBe('2026-11-15');
+      expect(vacReq?.estatus).toBe('pendiente');
+    });
+  });
 });
 
 

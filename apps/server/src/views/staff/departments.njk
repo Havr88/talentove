@@ -1,0 +1,111 @@
+{% extends "layouts/base.njk" %}
+
+{% block content %}
+<div class="page-header">
+  <div class="page-header-content">
+    <div class="page-header-icon" style="background: #fefce8; color: #ca8a04;">🏛️</div>
+    <div>
+      <h1 class="page-header-title">Gestión de Departamentos</h1>
+      <p class="page-header-subtitle">Crea, edita y organiza las áreas funcionales de la institución.</p>
+    </div>
+  </div>
+  <div class="page-header-actions">
+    <a href="/personal" class="btn btn-outline">&larr; Volver</a>
+  </div>
+</div>
+
+{% if success %}
+  <div class="alert-success">{{ success }}</div>
+{% endif %}
+
+<div style="display: grid; grid-template-columns: 2fr 1.2fr; gap: 1.5rem; align-items: start;">
+  <!-- Tabla de Departamentos -->
+  <div class="qrh-table-card">
+    <div style="padding: 1.25rem 1.5rem; border-bottom: 1px solid var(--border-color); display: flex; justify-content: space-between; align-items: center;">
+      <h3 style="font-size: 1.1rem; font-weight: 700; margin: 0; color: var(--text-color);">Áreas Funcionales</h3>
+      <span class="qrh-badge">{{ departments.length }} departamentos</span>
+    </div>
+
+    <table class="qrh-table">
+      <thead>
+        <tr>
+          <th>Nombre del Departamento</th>
+          <th>Ubicación / Sede</th>
+          <th>Tipo de Área</th>
+          <th scope="col" style="text-align: right;">Acciones</th>
+        </tr>
+      </thead>
+      <tbody>
+        {% if departments.length == 0 %}
+          <tr>
+            <td colspan="4" style="text-align: center; color: var(--text-muted); padding: 2rem;">
+              No hay departamentos configurados aún. Añade el primero en el formulario.
+            </td>
+          </tr>
+        {% else %}
+          {% for dept in departments %}
+            <tr>
+              <td style="font-weight: 600;">
+                <div>{{ dept.name }}</div>
+                <small style="color: var(--text-muted); font-size: 0.75rem;">ID: {{ dept.id.slice(0, 8) }}</small>
+              </td>
+              <td>
+                <span class="qrh-badge" style="background: #f0fdf4; color: #166534;">
+                  {{ dept.locationName or 'Sede Principal' }}
+                </span>
+              </td>
+              <td>
+                <span class="qrh-badge" style="background: #f1f5f9; color: #475569;">
+                  Nivel {{ dept.typeId }}
+                </span>
+              </td>
+              <td style="text-align: right;">
+                <span style="color: #10b981; font-size: 0.8rem; font-weight: 600;">Activo</span>
+              </td>
+            </tr>
+          {% endfor %}
+        {% endif %}
+      </tbody>
+    </table>
+  </div>
+
+  <!-- Formulario de Añadir Departamento -->
+  <div class="card" style="margin-bottom: 0;">
+    <h3 style="font-size: 1.1rem; font-weight: 700; margin-bottom: 0.35rem; color: var(--text-color);">Añadir Departamento</h3>
+    <p style="font-size: 0.825rem; color: var(--text-muted); margin-bottom: 1.25rem;">
+      Organiza las áreas funcionales dentro de cada ubicación de la entidad.
+    </p>
+
+    <form method="POST" action="/departamentos">
+      <div class="form-group">
+        <label for="name">Nombre del Departamento *</label>
+        <input type="text" id="name" name="name" class="form-control" placeholder="Ej: Consultas Externas / Cardiología" required>
+      </div>
+
+      <div class="form-group">
+        <label for="locationId">Ubicación / Centro de Trabajo</label>
+        <select id="locationId" name="locationId" class="form-control">
+          <option value="">-- Sin asignar / Sede Central --</option>
+          {% for loc in locations %}
+            <option value="{{ loc.id }}">{{ loc.name }}</option>
+          {% endfor %}
+        </select>
+      </div>
+
+      <div class="form-group">
+        <label for="typeId">Nivel Jerárquico / Tipo</label>
+        <select id="typeId" name="typeId" class="form-control">
+          <option value="1">1 - Dirección General / Presidencia</option>
+          <option value="2">2 - Gerencia / Coordinación</option>
+          <option value="3" selected>3 - Departamento / División</option>
+          <option value="4">4 - Sección / Unidad Operativa</option>
+        </select>
+      </div>
+
+      <button type="submit" class="btn btn-primary" style="width: 100%; justify-content: center; background: #ca8a04; border-color: #ca8a04;">
+        ➕ Guardar Departamento
+      </button>
+    </form>
+  </div>
+</div>
+{% endblock %}

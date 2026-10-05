@@ -1,0 +1,99 @@
+{% extends "layouts/base.njk" %}
+
+{% block content %}
+<div class="page-header">
+  <div class="page-header-content">
+    <div class="page-header-icon">👥</div>
+    <div>
+      <h1 class="page-header-title">Módulo de Gestión de Personal</h1>
+      <p class="page-header-subtitle">Administración integral del talento humano, centros de trabajo, áreas funcionales y estructura de cargos.</p>
+    </div>
+  </div>
+</div>
+
+<div class="qrh-feature-grid">
+  <!-- Gestionar Personal -->
+  <div class="qrh-feature-card">
+    <div>
+      <div class="page-header-icon" style="background: #eff6ff; color: #2563eb; margin-bottom: 1.25rem;">👥</div>
+      <h3 class="qrh-feature-title">Gestionar Personal</h3>
+      <p class="qrh-feature-desc">Administra la información de todos los empleados y trabajadores de la empresa.</p>
+    </div>
+    <a href="/trabajadores" class="btn btn-primary" style="width: 100%; justify-content: center;">
+      <span>Acceder</span> &rarr;
+    </a>
+  </div>
+
+  <!-- Gestionar Ubicaciones -->
+  <div class="qrh-feature-card">
+    <div>
+      <div class="page-header-icon" style="background: #f0fdf4; color: #16a34a; margin-bottom: 1.25rem;">🏢</div>
+      <h3 class="qrh-feature-title">Gestionar Ubicaciones</h3>
+      <p class="qrh-feature-desc">Crea, edita y organiza las diferentes sedes o centros de trabajo de la organización.</p>
+    </div>
+    <a href="/ubicaciones" class="btn btn-primary" style="width: 100%; justify-content: center; background: #16a34a; border-color: #16a34a;">
+      <span>Acceder</span> &rarr;
+    </a>
+  </div>
+
+  <!-- Gestionar Departamentos -->
+  <div class="qrh-feature-card">
+    <div>
+      <div class="page-header-icon" style="background: #fefce8; color: #ca8a04; margin-bottom: 1.25rem;">🏛️</div>
+      <h3 class="qrh-feature-title">Gestionar Departamentos</h3>
+      <p class="qrh-feature-desc">Crea, edita y organiza las áreas funcionales de la institución.</p>
+    </div>
+    <a href="/departamentos" class="btn btn-primary" style="width: 100%; justify-content: center; background: #ca8a04; border-color: #ca8a04;">
+      <span>Acceder</span> &rarr;
+    </a>
+  </div>
+
+  <!-- Gestionar Cargos -->
+  <div class="qrh-feature-card">
+    <div>
+      <div class="page-header-icon" style="background: #faf5ff; color: #9333ea; margin-bottom: 1.25rem;">📋</div>
+      <h3 class="qrh-feature-title">Gestionar Cargos</h3>
+      <p class="qrh-feature-desc">Crea y administra los cargos de la institución.</p>
+    </div>
+    <a href="/cargos" class="btn btn-primary" style="width: 100%; justify-content: center; background: #9333ea; border-color: #9333ea;">
+      <span>Acceder</span> &rarr;
+    </a>
+  </div>
+
+  <!-- Búsqueda de Expedientes -->
+  <div class="qrh-feature-card">
+    <div>
+      <div class="page-header-icon" style="background: #e0f2fe; color: #0284c7; margin-bottom: 1.25rem;">🔍</div>
+      <h3 class="qrh-feature-title">Búsqueda de Expedientes</h3>
+      <p class="qrh-feature-desc">Busca un trabajador para ver los documentos de su expediente.</p>
+    </div>
+    <a href="/expedientes/buscar" class="btn btn-primary" style="width: 100%; justify-content: center; background: #0284c7; border-color: #0284c7;">
+      <span>Acceder</span> &rarr;
+    </a>
+  </div>
+
+  <!-- Carga de Documentos -->
+  <div class="qrh-feature-card">
+    <div>
+      <div class="page-header-icon" style="background: #fff7ed; color: #ea580c; margin-bottom: 1.25rem;">📤</div>
+      <h3 class="qrh-feature-title">Carga de Documentos</h3>
+      <p class="qrh-feature-desc">Busca al trabajador, selecciona el tipo de documento y adjunta el archivo a subir.</p>
+    </div>
+    <a href="/expedientes/cargar" class="btn btn-primary" style="width: 100%; justify-content: center; background: #ea580c; border-color: #ea580c;">
+      <span>Acceder</span> &rarr;
+    </a>
+  </div>
+
+  <!-- Perfil de la Institución -->
+  <div class="qrh-feature-card">
+    <div>
+      <div class="page-header-icon" style="background: #ecfeff; color: #0891b2; margin-bottom: 1.25rem;">📊</div>
+      <h3 class="qrh-feature-title">Perfil de la Institución</h3>
+      <p class="qrh-feature-desc">Una vista general de la composición actual y métricas clave de la organización.</p>
+    </div>
+    <a href="/institucion" class="btn btn-primary" style="width: 100%; justify-content: center; background: #0891b2; border-color: #0891b2;">
+      <span>Acceder</span> &rarr;
+    </a>
+  </div>
+</div>
+{% endblock %}

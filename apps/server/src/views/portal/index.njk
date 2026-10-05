@@ -1,0 +1,181 @@
+{% extends "layouts/base.njk" %}
+
+{% block content %}
+<div class="page-header">
+  <div class="page-header-content">
+    <div class="page-header-icon">👤</div>
+    <div>
+      <h1 class="page-header-title">Portal de Autoservicio del Trabajador</h1>
+      <p class="page-header-subtitle">Bienvenido, {{ worker.nombres }} {{ worker.apellidos }}. Consulta tus recibos, balance de vacaciones y gestiona solicitudes institucionales.</p>
+    </div>
+  </div>
+</div>
+
+<!-- Métricas y Resumen Personal -->
+<div class="kpi-grid">
+  <!-- Vacaciones Disponibles -->
+  <div class="kpi-card kpi-success">
+    <div class="kpi-label">Vacaciones Disponibles</div>
+    <div class="kpi-value">{{ vacationBalance.daysAvailable }} <span style="font-size: 1rem; font-weight: 600;">días hábiles</span></div>
+    <div class="kpi-subtext" style="color: var(--text-muted); font-size: 0.8rem; margin-top: 0.25rem;">
+      {{ vacationBalance.yearsOfService }} años de antigüedad &bull; {{ vacationBalance.entitlementDays }} días totales LOTTT
+    </div>
+  </div>
+
+  <!-- Último Sueldo Neto -->
+  <div class="kpi-card">
+    <div class="kpi-label">Último Pago Neto</div>
+    <div class="kpi-value">Bs. {{ latestReceipt.netPay | default("0.00") }}</div>
+    <div class="kpi-subtext" style="color: var(--text-muted); font-size: 0.8rem; margin-top: 0.25rem;">
+      Período: {{ latestReceipt.periodName | default("Actual") }}
+    </div>
+  </div>
+
+  <!-- Solicitudes Activas -->
+  <div class="kpi-card kpi-warning">
+    <div class="kpi-label">Solicitudes en Trámite</div>
+    <div class="kpi-value">{{ pendingRequestsCount | default(0) }}</div>
+    <div class="kpi-subtext" style="color: var(--text-muted); font-size: 0.8rem; margin-top: 0.25rem;">
+      Pendientes de aprobación por supervisión
+    </div>
+  </div>
+
+  <!-- Credencial Laboral -->
+  <div class="kpi-card kpi-accent">
+    <div class="kpi-label">Credencial Digital</div>
+    <div class="kpi-value" style="font-size: 1.25rem; font-weight: 700; color: var(--primary-color);">ACTIVA ✓</div>
+    <div class="kpi-subtext" style="color: var(--text-muted); font-size: 0.8rem; margin-top: 0.25rem;">
+      <a href="/public/credencial/{{ worker.id }}" target="_blank" style="color: var(--primary-color); font-weight: 600;">Ver carnet digital con QR &rarr;</a>
+    </div>
+  </div>
+</div>
+
+<!-- Acciones Rápidas y Formulario de Solicitudes -->
+<div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1.5rem; margin-bottom: 2rem;">
+
+  <!-- Formulario de Nueva Solicitud -->
+  <div class="card">
+    <div class="card-header">
+      <h3 class="card-title">📝 Emitir Solicitud</h3>
+    </div>
+    <form action="/mi-portal/solicitar" method="POST" class="active-form">
+      {% if csrfToken %}<input type="hidden" name="_csrf" value="{{ csrfToken }}">{% endif %}
+      <input type="hidden" name="workerId" value="{{ worker.id }}">
+
+      <div class="form-group" style="margin-bottom: 1rem;">
+        <label class="form-label" style="display: block; font-size: 0.85rem; font-weight: 600; margin-bottom: 0.35rem;">Tipo de Solicitud</label>
+        <select name="requestType" class="form-control" style="width: 100%; padding: 0.55rem; border: 1px solid var(--border-color); border-radius: var(--radius-md);" required>
+          <option value="VACACIONES">Vacaciones Reglamentarias (LOTTT)</option>
+          <option value="PERMISO_MEDICO">Reposo / Permiso Médico</option>
+          <option value="ANTICIPO_PRESTACIONES">Anticipo de Prestaciones Sociales (Art. 144 LOTTT)</option>
+          <option value="PERMISO_PATERNIDAD">Permiso de Paternidad (14 días continuos)</option>
+          <option value="DUELO">Permiso por Duelo Familiar</option>
+          <option value="DILIGENCIA_PERSONAL">Permiso por Diligencia Personal</option>
+        </select>
+      </div>
+
+      <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; margin-bottom: 1rem;">
+        <div class="form-group">
+          <label class="form-label" style="display: block; font-size: 0.85rem; font-weight: 600; margin-bottom: 0.35rem;">Fecha Desde</label>
+          <input type="date" name="startDate" class="form-control" style="width: 100%; padding: 0.55rem; border: 1px solid var(--border-color); border-radius: var(--radius-md);" required>
+        </div>
+        <div class="form-group">
+          <label class="form-label" style="display: block; font-size: 0.85rem; font-weight: 600; margin-bottom: 0.35rem;">Fecha Hasta</label>
+          <input type="date" name="endDate" class="form-control" style="width: 100%; padding: 0.55rem; border: 1px solid var(--border-color); border-radius: var(--radius-md);" required>
+        </div>
+      </div>
+
+      <div class="form-group" style="margin-bottom: 1.25rem;">
+        <label class="form-label" style="display: block; font-size: 0.85rem; font-weight: 600; margin-bottom: 0.35rem;">Motivo / Justificación</label>
+        <textarea name="reason" rows="3" class="form-control" style="width: 100%; padding: 0.55rem; border: 1px solid var(--border-color); border-radius: var(--radius-md);" placeholder="Indique la justificación correspondiente..." required></textarea>
+      </div>
+
+      <div style="display: flex; justify-content: flex-end;">
+        <button type="submit" class="btn btn-primary" style="padding: 0.6rem 1.5rem; background: var(--primary-color); color: white; border: none; border-radius: var(--radius-md); font-weight: 600; cursor: pointer;">
+          Enviar Solicitud (Ctrl+S)
+        </button>
+      </div>
+    </form>
+  </div>
+
+  <!-- Accesos y Últimos Recibos -->
+  <div class="card">
+    <div class="card-header">
+      <h3 class="card-title">🧾 Últimos Recibos de Pago</h3>
+      <a href="/mi-portal/recibos" style="font-size: 0.85rem; font-weight: 600; color: var(--primary-color);">Ver todos &rarr;</a>
+    </div>
+
+    {% if receipts and receipts.length > 0 %}
+      <div style="display: flex; flex-direction: column; gap: 0.75rem;">
+        {% for rec in receipts | slice(0, 3) %}
+          <div style="display: flex; justify-content: space-between; align-items: center; padding: 0.75rem 1rem; background: var(--surface-alt); border-radius: var(--radius-md); border: 1px solid var(--border-color);">
+            <div>
+              <div style="font-weight: 700; font-size: 0.9rem;">{{ rec.periodName | default("Período Quincenal") }}</div>
+              <div style="font-size: 0.8rem; color: var(--text-muted);">{{ rec.date }} &bull; Pago bancario procesado</div>
+            </div>
+            <div style="text-align: right; display: flex; align-items: center; gap: 0.75rem;">
+              <span style="font-weight: 800; color: #16a34a; font-size: 1rem;">Bs. {{ rec.netPay }}</span>
+              <a href="/nomina/recibos/{{ rec.id }}" class="btn btn-sm" style="padding: 0.35rem 0.65rem; background: white; border: 1px solid var(--border-color); border-radius: 4px; font-size: 0.8rem; font-weight: 600;">A4</a>
+              <a href="/nomina/recibos/{{ rec.id }}/pdf" class="btn btn-sm" style="padding: 0.35rem 0.65rem; background: var(--primary-color); color: white; border-radius: 4px; font-size: 0.8rem; font-weight: 600;">PDF</a>
+            </div>
+          </div>
+        {% endfor %}
+      </div>
+    {% else %}
+      <p style="font-size: 0.875rem; color: var(--text-muted); padding: 1rem 0;">Aún no tienes recibos de nómina liquidados registrados.</p>
+    {% endif %}
+
+    <div style="margin-top: 1.5rem; padding-top: 1rem; border-top: 1px solid var(--border-color); display: flex; justify-content: space-between; align-items: center;">
+      <span style="font-size: 0.85rem; font-weight: 600; color: var(--text-muted);">Constancia de Trabajo</span>
+      <a href="/trabajadores/{{ worker.id }}/constancia/pdf" class="btn btn-sm" style="padding: 0.4rem 0.85rem; background: #f8fafc; border: 1px solid var(--border-color); border-radius: var(--radius-sm); font-size: 0.825rem; font-weight: 600;">Descargar Constancia Oficial (PDF) &darr;</a>
+    </div>
+  </div>
+
+</div>
+
+<!-- Historial de Solicitudes Recientes -->
+<div class="card">
+  <div class="card-header">
+    <h3 class="card-title">📋 Estado de mis Solicitudes</h3>
+    <a href="/mi-portal/solicitudes" style="font-size: 0.85rem; font-weight: 600; color: var(--primary-color);">Ver historial completo &rarr;</a>
+  </div>
+  {% if requests and requests.length > 0 %}
+    <div class="table-responsive">
+      <table class="qrh-table">
+        <thead>
+          <tr>
+            <th>Tipo</th>
+            <th>Período</th>
+            <th>Días Hábiles</th>
+            <th>Motivo</th>
+            <th>Estatus</th>
+            <th>Fecha Envío</th>
+          </tr>
+        </thead>
+        <tbody>
+          {% for req in requests %}
+          <tr>
+            <td style="font-weight: 600;">{{ req.tipo }}</td>
+            <td>{{ req.fechaDesde }} al {{ req.fechaHasta }}</td>
+            <td>{{ req.diasSolicitados | default(1) }}</td>
+            <td style="max-width: 250px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;">{{ req.motivo }}</td>
+            <td>
+              {% if req.estatus == "aprobada" or req.estatus == "APROBADO" %}
+                <span class="badge" style="background: #dcfce7; color: #16a34a; padding: 0.25rem 0.65rem; border-radius: 9999px; font-weight: 700; font-size: 0.75rem;">Aprobada</span>
+              {% elif req.estatus == "rechazada" or req.estatus == "RECHAZADO" %}
+                <span class="badge" style="background: #fee2e2; color: #dc2626; padding: 0.25rem 0.65rem; border-radius: 9999px; font-weight: 700; font-size: 0.75rem;">Rechazada</span>
+              {% else %}
+                <span class="badge" style="background: #fef3c7; color: #d97706; padding: 0.25rem 0.65rem; border-radius: 9999px; font-weight: 700; font-size: 0.75rem;">Pendiente</span>
+              {% endif %}
+            </td>
+            <td style="color: var(--text-muted); font-size: 0.8rem;">{{ req.createdAt }}</td>
+          </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+    </div>
+  {% else %}
+    <p style="font-size: 0.875rem; color: var(--text-muted); padding: 1rem 0;">No tienes solicitudes pendientes ni registradas recientemente.</p>
+  {% endif %}
+</div>
+{% endblock %}

@@ -1,0 +1,148 @@
+{% extends "layouts/base.njk" %}
+
+{% block content %}
+<div class="row">
+  <div class="col s12">
+    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 24px;">
+      <div>
+        <h4 style="margin: 0; font-weight: 700; color: #1a237e;">Capacitación y Cumplimiento INCES</h4>
+        <p style="margin: 4px 0 0; color: #546e7a;">Control legal del Programa Nacional de Aprendizaje (PNA) y catálogo formativo institucional</p>
+      </div>
+      <div>
+        <a href="#modal-nuevo-curso" class="btn waves-effect waves-light modal-trigger" style="background-color: #1565c0; border-radius: 6px;">
+          <i class="material-icons left">add</i>Nuevo Curso
+        </a>
+      </div>
+    </div>
+  </div>
+
+  <!-- Métricas de Cuota PNA (Ley del INCES) -->
+  <div class="col s12 m6 l3">
+    <div class="card-panel z-depth-1 hoverable" style="border-radius: 8px; border-left: 5px solid #1e88e5; padding: 16px;">
+      <span class="grey-text text-darken-1" style="font-size: 0.85rem; font-weight: 600;">PLANTILLA TOTAL</span>
+      <h4 style="margin: 8px 0; font-weight: 700; color: #1e88e5;">{{ pna.totalWorkers }}</h4>
+      <span class="grey-text" style="font-size: 0.8rem;">Trabajadores activos</span>
+    </div>
+  </div>
+
+  <div class="col s12 m6 l3">
+    <div class="card-panel z-depth-1 hoverable" style="border-radius: 8px; border-left: 5px solid #fb8c00; padding: 16px;">
+      <span class="grey-text text-darken-1" style="font-size: 0.85rem; font-weight: 600;">CUOTA OBLIGATORIA PNA</span>
+      <h4 style="margin: 8px 0; font-weight: 700; color: #fb8c00;">{{ pna.apprenticeQuota }}</h4>
+      <span class="grey-text" style="font-size: 0.8rem;">1 por cada 20 (Art. 32 Ley INCES)</span>
+    </div>
+  </div>
+
+  <div class="col s12 m6 l3">
+    <div class="card-panel z-depth-1 hoverable" style="border-radius: 8px; border-left: 5px solid #43a047; padding: 16px;">
+      <span class="grey-text text-darken-1" style="font-size: 0.85rem; font-weight: 600;">APRENDICES ACTIVOS</span>
+      <h4 style="margin: 8px 0; font-weight: 700; color: #43a047;">{{ pna.activeApprentices }}</h4>
+      <span class="grey-text" style="font-size: 0.8rem;">Contratos de formación</span>
+    </div>
+  </div>
+
+  <div class="col s12 m6 l3">
+    <div class="card-panel z-depth-1 hoverable" style="border-radius: 8px; border-left: 5px solid {% if pna.isCompliant %}#2e7d32{% else %}#c62828{% endif %}; padding: 16px;">
+      <span class="grey-text text-darken-1" style="font-size: 0.85rem; font-weight: 600;">ESTADO DE SOLVENCIA</span>
+      <h4 style="margin: 8px 0; font-weight: 700; color: {% if pna.isCompliant %}#2e7d32{% else %}#c62828{% endif %};">
+        {% if pna.isCompliant %}SOLVENTE{% else %}DÉFICIT ({{ pna.deficit }}){% endif %}
+      </h4>
+      <span class="grey-text" style="font-size: 0.8rem;">Cumplimiento: {{ pna.compliancePercentage }}%</span>
+    </div>
+  </div>
+
+  <!-- Catálogo de Cursos -->
+  <div class="col s12">
+    <div class="card z-depth-1" style="border-radius: 8px;">
+      <div class="card-content" style="padding: 24px;">
+        <span class="card-title" style="font-weight: 600; font-size: 1.2rem; color: #263238; margin-bottom: 20px;">
+          <i class="material-icons left" style="color: #1565c0;">school</i>Catálogo de Formación y Programas INCES
+        </span>
+
+        <table class="striped highlight responsive-table">
+          <thead>
+            <tr style="border-bottom: 2px solid #cfd8dc;">
+              <th>Código</th>
+              <th>Título del Curso</th>
+              <th>Categoría</th>
+              <th>Duración</th>
+              <th>Nota Mínima</th>
+              <th>Estado</th>
+            </tr>
+          </thead>
+          <tbody>
+            {% if courses.length > 0 %}
+              {% for c in courses %}
+              <tr>
+                <td><span class="chip blue lighten-5 blue-text text-darken-3" style="font-weight: 600;">{{ c.code }}</span></td>
+                <td style="font-weight: 600; color: #37474f;">{{ c.title }}</td>
+                <td>
+                  {% if c.category == 'pna_inces' %}
+                    <span class="chip amber lighten-4 amber-text text-darken-4">PNA INCES</span>
+                  {% elif c.category == 'seguridad' %}
+                    <span class="chip red lighten-5 red-text text-darken-3">Seguridad SST</span>
+                  {% elif c.category == 'tecnica' %}
+                    <span class="chip green lighten-5 green-text text-darken-4">Técnica</span>
+                  {% else %}
+                    <span class="chip purple lighten-5 purple-text text-darken-3">Habilidades Blandas</span>
+                  {% endif %}
+                </td>
+                <td>{{ c.durationHours }} horas pedagógicas</td>
+                <td>{{ c.minPassingScore }} / 20 pts</td>
+                <td><span class="badge green white-text" style="border-radius: 4px;">Activo</span></td>
+              </tr>
+              {% endfor %}
+            {% else %}
+              <tr>
+                <td colspan="6" class="center-align grey-text" style="padding: 32px;">
+                  No hay cursos registrados en el catálogo formativo actualmente.
+                </td>
+              </tr>
+            {% endif %}
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Modal Nuevo Curso -->
+<div id="modal-nuevo-curso" class="modal" style="border-radius: 8px; max-width: 600px;">
+  <form action="/talento/inces/cursos" method="POST">
+    <div class="modal-content">
+      <h5 style="font-weight: 700; color: #1a237e; margin-top: 0;">Registrar Curso en el Catálogo</h5>
+      <div class="row" style="margin-bottom: 0;">
+        <div class="input-field col s12 m4">
+          <input id="code" name="code" type="text" required placeholder="p.ej. SST-01" class="validate">
+          <label for="code" class="active">Código del Curso</label>
+        </div>
+        <div class="input-field col s12 m8">
+          <input id="title" name="title" type="text" required placeholder="Título del programa" class="validate">
+          <label for="title" class="active">Título de la Formación</label>
+        </div>
+        <div class="input-field col s12 m6">
+          <select name="category" class="browser-default" style="margin-top: 8px; border: 1px solid #cfd8dc; border-radius: 4px; padding: 8px;">
+            <option value="tecnica">Técnica / Oficio</option>
+            <option value="seguridad">Seguridad y Salud Laboral (SST)</option>
+            <option value="pna_inces">Programa de Aprendizaje (PNA INCES)</option>
+            <option value="habilidades_blandas">Habilidades Blandas</option>
+          </select>
+          <label class="active" style="transform: translateY(-24px);">Área Formativa</label>
+        </div>
+        <div class="input-field col s12 m3">
+          <input id="durationHours" name="durationHours" type="number" min="1" value="16" required class="validate">
+          <label for="durationHours" class="active">Horas (h)</label>
+        </div>
+        <div class="input-field col s12 m3">
+          <input id="minPassingScore" name="minPassingScore" type="number" min="10" max="20" value="12" required class="validate">
+          <label for="minPassingScore" class="active">Nota Mínima</label>
+        </div>
+      </div>
+    </div>
+    <div class="modal-footer" style="padding: 0 24px 20px;">
+      <a href="#!" class="modal-close btn-flat grey-text">Cancelar</a>
+      <button type="submit" class="btn waves-effect waves-light" style="background-color: #1565c0; border-radius: 6px;">Guardar Curso</button>
+    </div>
+  </form>
+</div>
+{% endblock %}

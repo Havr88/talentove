@@ -1,0 +1,139 @@
+{% extends "layouts/base.njk" %}
+
+{% block content %}
+<div style="margin-bottom: 1.5rem;">
+  <a href="/nomina/{{ batch.id }}" style="color: var(--text-muted); font-size: 0.875rem; text-decoration: none;">
+    &larr; Volver al Lote de Nómina
+  </a>
+  <div style="display: flex; justify-content: space-between; align-items: flex-start; margin-top: 0.5rem;">
+    <div>
+      <h1 style="font-size: 1.5rem; font-weight: 700; color: var(--text-color);">
+        Dispersión de Nómina Bancaria (Archivos TXT)
+      </h1>
+      <p style="color: var(--text-muted); font-size: 0.875rem;">
+        Período: <strong>{{ batch.periodStart }}</strong> al <strong>{{ batch.periodEnd }}</strong> &bull; Total Lote: <strong>{{ batch.totalNet }} Bs</strong>
+      </p>
+    </div>
+  </div>
+</div>
+
+{% if success %}
+  <div class="alert-success" style="padding: 1rem; background: #ecfdf5; border: 1px solid #10b981; border-radius: 6px; color: #065f46; margin-bottom: 1rem;">
+    {{ success }}
+  </div>
+{% endif %}
+
+<div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 1.25rem; margin-bottom: 2rem;">
+  <!-- Banco de Venezuela (0102) -->
+  <div class="card" style="background: white; border: 1px solid var(--border-color); border-radius: var(--radius-md); padding: 1.25rem;">
+    <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 0.75rem;">
+      <span style="font-weight: 700; font-size: 1rem; color: #b91c1c;">Banco de Venezuela</span>
+      <span style="background: #fee2e2; color: #991b1b; padding: 0.2rem 0.5rem; border-radius: 4px; font-weight: 700; font-size: 0.75rem;">0102</span>
+    </div>
+    <p style="font-size: 0.8rem; color: var(--text-muted); margin-bottom: 1rem;">
+      Formato estándar TXT pagomóvil/nómina empresarial con RIF patronal y cuentas de 20 dígitos.
+    </p>
+    <form method="POST" action="/nomina/{{ batch.id }}/bancos/generar">
+      <input type="hidden" name="bankCode" value="0102">
+      <button type="submit" class="btn btn-primary" style="width: 100%; justify-content: center;">
+        ⚡ Generar TXT BDV
+      </button>
+    </form>
+  </div>
+
+  <!-- Banesco (0134) -->
+  <div class="card" style="background: white; border: 1px solid var(--border-color); border-radius: var(--radius-md); padding: 1.25rem;">
+    <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 0.75rem;">
+      <span style="font-weight: 700; font-size: 1rem; color: #15803d;">Banesco Banco Universal</span>
+      <span style="background: #dcfce7; color: #166534; padding: 0.2rem 0.5rem; border-radius: 4px; font-weight: 700; font-size: 0.75rem;">0134</span>
+    </div>
+    <p style="font-size: 0.8rem; color: var(--text-muted); margin-bottom: 1rem;">
+      Estructura de multipagos Banesco con delimitadores por comas y tipo de operación nómina.
+    </p>
+    <form method="POST" action="/nomina/{{ batch.id }}/bancos/generar">
+      <input type="hidden" name="bankCode" value="0134">
+      <button type="submit" class="btn btn-primary" style="width: 100%; justify-content: center; background: #15803d; border-color: #15803d;">
+        ⚡ Generar TXT Banesco
+      </button>
+    </form>
+  </div>
+
+  <!-- Mercantil (0105) -->
+  <div class="card" style="background: white; border: 1px solid var(--border-color); border-radius: var(--radius-md); padding: 1.25rem;">
+    <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 0.75rem;">
+      <span style="font-weight: 700; font-size: 1rem; color: #0369a1;">Mercantil Banco</span>
+      <span style="background: #e0f2fe; color: #075985; padding: 0.2rem 0.5rem; border-radius: 4px; font-weight: 700; font-size: 0.75rem;">0105</span>
+    </div>
+    <p style="font-size: 0.8rem; color: var(--text-muted); margin-bottom: 1rem;">
+      Layout Mercantil en Línea Empresas con registro de encabezado y detalle de beneficiarios.
+    </p>
+    <form method="POST" action="/nomina/{{ batch.id }}/bancos/generar">
+      <input type="hidden" name="bankCode" value="0105">
+      <button type="submit" class="btn btn-primary" style="width: 100%; justify-content: center; background: #0369a1; border-color: #0369a1;">
+        ⚡ Generar TXT Mercantil
+      </button>
+    </form>
+  </div>
+
+  <!-- BBVA Provincial (0108) -->
+  <div class="card" style="background: white; border: 1px solid var(--border-color); border-radius: var(--radius-md); padding: 1.25rem;">
+    <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 0.75rem;">
+      <span style="font-weight: 700; font-size: 1rem; color: #1d4ed8;">BBVA Provincial</span>
+      <span style="background: #dbeafe; color: #1e40af; padding: 0.2rem 0.5rem; border-radius: 4px; font-weight: 700; font-size: 0.75rem;">0108</span>
+    </div>
+    <p style="font-size: 0.8rem; color: var(--text-muted); margin-bottom: 1rem;">
+      Formato Provinet Empresas para transferencias masivas y dispersión de nómina.
+    </p>
+    <form method="POST" action="/nomina/{{ batch.id }}/bancos/generar">
+      <input type="hidden" name="bankCode" value="0108">
+      <button type="submit" class="btn btn-primary" style="width: 100%; justify-content: center; background: #1d4ed8; border-color: #1d4ed8;">
+        ⚡ Generar TXT Provincial
+      </button>
+    </form>
+  </div>
+</div>
+
+<!-- Historial de Archivos Bancarios Generados -->
+<div class="card" style="background: white; border: 1px solid var(--border-color); border-radius: var(--radius-lg); padding: 1.5rem;">
+  <h2 style="font-size: 1.1rem; font-weight: 600; margin-bottom: 1rem; color: var(--text-color);">
+    Archivos de Dispersión Generados y Verificados
+  </h2>
+
+  {% if bankFiles.length == 0 %}
+    <p style="color: var(--text-muted); font-size: 0.875rem;">No se han generado archivos bancarios para este lote aún. Haz clic en el banco correspondiente arriba.</p>
+  {% else %}
+    <div style="overflow-x: auto;">
+      <table style="width: 100%; border-collapse: collapse; font-size: 0.875rem; text-align: left;">
+        <thead>
+          <tr style="border-bottom: 2px solid var(--border-color); color: var(--text-muted);">
+            <th scope="col" style="padding: 0.75rem;">Banco</th>
+            <th scope="col" style="padding: 0.75rem;">Nombre Archivo</th>
+            <th scope="col" style="padding: 0.75rem; text-align: right;">Registros</th>
+            <th scope="col" style="padding: 0.75rem; text-align: right;">Monto Total</th>
+            <th scope="col" style="padding: 0.75rem;">Hash SHA-256</th>
+            <th scope="col" style="padding: 0.75rem; text-align: center;">Acción</th>
+          </tr>
+        </thead>
+        <tbody>
+          {% for f in bankFiles %}
+            <tr style="border-bottom: 1px solid var(--border-color);">
+              <td style="padding: 0.75rem; font-weight: 600;">
+                {% if f.bankCode == '0102' %}BDV (0102){% elif f.bankCode == '0134' %}Banesco (0134){% elif f.bankCode == '0105' %}Mercantil (0105){% else %}Provincial (0108){% endif %}
+              </td>
+              <td style="padding: 0.75rem; font-family: monospace;">{{ f.filename }}</td>
+              <td style="padding: 0.75rem; text-align: right;">{{ f.totalRecords }}</td>
+              <td style="padding: 0.75rem; text-align: right; font-family: monospace; font-weight: 700; color: #047857;">{{ f.totalAmount.toFixed(2) }} Bs</td>
+              <td style="padding: 0.75rem; font-family: monospace; font-size: 0.75rem; color: var(--text-muted);" title="{{ f.hashSha256 }}">{{ f.hashSha256.slice(0, 16) }}...</td>
+              <td style="padding: 0.75rem; text-align: center;">
+                <a href="/nomina/bancos/descargar/{{ f.id }}" class="btn btn-outline" style="padding: 0.35rem 0.75rem; font-size: 0.8rem;">
+                  💾 Descargar TXT
+                </a>
+              </td>
+            </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+    </div>
+  {% endif %}
+</div>
+{% endblock %}

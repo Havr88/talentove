@@ -1,0 +1,129 @@
+{% extends "layouts/base.njk" %}
+
+{% block content %}
+<div class="page-header">
+  <div class="page-header-content">
+    <div class="page-header-icon" style="background: #ecfeff; color: #0891b2;">🏢</div>
+    <div>
+      <h1 class="page-header-title">Perfil de la Institución</h1>
+      <p class="page-header-subtitle">Una vista general de la composición actual y métricas clave de la organización.</p>
+    </div>
+  </div>
+  <div class="page-header-actions">
+    <a href="/personal" class="btn btn-outline">🏛️ Gestión de Estructura</a>
+  </div>
+</div>
+
+<!-- KPIs Generales -->
+<div class="kpi-grid">
+  <div class="kpi-card">
+    <div class="kpi-label">Total Nómina Activa</div>
+    <div class="kpi-value">{{ stats.totalWorkers }}</div>
+    <div class="kpi-subtext"><span>👥</span><span>Trabajadores registrados</span></div>
+  </div>
+
+  <div class="kpi-card kpi-success">
+    <div class="kpi-label">Ubicaciones / Sedes</div>
+    <div class="kpi-value">{{ stats.totalLocations }}</div>
+    <div class="kpi-subtext"><span>🏢</span><span>Centros de trabajo activos</span></div>
+  </div>
+
+  <div class="kpi-card kpi-warning">
+    <div class="kpi-label">Departamentos</div>
+    <div class="kpi-value">{{ stats.totalDepartments }}</div>
+    <div class="kpi-subtext"><span>🏛️</span><span>Áreas funcionales</span></div>
+  </div>
+
+  <div class="kpi-card kpi-accent">
+    <div class="kpi-label">Cargos Ocupacionales</div>
+    <div class="kpi-value">{{ stats.totalPositions }}</div>
+    <div class="kpi-subtext"><span>📋</span><span>Puestos definidos</span></div>
+  </div>
+</div>
+
+<!-- Grids de Composición Institucional -->
+<div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(350px, 1fr)); gap: 1.5rem; margin-bottom: 2rem;">
+  <!-- Composición por Tipo de Nómina -->
+  <div class="card" style="margin-bottom: 0;">
+    <div class="card-header">
+      <h3 class="card-title">Composición por Tipo de Personal</h3>
+      <span class="qrh-badge">Estatus LOTTT</span>
+    </div>
+    <div style="display: flex; flex-direction: column; gap: 1rem;">
+      <div>
+        <div style="display: flex; justify-content: space-between; font-size: 0.875rem; margin-bottom: 0.35rem;">
+          <span style="font-weight: 600;">Personal Empleado Administrativo / Técnico</span>
+          <span style="font-weight: 700; color: #2563eb;">{{ stats.empleadosCount }}</span>
+        </div>
+        <div style="height: 8px; border-radius: 9999px; background: #e2e8f0; overflow: hidden;">
+          <div style="height: 100%; width: {{ (stats.empleadosCount / stats.totalWorkers * 100) if stats.totalWorkers else 50 }}%; background: #2563eb;"></div>
+        </div>
+      </div>
+
+      <div>
+        <div style="display: flex; justify-content: space-between; font-size: 0.875rem; margin-bottom: 0.35rem;">
+          <span style="font-weight: 600;">Personal Obrero / Operativo y Mantenimiento</span>
+          <span style="font-weight: 700; color: #16a34a;">{{ stats.obrerosCount }}</span>
+        </div>
+        <div style="height: 8px; border-radius: 9999px; background: #e2e8f0; overflow: hidden;">
+          <div style="height: 100%; width: {{ (stats.obrerosCount / stats.totalWorkers * 100) if stats.totalWorkers else 30 }}%; background: #16a34a;"></div>
+        </div>
+      </div>
+
+      <div>
+        <div style="display: flex; justify-content: space-between; font-size: 0.875rem; margin-bottom: 0.35rem;">
+          <span style="font-weight: 600;">Personal Especialista / Asistencial / Directivo</span>
+          <span style="font-weight: 700; color: #9333ea;">{{ stats.especialistasCount }}</span>
+        </div>
+        <div style="height: 8px; border-radius: 9999px; background: #e2e8f0; overflow: hidden;">
+          <div style="height: 100%; width: {{ (stats.especialistasCount / stats.totalWorkers * 100) if stats.totalWorkers else 20 }}%; background: #9333ea;"></div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Distribución por Antigüedad -->
+  <div class="card" style="margin-bottom: 0;">
+    <div class="card-header">
+      <h3 class="card-title">Distribución por Antigüedad Laboral</h3>
+      <span class="qrh-badge">Años de Servicio</span>
+    </div>
+    <div style="display: flex; flex-direction: column; gap: 0.85rem;">
+      <div style="display: flex; align-items: center; justify-content: space-between; padding: 0.5rem 0.75rem; background: #f8fafc; border-radius: 6px;">
+        <span style="font-size: 0.875rem; font-weight: 500;">0 a 1 año (Nuevo Ingreso)</span>
+        <span class="qrh-badge" style="background: #e0f2fe; color: #0369a1; font-size: 0.85rem;">{{ stats.tenure01 }} trabajadores</span>
+      </div>
+      <div style="display: flex; align-items: center; justify-content: space-between; padding: 0.5rem 0.75rem; background: #f8fafc; border-radius: 6px;">
+        <span style="font-size: 0.875rem; font-weight: 500;">2 a 5 años (Consolidación)</span>
+        <span class="qrh-badge" style="background: #f0fdf4; color: #166534; font-size: 0.85rem;">{{ stats.tenure25 }} trabajadores</span>
+      </div>
+      <div style="display: flex; align-items: center; justify-content: space-between; padding: 0.5rem 0.75rem; background: #f8fafc; border-radius: 6px;">
+        <span style="font-size: 0.875rem; font-weight: 500;">6 a 10 años (Experiencia)</span>
+        <span class="qrh-badge" style="background: #fefce8; color: #854d0e; font-size: 0.85rem;">{{ stats.tenure610 }} trabajadores</span>
+      </div>
+      <div style="display: flex; align-items: center; justify-content: space-between; padding: 0.5rem 0.75rem; background: #f8fafc; border-radius: 6px;">
+        <span style="font-size: 0.875rem; font-weight: 500;">Más de 10 años (Trayectoria)</span>
+        <span class="qrh-badge" style="background: #faf5ff; color: #7e22ce; font-size: 0.85rem;">{{ stats.tenure10plus }} trabajadores</span>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Estructura de Sedes y Departamentos -->
+<div class="card">
+  <div class="card-header">
+    <h3 class="card-title">Resumen de Sedes y Áreas Funcionales</h3>
+    <a href="/ubicaciones" class="btn btn-outline btn-sm">Ver Ubicaciones &rarr;</a>
+  </div>
+
+  <div style="display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap: 1rem;">
+    {% for loc in locations %}
+      <div style="padding: 1rem; border: 1px solid var(--border-color); border-radius: 8px; background: #f8fafc;">
+        <div style="font-weight: 700; color: var(--text-color); margin-bottom: 0.25rem;">{{ loc.name }}</div>
+        <p style="font-size: 0.8rem; color: var(--text-muted); margin-bottom: 0.5rem;">{{ loc.direccion or 'Sede Administrativa' }}</p>
+        <span class="qrh-badge" style="background: #dcfce7; color: #166534;">Operativo</span>
+      </div>
+    {% endfor %}
+  </div>
+</div>
+{% endblock %}

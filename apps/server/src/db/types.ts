@@ -56,6 +56,7 @@ export interface ISessionRepository {
 }
 
 export interface Repositories {
+  readonly bankAccounts?: IBankAccountRepository | undefined;
   readonly settings: ISettingsRepository;
   readonly users: IUserRepository;
   readonly sessions: ISessionRepository;
@@ -68,6 +69,16 @@ export interface Repositories {
   readonly movements: IContractMovementRepository;
   readonly requests: IEmployeeRequestRepository;
   readonly attendance: IAttendanceRepository;
+  readonly payroll: IPayrollRepository;
+  readonly credentials: IDigitalCredentialRepository;
+  readonly holidays: IHolidayRepository;
+  readonly bankPayments: IBankPaymentRepository;
+  readonly assets: IAssignedAssetRepository;
+  readonly sst: ISstRepository;
+  readonly jobPostings: IJobPostingRepository;
+  readonly jobApplications: IJobApplicationRepository;
+  readonly training: ITrainingRepository;
+  readonly performance: IPerformanceRepository;
 }
 
 export interface Territory {
@@ -124,6 +135,16 @@ export interface PersonnelType {
   readonly baseLegal?: string | undefined;
 }
 
+export type GradoInstruccion = 'BACH' | 'TSU' | 'PROF' | 'ESPEC' | 'MGS' | 'DOCT';
+export const GRADO_INSTRUCCION_LABEL: Record<GradoInstruccion, string> = {
+  BACH: 'Bachiller',
+  TSU: 'Técnico Superior Universitario',
+  PROF: 'Profesional Universitario',
+  ESPEC: 'Especialista',
+  MGS: 'Magíster',
+  DOCT: 'Doctor(a)',
+};
+
 export type EmployeeStatus = 'activo' | 'reposo' | 'vacaciones' | 'suspendido' | 'retirado';
 export type CivilStatus = 'soltero' | 'casado' | 'divorciado' | 'viudo' | 'union_estable';
 
@@ -142,6 +163,7 @@ export interface Employee {
   readonly telefono?: string | undefined;
   readonly direccion: string;
   readonly territoryId?: number | undefined;
+  readonly gradoInstruccion?: GradoInstruccion | undefined;
   readonly status: EmployeeStatus;
   readonly createdAt: string;
   readonly updatedAt: string;
@@ -157,7 +179,9 @@ export interface Contract {
   readonly tipo: 'indeterminado' | 'determinado' | 'obra_labor';
   readonly sector: 'publico' | 'privado';
   readonly fechaIngreso: string;
+  readonly fechaIngresoApn?: string | undefined;
   readonly fechaFin?: string | undefined;
+  readonly condicionLaboral?: string | undefined;
   readonly salarioBase: string;
   readonly currency: 'VES' | 'USD';
   readonly jornadaHoras: number;
@@ -177,6 +201,11 @@ export interface BankAccount {
   readonly createdAt: string;
 }
 
+export interface IBankAccountRepository {
+  listByEmployeeId(employeeId: string): Promise<BankAccount[]>;
+  create(data: Omit<BankAccount, 'id' | 'createdAt'>): Promise<BankAccount>;
+}
+
 export interface ITerritoryRepository {
   list(): Promise<Territory[]>;
   findById(id: number): Promise<Territory | null>;
@@ -191,6 +220,7 @@ export interface IOrgUnitRepository {
 
 export interface IPositionRepository {
   list(): Promise<Position[]>;
+  findById(id: number): Promise<Position | null>;
   create(data: Omit<Position, 'id'>): Promise<Position>;
   findByName(name: string): Promise<Position | null>;
 }
@@ -340,6 +370,283 @@ export interface IAttendanceRepository {
   listRecordsBySheetId(sheetId: string): Promise<AttendanceRecord[]>;
   saveRecords(records: Omit<AttendanceRecord, 'id' | 'createdAt' | 'updatedAt'>[]): Promise<AttendanceRecord[]>;
 }
+
+// ----------------------------------------------------
+// Hito M2b: Nómina Integral LOTTT & APN
+// ----------------------------------------------------
+export interface PayrollBatch {
+  readonly id: string;
+  readonly title: string;
+  readonly periodType: string;
+  readonly year: number;
+  readonly month: number;
+  readonly startDate: string;
+  readonly endDate: string;
+  readonly status: string;
+  readonly totalEarnings: number;
+  readonly totalDeductions: number;
+  readonly totalNet: number;
+  readonly exchangeRateBcv: number;
+  readonly processedBy?: string | undefined;
+  readonly createdAt: string;
+  readonly updatedAt: string;
+}
+
+export interface PayrollReceiptRecord {
+  readonly id: string;
+  readonly payrollId: string;
+  readonly employeeId: string;
+  readonly snapshot: string; // JSON con EmployeePayrollSnapshot
+  readonly baseSalary: number;
+  readonly educationPremium: number;
+  readonly seniorityPremium: number;
+  readonly kidsPremium: number;
+  readonly overtimePay: number;
+  readonly nightBonusPay: number;
+  readonly cestaTicket: number;
+  readonly totalEarnings: number;
+  readonly ivssDeduction: number;
+  readonly faovDeduction: number;
+  readonly spfDeduction: number;
+  readonly absenceDeduction: number;
+  readonly totalDeductions: number;
+  readonly netPay: number;
+  readonly netPayUsd: number;
+  readonly status: string;
+  readonly createdAt: string;
+}
+
+export interface IPayrollRepository {
+  listBatches(): Promise<PayrollBatch[]>;
+  findBatchById(id: string): Promise<PayrollBatch | null>;
+  createBatch(batch: Omit<PayrollBatch, 'id' | 'createdAt' | 'updatedAt'>): Promise<PayrollBatch>;
+  updateBatchStatus(id: string, status: string): Promise<PayrollBatch | null>;
+  listReceiptsByBatchId(batchId: string): Promise<PayrollReceiptRecord[]>;
+  listReceiptsByEmployeeId(employeeId: string): Promise<PayrollReceiptRecord[]>;
+  findReceiptById(id: string): Promise<PayrollReceiptRecord | null>;
+  saveReceipts(receipts: Omit<PayrollReceiptRecord, 'id' | 'createdAt'>[]): Promise<PayrollReceiptRecord[]>;
+}
+
+// ----------------------------------------------------
+// Hito M2c: Carnetización Institucional CR-80 con QR
+// ----------------------------------------------------
+export interface DigitalCredential {
+  readonly id: string;
+  readonly employeeId: string;
+  readonly verificationToken: string;
+  readonly issuedAt: string;
+  readonly expiresAt: string;
+  readonly bloodType: string;
+  readonly emergencyContact: string;
+  readonly emergencyPhone: string;
+  readonly status: 'activa' | 'revocada' | 'suspendida';
+  readonly qrCodeDataUri?: string | undefined;
+  readonly createdAt: string;
+}
+
+export interface IDigitalCredentialRepository {
+  findByEmployeeId(employeeId: string): Promise<DigitalCredential | null>;
+  findByToken(token: string): Promise<DigitalCredential | null>;
+  create(data: Omit<DigitalCredential, 'id' | 'createdAt'>): Promise<DigitalCredential>;
+  updateStatus(id: string, status: 'activa' | 'revocada' | 'suspendida'): Promise<DigitalCredential | null>;
+}
+
+// ----------------------------------------------------
+// Hito M3: Calendario de Feriados y Decretos
+// ----------------------------------------------------
+export interface HolidayRecord {
+  readonly id: number;
+  readonly date: string;
+  readonly name: string;
+  readonly type: 'nacional' | 'decreto' | 'bancario' | 'regional';
+  readonly isWorkingDay: boolean;
+  readonly payRateMultiplier: number;
+  readonly description?: string | undefined;
+  readonly createdAt: string;
+}
+
+export interface IHolidayRepository {
+  list(year?: number): Promise<HolidayRecord[]>;
+  findByDate(date: string): Promise<HolidayRecord | null>;
+  create(data: Omit<HolidayRecord, 'id' | 'createdAt'>): Promise<HolidayRecord>;
+}
+
+// ----------------------------------------------------
+// Integraciones Bancarias de Pago de Nómina (M2b)
+// ----------------------------------------------------
+export interface BankPaymentFileRecord {
+  readonly id: string;
+  readonly payrollBatchId: string;
+  readonly bankCode: string;
+  readonly bankName: string;
+  readonly fileName: string;
+  readonly content: string;
+  readonly totalRecords: number;
+  readonly totalAmount: number;
+  readonly hash: string;
+  readonly createdAt: string;
+  readonly createdBy: string;
+}
+
+export interface IBankPaymentRepository {
+  listByBatchId(batchId: string): Promise<BankPaymentFileRecord[]>;
+  findById(id: string): Promise<BankPaymentFileRecord | null>;
+  save(record: BankPaymentFileRecord): Promise<void>;
+}
+
+// ----------------------------------------------------
+// Control de Activos Asignados (Módulo E - M3)
+// ----------------------------------------------------
+export interface AssignedAssetRecord {
+  readonly id: string;
+  readonly employeeId: string;
+  readonly assetType: 'equipo_computo' | 'linea_telefonica' | 'uniforme' | 'epp' | 'vehiculo' | 'llave_acceso' | 'otro';
+  readonly assetCode: string;
+  readonly description: string;
+  readonly serialNumber?: string | undefined;
+  readonly assignedDate: string;
+  readonly status: 'asignado' | 'devuelto' | 'extraviado' | 'danado';
+  readonly returnDate?: string | undefined;
+  readonly notes?: string | undefined;
+  readonly createdAt: string;
+}
+
+export interface IAssignedAssetRepository {
+  list(): Promise<AssignedAssetRecord[]>;
+  listByEmployeeId(employeeId: string): Promise<AssignedAssetRecord[]>;
+  findById(id: string): Promise<AssignedAssetRecord | null>;
+  create(asset: Omit<AssignedAssetRecord, 'id' | 'createdAt'>): Promise<AssignedAssetRecord>;
+  updateStatus(id: string, status: AssignedAssetRecord['status'], returnDate?: string): Promise<AssignedAssetRecord | null>;
+}
+
+// ----------------------------------------------------
+// Seguridad y Salud Laboral LOPCYMAT (SST - M3)
+// ----------------------------------------------------
+export interface SstRiskNotificationRecord {
+  readonly id: string;
+  readonly employeeId: string;
+  readonly positionName: string;
+  readonly workArea: string;
+  readonly riskFactors: string[];
+  readonly preventiveMeasures: string[];
+  readonly eppRequired: string[];
+  readonly isAcknowledged: boolean;
+  readonly signedAt?: string | undefined;
+  readonly createdAt: string;
+}
+
+export interface ISstRepository {
+  listByEmployeeId(employeeId: string): Promise<SstRiskNotificationRecord[]>;
+  findById(id: string): Promise<SstRiskNotificationRecord | null>;
+  create(data: Omit<SstRiskNotificationRecord, 'id' | 'createdAt'>): Promise<SstRiskNotificationRecord>;
+  acknowledge(id: string, signedAt: string): Promise<SstRiskNotificationRecord | null>;
+}
+
+// ----------------------------------------------------
+// ATS y Reclutamiento (M3)
+// ----------------------------------------------------
+export interface JobPostingRecord {
+  readonly id: string;
+  readonly code: string;
+  readonly title: string;
+  readonly orgUnitId: string;
+  readonly positionId: number;
+  readonly type: 'interna' | 'publica' | 'mixta';
+  readonly status: 'borrador' | 'publicada' | 'pausada' | 'cerrada';
+  readonly vacanciesCount: number;
+  readonly salaryMinBs?: string;
+  readonly salaryMaxBs?: string;
+  readonly description: string;
+  readonly requirements: string[];
+  readonly closingDate?: string;
+  readonly createdAt: string;
+}
+
+export interface IJobPostingRepository {
+  list(): Promise<JobPostingRecord[]>;
+  findById(id: string): Promise<JobPostingRecord | null>;
+  create(data: Omit<JobPostingRecord, 'id' | 'createdAt'>): Promise<JobPostingRecord>;
+  updateStatus(id: string, status: JobPostingRecord['status']): Promise<JobPostingRecord | null>;
+}
+
+export interface JobApplicationRecord {
+  readonly id: string;
+  readonly jobPostingId: string;
+  readonly candidateName: string;
+  readonly candidateCedula: string;
+  readonly candidateEmail: string;
+  readonly candidatePhone: string;
+  readonly candidateAddress?: string;
+  readonly stage: 'postulado' | 'revision' | 'entrevista' | 'oferta' | 'contratado' | 'descartado';
+  readonly score?: number | undefined;
+  readonly notes?: string | undefined;
+  readonly stageUpdatedAt: string;
+  readonly createdAt: string;
+}
+
+export interface IJobApplicationRepository {
+  listByPostingId(postingId: string): Promise<JobApplicationRecord[]>;
+  findById(id: string): Promise<JobApplicationRecord | null>;
+  create(data: Omit<JobApplicationRecord, 'id' | 'createdAt' | 'stageUpdatedAt'>): Promise<JobApplicationRecord>;
+  updateStage(id: string, stage: JobApplicationRecord['stage'], notes?: string): Promise<JobApplicationRecord | null>;
+}
+
+// ----------------------------------------------------
+// Capacitación y Formación INCES (M3)
+// ----------------------------------------------------
+export interface TrainingCourseRecord {
+  readonly id: string;
+  readonly code: string;
+  readonly title: string;
+  readonly category: 'tecnica' | 'seguridad' | 'habilidades_blandas' | 'pna_inces';
+  readonly durationHours: number;
+  readonly minPassingScore: number;
+  readonly createdAt: string;
+}
+
+export interface TrainingEnrollmentRecord {
+  readonly id: string;
+  readonly courseId: string;
+  readonly workerId: string;
+  readonly status: 'inscrito' | 'en_progreso' | 'aprobado' | 'reprobado';
+  readonly score?: number | undefined;
+  readonly completionDate?: string | undefined;
+  readonly createdAt: string;
+}
+
+export interface ITrainingRepository {
+  listCourses(): Promise<TrainingCourseRecord[]>;
+  findCourseById(id: string): Promise<TrainingCourseRecord | null>;
+  createCourse(data: Omit<TrainingCourseRecord, 'id' | 'createdAt'>): Promise<TrainingCourseRecord>;
+  listEnrollments(workerId?: string): Promise<TrainingEnrollmentRecord[]>;
+  enrollWorker(data: Omit<TrainingEnrollmentRecord, 'id' | 'createdAt'>): Promise<TrainingEnrollmentRecord>;
+  updateEnrollmentStatus(id: string, status: TrainingEnrollmentRecord['status'], score?: number | undefined, completionDate?: string): Promise<TrainingEnrollmentRecord | null>;
+}
+
+// ----------------------------------------------------
+// Evaluación de Desempeño (M3)
+// ----------------------------------------------------
+export interface PerformanceEvaluationRecord {
+  readonly id: string;
+  readonly workerId: string;
+  readonly period: string;
+  readonly goalsScore: number;
+  readonly competenciesScore: number;
+  readonly finalScore: number;
+  readonly meritLevel: string;
+  readonly isEligibleForPromotion: boolean;
+  readonly isEligibleForBonus: boolean;
+  readonly evaluatorId?: string | undefined;
+  readonly comments?: string | undefined;
+  readonly createdAt: string;
+}
+
+export interface IPerformanceRepository {
+  list(workerId?: string): Promise<PerformanceEvaluationRecord[]>;
+  findById(id: string): Promise<PerformanceEvaluationRecord | null>;
+  create(data: Omit<PerformanceEvaluationRecord, 'id' | 'createdAt'>): Promise<PerformanceEvaluationRecord>;
+}
+
 
 
 

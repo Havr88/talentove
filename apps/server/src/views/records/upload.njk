@@ -1,0 +1,88 @@
+{% extends "layouts/base.njk" %}
+
+{% block content %}
+<div class="page-header">
+  <div class="page-header-content">
+    <div class="page-header-icon" style="background: #fff7ed; color: #ea580c;">📤</div>
+    <div>
+      <h1 class="page-header-title">Carga de Documentos al Expediente</h1>
+      <p class="page-header-subtitle">Busca al trabajador, selecciona el tipo de documento y adjunta el archivo a subir.</p>
+    </div>
+  </div>
+  <div class="page-header-actions">
+    <a href="/expedientes/buscar" class="btn btn-outline">🔍 Buscar Expedientes</a>
+  </div>
+</div>
+
+{% if success %}
+  <div class="alert-success">{{ success }}</div>
+{% endif %}
+
+<div class="card" style="max-width: 800px; margin: 0 auto 2rem auto;">
+  <form method="POST" action="/expedientes/cargar" enctype="multipart/form-data">
+    <div class="form-group">
+      <label for="workerId">1. Seleccionar Trabajador *</label>
+      <select id="workerId" name="workerId" class="form-control" required>
+        <option value="">-- Selecciona el titular del expediente --</option>
+        {% for w in allWorkers %}
+          <option value="{{ w.id }}" {% if selectedWorkerId == w.id %}selected{% endif %}>
+            {{ w.cedulaTipo }}-{{ w.cedulaNumero }} &bull; {{ w.nombres }} {{ w.apellidos }}
+          </option>
+        {% endfor %}
+      </select>
+    </div>
+
+    <div class="form-group">
+      <label for="documentType">2. Tipo de Documento *</label>
+      <select id="documentType" name="documentType" class="form-control" required>
+        <option value="Cédula de Identidad">Cédula de Identidad</option>
+        <option value="RIF Digital">RIF Digital Actualizado</option>
+        <option value="Contrato de Trabajo">Contrato de Trabajo Firmado</option>
+        <option value="Título Académico / Certificación">Título Académico / Certificación</option>
+        <option value="Certificado de Salud / Manipulación">Certificado de Salud / Manipulación de Alimentos</option>
+        <option value="Constancia de Trabajo">Constancia de Trabajo</option>
+        <option value="Amonestación / Incidencia">Amonestación / Notificación de Faltas</option>
+        <option value="Reconocimiento / Mérito">Reconocimiento / Carta de Mérito</option>
+        <option value="Soporte de Permiso / Reposo Médico">Soporte de Permiso / Reposo Médico (IVSS)</option>
+        <option value="Otro">Otro Soporte Oficial</option>
+      </select>
+    </div>
+
+    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1rem;">
+      <div class="form-group">
+        <label for="emissionDate">Fecha de Emisión (opcional)</label>
+        <input type="date" id="emissionDate" name="emissionDate" class="form-control">
+      </div>
+      <div class="form-group">
+        <label for="expiryDate">Fecha de Vencimiento (opcional)</label>
+        <input type="date" id="expiryDate" name="expiryDate" class="form-control">
+      </div>
+    </div>
+
+    <div class="form-group">
+      <label for="metadata">Metadatos u Observaciones Adicionales</label>
+      <input type="text" id="metadata" name="metadata" class="form-control" placeholder="Ej: Copia certificada por RRHH / Registro N° 2026-A">
+    </div>
+
+    <div class="form-group">
+      <label for="fileUpload">3. Archivo Adjunto (PDF, JPG, PNG) *</label>
+      <div style="border: 2px dashed #cbd5e1; border-radius: var(--radius-md); padding: 2rem 1.5rem; text-align: center; background: #f8fafc; cursor: pointer;" onclick="document.getElementById('fileUpload').click()">
+        <div style="font-size: 2.25rem; color: #ea580c; margin-bottom: 0.5rem;">📁</div>
+        <p style="font-weight: 600; font-size: 0.95rem; color: var(--text-color); margin-bottom: 0.25rem;">
+          Haz clic aquí para seleccionar el archivo o arrástralo
+        </p>
+        <p style="font-size: 0.8rem; color: var(--text-muted);">Formatos admitidos: PDF, JPG, PNG (máx. 10MB)</p>
+        <input type="file" id="fileUpload" name="file" accept=".pdf,.png,.jpg,.jpeg" style="display: none;" onchange="document.getElementById('fileNameDisplay').textContent = this.files[0]?.name || ''">
+        <div id="fileNameDisplay" style="margin-top: 0.75rem; font-weight: 700; color: #0284c7; font-size: 0.875rem;"></div>
+      </div>
+    </div>
+
+    <div style="display: flex; justify-content: flex-end; gap: 1rem; margin-top: 1.5rem;">
+      <a href="/expedientes/buscar" class="btn btn-outline">Cancelar</a>
+      <button type="submit" class="btn btn-primary" style="background: #ea580c; border-color: #ea580c; padding: 0.65rem 1.5rem;">
+        📤 Guardar en Expediente
+      </button>
+    </div>
+  </form>
+</div>
+{% endblock %}

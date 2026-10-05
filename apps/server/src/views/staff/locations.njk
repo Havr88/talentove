@@ -1,0 +1,104 @@
+{% extends "layouts/base.njk" %}
+
+{% block content %}
+<div class="page-header">
+  <div class="page-header-content">
+    <div class="page-header-icon" style="background: #eff6ff; color: #2563eb;">🏢</div>
+    <div>
+      <h1 class="page-header-title">Gestión de Ubicaciones Físicas</h1>
+      <p class="page-header-subtitle">Crea, edita y organiza las instituciones, sedes o centros de trabajo de la organización.</p>
+    </div>
+  </div>
+  <div class="page-header-actions">
+    <a href="/personal" class="btn btn-outline">&larr; Volver</a>
+  </div>
+</div>
+
+{% if success %}
+  <div class="alert-success">{{ success }}</div>
+{% endif %}
+
+<div style="display: grid; grid-template-columns: 2fr 1.2fr; gap: 1.5rem; align-items: start;">
+  <!-- Tabla de Ubicaciones Físicas -->
+  <div class="qrh-table-card">
+    <div style="padding: 1.25rem 1.5rem; border-bottom: 1px solid var(--border-color); display: flex; justify-content: space-between; align-items: center;">
+      <h3 style="font-size: 1.1rem; font-weight: 700; margin: 0; color: var(--text-color);">Sedes Registradas</h3>
+      <span class="qrh-badge">{{ locations.length }} ubicaciones</span>
+    </div>
+
+    <table class="qrh-table">
+      <thead>
+        <tr>
+          <th>Nombre de la Ubicación</th>
+          <th>Estado / Territorio</th>
+          <th>Dirección</th>
+          <th scope="col" style="text-align: right;">Acciones</th>
+        </tr>
+      </thead>
+      <tbody>
+        {% if locations.length == 0 %}
+          <tr>
+            <td colspan="4" style="text-align: center; color: var(--text-muted); padding: 2rem;">
+              No hay ubicaciones registradas aún. Añade la primera en el formulario derecho.
+            </td>
+          </tr>
+        {% else %}
+          {% for loc in locations %}
+            <tr>
+              <td style="font-weight: 600;">
+                <div>{{ loc.name }}</div>
+                <small style="color: var(--text-muted); font-size: 0.75rem;">ID: {{ loc.id.slice(0, 8) }}</small>
+              </td>
+              <td>
+                <span class="qrh-badge" style="background: #e0f2fe; color: #0369a1;">{{ loc.territoryName or 'Sede Principal' }}</span>
+              </td>
+              <td style="color: #475569; font-size: 0.825rem;">{{ loc.direccion or 'Dirección no especificada' }}</td>
+              <td style="text-align: right;">
+                <span style="color: var(--text-muted); font-size: 0.8rem;">Activa</span>
+              </td>
+            </tr>
+          {% endfor %}
+        {% endif %}
+      </tbody>
+    </table>
+  </div>
+
+  <!-- Formulario de Añadir Ubicación -->
+  <div class="card" style="margin-bottom: 0;">
+    <h3 style="font-size: 1.1rem; font-weight: 700; margin-bottom: 0.35rem; color: var(--text-color);">Añadir Ubicación</h3>
+    <p style="font-size: 0.825rem; color: var(--text-muted); margin-bottom: 1.25rem;">
+      Las ubicaciones representan las instituciones o sedes a las que se asignan los departamentos.
+    </p>
+
+    <form method="POST" action="/ubicaciones">
+      <div class="form-group">
+        <label for="name">Nombre de la Ubicación *</label>
+        <input type="text" id="name" name="name" class="form-control" placeholder="Ej: Sede Principal Caracas" required>
+      </div>
+
+      <div class="form-group">
+        <label for="territoryId">Estado / Entidad Federal *</label>
+        <select id="territoryId" name="territoryId" class="form-control" required>
+          {% for t in territories %}
+            <option value="{{ t.id }}">{{ t.nombre }} ({{ t.codigo }})</option>
+          {% endfor %}
+        </select>
+      </div>
+
+      <div class="form-group">
+        <label for="municipio">Municipio</label>
+        <input type="text" id="municipio" name="municipio" class="form-control" placeholder="Ej: Libertador">
+      </div>
+
+      <div class="form-group">
+        <label for="direccion">Dirección Detallada</label>
+        <textarea id="direccion" name="direccion" class="form-control" rows="3" placeholder="Av., Edificio, Piso, Referencia"></textarea>
+      </div>
+
+      <button type="submit" class="btn btn-primary" style="width: 100%; justify-content: center;">
+        ➕ Guardar Ubicación
+      </button>
+    </form>
+  </div>
+</div>
+{% endblock %}

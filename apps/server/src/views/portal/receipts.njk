@@ -1,0 +1,66 @@
+{% extends "layouts/base.njk" %}
+
+{% block content %}
+<div class="page-header">
+  <div class="page-header-content">
+    <div class="page-header-icon">🧾</div>
+    <div>
+      <h1 class="page-header-title">Historial de Recibos de Pago</h1>
+      <p class="page-header-subtitle">Consulta e imprime tus comprobantes de nómina oficiales en formato A4 según el Artículo 106 de la LOTTT.</p>
+    </div>
+  </div>
+  <div class="page-header-actions">
+    <a href="/mi-portal" class="btn btn-secondary">&larr; Volver al Portal</a>
+  </div>
+</div>
+
+<div class="card">
+  <div class="card-header">
+    <h3 class="card-title">Comprobantes Liquidados</h3>
+  </div>
+
+  {% if receipts and receipts.length > 0 %}
+    <div class="table-responsive">
+      <table class="qrh-table">
+        <thead>
+          <tr>
+            <th>Período</th>
+            <th>Fecha de Emisión</th>
+            <th>Total Asignaciones</th>
+            <th>Total Deducciones</th>
+            <th>Neto Percibido</th>
+            <th scope="col" style="text-align: right;">Acciones</th>
+          </tr>
+        </thead>
+        <tbody>
+          {% for rec in receipts %}
+          <tr>
+            <td style="font-weight: 700; color: var(--text-color);">{{ rec.periodName | default("Nómina Quincenal") }}</td>
+            <td style="color: var(--text-muted);">{{ rec.date }}</td>
+            <td style="color: #16a34a; font-weight: 600;">Bs. {{ rec.totalEarnings }}</td>
+            <td style="color: #dc2626; font-weight: 600;">Bs. {{ rec.totalDeductions }}</td>
+            <td style="font-weight: 800; font-size: 1.05rem; color: var(--text-color);">Bs. {{ rec.netPay }}</td>
+            <td style="text-align: right;">
+              <div style="display: inline-flex; gap: 0.5rem;">
+                <a href="/nomina/recibos/{{ rec.id }}" class="btn btn-sm" style="padding: 0.35rem 0.75rem; background: var(--surface-alt); border: 1px solid var(--border-color); border-radius: var(--radius-sm); font-size: 0.8rem; font-weight: 600;">
+                  👁️ Ver A4
+                </a>
+                <a href="/nomina/recibos/{{ rec.id }}/pdf" class="btn btn-sm btn-primary" style="padding: 0.35rem 0.75rem; border-radius: var(--radius-sm); font-size: 0.8rem; font-weight: 600;">
+                  Descargar PDF &darr;
+                </a>
+              </div>
+            </td>
+          </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+    </div>
+  {% else %}
+    <div style="text-align: center; padding: 3rem 1rem;">
+      <div style="font-size: 2.5rem; margin-bottom: 0.75rem;">📂</div>
+      <h4 style="font-size: 1.1rem; font-weight: 700; margin-bottom: 0.25rem;">No hay recibos emitidos</h4>
+      <p style="color: var(--text-muted); font-size: 0.875rem;">Tus recibos aparecerán aquí una vez que los lotes de nómina sean aprobados por el departamento de Talento Humano.</p>
+    </div>
+  {% endif %}
+</div>
+{% endblock %}

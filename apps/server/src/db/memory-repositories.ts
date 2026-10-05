@@ -28,6 +28,30 @@ import type {
   Session,
   Territory,
   User,
+  PayrollBatch,
+  PayrollReceiptRecord,
+  IPayrollRepository,
+  DigitalCredential,
+  IDigitalCredentialRepository,
+  HolidayRecord,
+  IHolidayRepository,
+  BankPaymentFileRecord,
+  IBankPaymentRepository,
+  AssignedAssetRecord,
+  IAssignedAssetRepository,
+  SstRiskNotificationRecord,
+  ISstRepository,
+  JobPostingRecord,
+  IJobPostingRepository,
+  JobApplicationRecord,
+  IJobApplicationRepository,
+  TrainingCourseRecord,
+  TrainingEnrollmentRecord,
+  ITrainingRepository,
+  PerformanceEvaluationRecord,
+  IPerformanceRepository,
+  IBankAccountRepository,
+  BankAccount,
 } from './types.js';
 
 export class MemorySettingsRepository implements ISettingsRepository {
@@ -137,6 +161,25 @@ export class MemorySessionRepository implements ISessionRepository {
   }
 }
 
+export class MemoryBankAccountRepository implements IBankAccountRepository {
+  private accounts: BankAccount[] = [];
+  private nextId = 1;
+
+  async listByEmployeeId(employeeId: string): Promise<BankAccount[]> {
+    return this.accounts.filter((a) => a.employeeId === employeeId).map((a) => ({ ...a }));
+  }
+
+  async create(data: Omit<BankAccount, 'id' | 'createdAt'>): Promise<BankAccount> {
+    const account: BankAccount = {
+      ...data,
+      id: `bank-${this.nextId++}`,
+      createdAt: new Date().toISOString(),
+    };
+    this.accounts.push(account);
+    return { ...account };
+  }
+}
+
 export class MemoryTerritoryRepository implements ITerritoryRepository {
   private territories: Territory[] = [
     { id: 1, codigo: 'VE-A', nombre: 'Distrito Capital', capital: 'Caracas' },
@@ -221,6 +264,11 @@ export class MemoryPositionRepository implements IPositionRepository {
     };
     this.positions.set(id, created);
     return { ...created };
+  }
+
+  async findById(id: number): Promise<Position | null> {
+    const p = this.positions.get(id);
+    return p ? { ...p } : null;
   }
 
   async findByName(name: string): Promise<Position | null> {
@@ -518,11 +566,449 @@ export class MemoryAttendanceRepository implements IAttendanceRepository {
   }
 }
 
+export class MemoryPayrollRepository implements IPayrollRepository {
+  private batches = new Map<string, PayrollBatch>();
+  private receipts = new Map<string, PayrollReceiptRecord>();
+
+  async listBatches(): Promise<PayrollBatch[]> {
+    return Array.from(this.batches.values()).sort(
+      (a, b) => b.year - a.year || b.month - a.month || b.createdAt.localeCompare(a.createdAt)
+    );
+  }
+
+  async findBatchById(id: string): Promise<PayrollBatch | null> {
+    const b = this.batches.get(id);
+    return b ? { ...b } : null;
+  }
+
+  async createBatch(batch: Omit<PayrollBatch, 'id' | 'createdAt' | 'updatedAt'>): Promise<PayrollBatch> {
+    const id = randomUUID();
+    const now = new Date().toISOString();
+    const item: PayrollBatch = {
+      ...batch,
+      id,
+      createdAt: now,
+      updatedAt: now,
+    };
+    this.batches.set(id, item);
+    return { ...item };
+  }
+
+  async updateBatchStatus(id: string, status: string): Promise<PayrollBatch | null> {
+    const b = this.batches.get(id);
+    if (!b) return null;
+    const updated: PayrollBatch = {
+      ...b,
+      status,
+      updatedAt: new Date().toISOString(),
+    };
+    this.batches.set(id, updated);
+    return { ...updated };
+  }
+
+  async listReceiptsByBatchId(batchId: string): Promise<PayrollReceiptRecord[]> {
+    return Array.from(this.receipts.values())
+      .filter((r) => r.payrollId === batchId)
+      .sort((a, b) => a.id.localeCompare(b.id));
+  }
+
+  async listReceiptsByEmployeeId(employeeId: string): Promise<PayrollReceiptRecord[]> {
+    return Array.from(this.receipts.values())
+      .filter((r) => r.employeeId === employeeId)
+      .sort((a, b) => b.createdAt.localeCompare(a.createdAt));
+  }
+
+  async findReceiptById(id: string): Promise<PayrollReceiptRecord | null> {
+    const r = this.receipts.get(id);
+    return r ? { ...r } : null;
+  }
+
+  async saveReceipts(receipts: Omit<PayrollReceiptRecord, 'id' | 'createdAt'>[]): Promise<PayrollReceiptRecord[]> {
+    const saved: PayrollReceiptRecord[] = [];
+    const now = new Date().toISOString();
+
+    for (const r of receipts) {
+      const id = randomUUID();
+      const item: PayrollReceiptRecord = {
+        ...r,
+        id,
+        createdAt: now,
+      };
+      this.receipts.set(id, item);
+      saved.push({ ...item });
+    }
+
+    return saved;
+  }
+}
+
+export class MemoryDigitalCredentialRepository implements IDigitalCredentialRepository {
+  private credentials = new Map<string, DigitalCredential>();
+
+  async findByEmployeeId(employeeId: string): Promise<DigitalCredential | null> {
+    for (const c of this.credentials.values()) {
+      if (c.employeeId === employeeId && c.status === 'activa') {
+        return { ...c };
+      }
+    }
+    return null;
+  }
+
+  async findByToken(token: string): Promise<DigitalCredential | null> {
+    for (const c of this.credentials.values()) {
+      if (c.verificationToken === token) {
+        return { ...c };
+      }
+    }
+    return null;
+  }
+
+  async create(data: Omit<DigitalCredential, 'id' | 'createdAt'>): Promise<DigitalCredential> {
+    const id = randomUUID();
+    const item: DigitalCredential = {
+      ...data,
+      id,
+      createdAt: new Date().toISOString(),
+    };
+    this.credentials.set(id, item);
+    return { ...item };
+  }
+
+  async updateStatus(id: string, status: 'activa' | 'revocada' | 'suspendida'): Promise<DigitalCredential | null> {
+    const c = this.credentials.get(id);
+    if (!c) return null;
+    const updated: DigitalCredential = {
+      ...c,
+      status,
+    };
+    this.credentials.set(id, updated);
+    return { ...updated };
+  }
+}
+
+export class MemoryHolidayRepository implements IHolidayRepository {
+  private holidays = new Map<string, HolidayRecord>();
+  private nextId = 1;
+
+  constructor() {
+    this.seedDefaultNationalHolidays();
+  }
+
+  private seedDefaultNationalHolidays() {
+    const currentYear = new Date().getFullYear();
+    const defaults = [
+      { date: `${currentYear}-01-01`, name: 'Año Nuevo', type: 'nacional' as const },
+      { date: `${currentYear}-04-19`, name: 'Declaración de la Independencia (19 de Abril)', type: 'nacional' as const },
+      { date: `${currentYear}-05-01`, name: 'Día Internacional del Trabajador', type: 'nacional' as const },
+      { date: `${currentYear}-06-24`, name: 'Batalla de Carabobo', type: 'nacional' as const },
+      { date: `${currentYear}-07-05`, name: 'Día de la Independencia (5 de Julio)', type: 'nacional' as const },
+      { date: `${currentYear}-07-24`, name: 'Natalicio del Libertador Simón Bolívar', type: 'nacional' as const },
+      { date: `${currentYear}-10-12`, name: 'Día de la Resistencia Indígena', type: 'nacional' as const },
+      { date: `${currentYear}-12-24`, name: 'Víspera de Navidad', type: 'nacional' as const },
+      { date: `${currentYear}-12-25`, name: 'Natividad de Nuestro Señor', type: 'nacional' as const },
+      { date: `${currentYear}-12-31`, name: 'Fin de Año', type: 'nacional' as const },
+    ];
+
+    for (const d of defaults) {
+      this.create({
+        date: d.date,
+        name: d.name,
+        type: d.type,
+        isWorkingDay: false,
+        payRateMultiplier: 1.5,
+        description: 'Feriado nacional de ley LOTTT',
+      });
+    }
+  }
+
+  async list(year?: number): Promise<HolidayRecord[]> {
+    const all = Array.from(this.holidays.values());
+    if (year) {
+      return all.filter((h) => h.date.startsWith(String(year))).sort((a, b) => a.date.localeCompare(b.date));
+    }
+    return all.sort((a, b) => a.date.localeCompare(b.date));
+  }
+
+  async findByDate(date: string): Promise<HolidayRecord | null> {
+    const h = this.holidays.get(date);
+    return h ? { ...h } : null;
+  }
+
+  async create(data: Omit<HolidayRecord, 'id' | 'createdAt'>): Promise<HolidayRecord> {
+    const id = this.nextId++;
+    const item: HolidayRecord = {
+      ...data,
+      id,
+      createdAt: new Date().toISOString(),
+    };
+    this.holidays.set(data.date, item);
+    return { ...item };
+  }
+}
+
+export class MemoryBankPaymentRepository implements IBankPaymentRepository {
+  private files = new Map<string, BankPaymentFileRecord>();
+
+  async listByBatchId(batchId: string): Promise<BankPaymentFileRecord[]> {
+    return Array.from(this.files.values())
+      .filter((f) => f.payrollBatchId === batchId)
+      .sort((a, b) => b.createdAt.localeCompare(a.createdAt));
+  }
+
+  async findById(id: string): Promise<BankPaymentFileRecord | null> {
+    const f = this.files.get(id);
+    return f ? { ...f } : null;
+  }
+
+  async save(record: BankPaymentFileRecord): Promise<void> {
+    this.files.set(record.id, { ...record });
+  }
+}
+
+export class MemoryAssignedAssetRepository implements IAssignedAssetRepository {
+  private assets = new Map<string, AssignedAssetRecord>();
+
+  async list(): Promise<AssignedAssetRecord[]> {
+    return Array.from(this.assets.values()).sort((a, b) => b.createdAt.localeCompare(a.createdAt));
+  }
+
+  async listByEmployeeId(employeeId: string): Promise<AssignedAssetRecord[]> {
+    return Array.from(this.assets.values())
+      .filter((a) => a.employeeId === employeeId)
+      .sort((a, b) => b.createdAt.localeCompare(a.createdAt));
+  }
+
+  async findById(id: string): Promise<AssignedAssetRecord | null> {
+    const a = this.assets.get(id);
+    return a ? { ...a } : null;
+  }
+
+  async create(asset: Omit<AssignedAssetRecord, 'id' | 'createdAt'>): Promise<AssignedAssetRecord> {
+    const id = randomUUID();
+    const created: AssignedAssetRecord = {
+      ...asset,
+      id,
+      createdAt: new Date().toISOString(),
+    };
+    this.assets.set(id, created);
+    return { ...created };
+  }
+
+  async updateStatus(id: string, status: AssignedAssetRecord['status'], returnDate?: string): Promise<AssignedAssetRecord | null> {
+    const existing = this.assets.get(id);
+    if (!existing) return null;
+    const updated: AssignedAssetRecord = {
+      ...existing,
+      status,
+      returnDate: returnDate !== undefined ? returnDate : existing.returnDate,
+    };
+    this.assets.set(id, updated);
+    return { ...updated };
+  }
+}
+
+export class MemorySstRepository implements ISstRepository {
+  private records = new Map<string, SstRiskNotificationRecord>();
+
+  async listByEmployeeId(employeeId: string): Promise<SstRiskNotificationRecord[]> {
+    return Array.from(this.records.values())
+      .filter((r) => r.employeeId === employeeId)
+      .sort((a, b) => b.createdAt.localeCompare(a.createdAt));
+  }
+
+  async findById(id: string): Promise<SstRiskNotificationRecord | null> {
+    const r = this.records.get(id);
+    return r ? { ...r } : null;
+  }
+
+  async create(data: Omit<SstRiskNotificationRecord, 'id' | 'createdAt'>): Promise<SstRiskNotificationRecord> {
+    const id = randomUUID();
+    const created: SstRiskNotificationRecord = {
+      ...data,
+      id,
+      createdAt: new Date().toISOString(),
+    };
+    this.records.set(id, created);
+    return { ...created };
+  }
+
+  async acknowledge(id: string, signedAt: string): Promise<SstRiskNotificationRecord | null> {
+    const existing = this.records.get(id);
+    if (!existing) return null;
+    const updated: SstRiskNotificationRecord = {
+      ...existing,
+      isAcknowledged: true,
+      signedAt,
+    };
+    this.records.set(id, updated);
+    return { ...updated };
+  }
+}
+
+export class MemoryJobPostingRepository implements IJobPostingRepository {
+  private postings = new Map<string, JobPostingRecord>();
+
+  async list(): Promise<JobPostingRecord[]> {
+    return Array.from(this.postings.values()).sort((a, b) => b.createdAt.localeCompare(a.createdAt));
+  }
+
+  async findById(id: string): Promise<JobPostingRecord | null> {
+    const p = this.postings.get(id);
+    return p ? { ...p } : null;
+  }
+
+  async create(data: Omit<JobPostingRecord, 'id' | 'createdAt'>): Promise<JobPostingRecord> {
+    const item: JobPostingRecord = {
+      ...data,
+      id: randomUUID(),
+      createdAt: new Date().toISOString(),
+    };
+    this.postings.set(item.id, item);
+    return { ...item };
+  }
+
+  async updateStatus(id: string, status: JobPostingRecord['status']): Promise<JobPostingRecord | null> {
+    const item = this.postings.get(id);
+    if (!item) return null;
+    const updated = { ...item, status };
+    this.postings.set(id, updated);
+    return { ...updated };
+  }
+}
+
+export class MemoryJobApplicationRepository implements IJobApplicationRepository {
+  private applications = new Map<string, JobApplicationRecord>();
+
+  async listByPostingId(postingId: string): Promise<JobApplicationRecord[]> {
+    return Array.from(this.applications.values())
+      .filter((a) => a.jobPostingId === postingId)
+      .sort((a, b) => b.createdAt.localeCompare(a.createdAt));
+  }
+
+  async findById(id: string): Promise<JobApplicationRecord | null> {
+    const a = this.applications.get(id);
+    return a ? { ...a } : null;
+  }
+
+  async create(data: Omit<JobApplicationRecord, 'id' | 'createdAt' | 'stageUpdatedAt'>): Promise<JobApplicationRecord> {
+    const now = new Date().toISOString();
+    const item: JobApplicationRecord = {
+      ...data,
+      id: randomUUID(),
+      stageUpdatedAt: now,
+      createdAt: now,
+    };
+    this.applications.set(item.id, item);
+    return { ...item };
+  }
+
+  async updateStage(id: string, stage: JobApplicationRecord['stage'], notes?: string): Promise<JobApplicationRecord | null> {
+    const item = this.applications.get(id);
+    if (!item) return null;
+    const updated: JobApplicationRecord = {
+      ...item,
+      stage,
+      notes: notes !== undefined ? notes : item.notes,
+      stageUpdatedAt: new Date().toISOString(),
+    };
+    this.applications.set(id, updated);
+    return { ...updated };
+  }
+}
+
+export class MemoryTrainingRepository implements ITrainingRepository {
+  private courses = new Map<string, TrainingCourseRecord>();
+  private enrollments = new Map<string, TrainingEnrollmentRecord>();
+
+  async listCourses(): Promise<TrainingCourseRecord[]> {
+    return Array.from(this.courses.values()).sort((a, b) => a.title.localeCompare(b.title));
+  }
+
+  async findCourseById(id: string): Promise<TrainingCourseRecord | null> {
+    const c = this.courses.get(id);
+    return c ? { ...c } : null;
+  }
+
+  async createCourse(data: Omit<TrainingCourseRecord, 'id' | 'createdAt'>): Promise<TrainingCourseRecord> {
+    const item: TrainingCourseRecord = {
+      ...data,
+      id: randomUUID(),
+      createdAt: new Date().toISOString(),
+    };
+    this.courses.set(item.id, item);
+    return { ...item };
+  }
+
+  async listEnrollments(workerId?: string): Promise<TrainingEnrollmentRecord[]> {
+    const all = Array.from(this.enrollments.values());
+    if (workerId) {
+      return all.filter((e) => e.workerId === workerId);
+    }
+    return all.sort((a, b) => b.createdAt.localeCompare(a.createdAt));
+  }
+
+  async enrollWorker(data: Omit<TrainingEnrollmentRecord, 'id' | 'createdAt'>): Promise<TrainingEnrollmentRecord> {
+    const item: TrainingEnrollmentRecord = {
+      ...data,
+      id: randomUUID(),
+      createdAt: new Date().toISOString(),
+    };
+    this.enrollments.set(item.id, item);
+    return { ...item };
+  }
+
+  async updateEnrollmentStatus(
+    id: string,
+    status: TrainingEnrollmentRecord['status'],
+    score?: number,
+    completionDate?: string
+  ): Promise<TrainingEnrollmentRecord | null> {
+    const item = this.enrollments.get(id);
+    if (!item) return null;
+    const updated: TrainingEnrollmentRecord = {
+      ...item,
+      status,
+      score: score !== undefined ? score : item.score,
+      completionDate: completionDate !== undefined ? completionDate : item.completionDate,
+    };
+    this.enrollments.set(id, updated);
+    return { ...updated };
+  }
+}
+
+export class MemoryPerformanceRepository implements IPerformanceRepository {
+  private evaluations = new Map<string, PerformanceEvaluationRecord>();
+
+  async list(workerId?: string): Promise<PerformanceEvaluationRecord[]> {
+    const all = Array.from(this.evaluations.values());
+    if (workerId) {
+      return all.filter((e) => e.workerId === workerId);
+    }
+    return all.sort((a, b) => b.createdAt.localeCompare(a.createdAt));
+  }
+
+  async findById(id: string): Promise<PerformanceEvaluationRecord | null> {
+    const e = this.evaluations.get(id);
+    return e ? { ...e } : null;
+  }
+
+  async create(data: Omit<PerformanceEvaluationRecord, 'id' | 'createdAt'>): Promise<PerformanceEvaluationRecord> {
+    const item: PerformanceEvaluationRecord = {
+      ...data,
+      id: randomUUID(),
+      createdAt: new Date().toISOString(),
+    };
+    this.evaluations.set(item.id, item);
+    return { ...item };
+  }
+}
+
 export function createMemoryRepositories(): Repositories {
   return {
     settings: new MemorySettingsRepository(),
     users: new MemoryUserRepository(),
     sessions: new MemorySessionRepository(),
+    bankAccounts: new MemoryBankAccountRepository(),
     territories: new MemoryTerritoryRepository(),
     orgUnits: new MemoryOrgUnitRepository(),
     positions: new MemoryPositionRepository(),
@@ -532,5 +1018,15 @@ export function createMemoryRepositories(): Repositories {
     movements: new MemoryContractMovementRepository(),
     requests: new MemoryEmployeeRequestRepository(),
     attendance: new MemoryAttendanceRepository(),
+    payroll: new MemoryPayrollRepository(),
+    credentials: new MemoryDigitalCredentialRepository(),
+    holidays: new MemoryHolidayRepository(),
+    bankPayments: new MemoryBankPaymentRepository(),
+    assets: new MemoryAssignedAssetRepository(),
+    sst: new MemorySstRepository(),
+    jobPostings: new MemoryJobPostingRepository(),
+    jobApplications: new MemoryJobApplicationRepository(),
+    training: new MemoryTrainingRepository(),
+    performance: new MemoryPerformanceRepository(),
   };
 }

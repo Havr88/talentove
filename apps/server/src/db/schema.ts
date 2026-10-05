@@ -199,3 +199,196 @@ export const attendanceRecordsTable = sqliteTable(
     uniqueIndex('idx_attendance_records_sheet_emp_date').on(table.sheetId, table.employeeId, table.date),
   ]
 );
+
+export const payrollsTable = sqliteTable('payrolls', {
+  id: text('id').primaryKey(),
+  title: text('title').notNull(),
+  periodType: text('period_type').notNull(),
+  year: integer('year').notNull(),
+  month: integer('month').notNull(),
+  startDate: text('start_date').notNull(),
+  endDate: text('end_date').notNull(),
+  status: text('status').notNull().default('borrador'),
+  totalEarnings: real('total_earnings').notNull().default(0),
+  totalDeductions: real('total_deductions').notNull().default(0),
+  totalNet: real('total_net').notNull().default(0),
+  exchangeRateBcv: real('exchange_rate_bcv').notNull().default(1),
+  processedBy: text('processed_by'),
+  createdAt: text('created_at').notNull(),
+  updatedAt: text('updated_at').notNull(),
+});
+
+export const payrollReceiptsTable = sqliteTable('payroll_receipts', {
+  id: text('id').primaryKey(),
+  payrollId: text('payroll_id').notNull().references(() => payrollsTable.id),
+  employeeId: text('employee_id').notNull().references(() => employeesTable.id),
+  snapshot: text('snapshot').notNull(),
+  baseSalary: real('base_salary').notNull().default(0),
+  educationPremium: real('education_premium').notNull().default(0),
+  seniorityPremium: real('seniority_premium').notNull().default(0),
+  kidsPremium: real('kids_premium').notNull().default(0),
+  overtimePay: real('overtime_pay').notNull().default(0),
+  nightBonusPay: real('night_bonus_pay').notNull().default(0),
+  cestaTicket: real('cesta_ticket').notNull().default(0),
+  totalEarnings: real('total_earnings').notNull().default(0),
+  ivssDeduction: real('ivss_deduction').notNull().default(0),
+  faovDeduction: real('faov_deduction').notNull().default(0),
+  spfDeduction: real('spf_deduction').notNull().default(0),
+  absenceDeduction: real('absence_deduction').notNull().default(0),
+  totalDeductions: real('total_deductions').notNull().default(0),
+  netPay: real('net_pay').notNull().default(0),
+  netPayUsd: real('net_pay_usd').notNull().default(0),
+  status: text('status').notNull().default('generado'),
+  createdAt: text('created_at').notNull(),
+});
+
+export const digitalCredentialsTable = sqliteTable('digital_credentials', {
+  id: text('id').primaryKey(),
+  employeeId: text('employee_id').notNull().references(() => employeesTable.id),
+  verificationToken: text('verification_token').notNull().unique(),
+  issuedAt: text('issued_at').notNull(),
+  expiresAt: text('expires_at').notNull(),
+  bloodType: text('blood_type').notNull().default('O+'),
+  emergencyContact: text('emergency_contact').notNull().default(''),
+  emergencyPhone: text('emergency_phone').notNull().default(''),
+  status: text('status').notNull().default('activa'),
+  qrCodeDataUri: text('qr_code_data_uri'),
+  createdAt: text('created_at').notNull(),
+});
+
+export const holidaysTable = sqliteTable('holidays', {
+  id: integer('id').primaryKey({ autoIncrement: true }),
+  date: text('date').notNull().unique(),
+  name: text('name').notNull(),
+  type: text('type').notNull().default('nacional'),
+  isWorkingDay: integer('is_working_day', { mode: 'boolean' }).notNull().default(false),
+  payRateMultiplier: real('pay_rate_multiplier').notNull().default(1.5),
+  description: text('description'),
+  createdAt: text('created_at').notNull(),
+});
+
+export const bankPaymentFilesTable = sqliteTable('bank_payment_files', {
+  id: text('id').primaryKey(),
+  payrollBatchId: text('payroll_batch_id').notNull().references(() => payrollsTable.id),
+  bankCode: text('bank_code').notNull(),
+  bankName: text('bank_name').notNull(),
+  fileName: text('file_name').notNull(),
+  content: text('content').notNull(),
+  totalRecords: integer('total_records').notNull().default(0),
+  totalAmount: real('total_amount').notNull().default(0),
+  hash: text('hash').notNull(),
+  createdAt: text('created_at').notNull(),
+  createdBy: text('created_by').notNull(),
+});
+
+export const assignedAssetsTable = sqliteTable('assigned_assets', {
+  id: text('id').primaryKey(),
+  employeeId: text('employee_id').notNull().references(() => employeesTable.id),
+  assetType: text('asset_type').notNull(),
+  assetCode: text('asset_code').notNull(),
+  description: text('description').notNull(),
+  serialNumber: text('serial_number'),
+  assignedDate: text('assigned_date').notNull(),
+  status: text('status').notNull().default('asignado'),
+  returnDate: text('return_date'),
+  notes: text('notes'),
+  createdAt: text('created_at').notNull(),
+});
+
+export const sstRiskNotificationsTable = sqliteTable('sst_risk_notifications', {
+  id: text('id').primaryKey(),
+  employeeId: text('employee_id').notNull().references(() => employeesTable.id),
+  positionName: text('position_name').notNull(),
+  workArea: text('work_area').notNull(),
+  riskFactors: text('risk_factors').notNull(), // JSON array
+  preventiveMeasures: text('preventive_measures').notNull(), // JSON array
+  eppRequired: text('epp_required').notNull(), // JSON array
+  isAcknowledged: integer('is_acknowledged', { mode: 'boolean' }).notNull().default(false),
+  signedAt: text('signed_at'),
+  createdAt: text('created_at').notNull(),
+});
+
+// --- Tablas Módulos IceHrm Incorporados ---
+
+export const leavesTable = sqliteTable('leaves', {
+  id: text('id').primaryKey(),
+  employeeId: text('employee_id').notNull().references(() => employeesTable.id),
+  leaveType: text('leave_type').notNull(), // VACACIONES, PERMISO_MEDICO, etc.
+  startDate: text('start_date').notNull(),
+  endDate: text('end_date').notNull(),
+  returnDate: text('return_date').notNull(),
+  totalCalendarDays: integer('total_calendar_days').notNull().default(1),
+  totalBusinessDays: integer('total_business_days').notNull().default(1),
+  reason: text('reason'),
+  status: text('status').notNull().default('PENDIENTE'),
+  approvedBy: text('approved_by'),
+  createdAt: text('created_at').notNull(),
+});
+
+export const overtimeRequestsTable = sqliteTable('overtime_requests', {
+  id: text('id').primaryKey(),
+  employeeId: text('employee_id').notNull().references(() => employeesTable.id),
+  date: text('date').notNull(),
+  startTime: text('start_time').notNull(),
+  endTime: text('end_time').notNull(),
+  category: text('category').notNull(), // DIURNA, NOCTURNA, FERIADO_DESCANSO, etc.
+  hours: real('hours').notNull(),
+  reason: text('reason'),
+  status: text('status').notNull().default('PENDIENTE'),
+  approvedBy: text('approved_by'),
+  createdAt: text('created_at').notNull(),
+});
+
+export const employeeLoansTable = sqliteTable('employee_loans', {
+  id: text('id').primaryKey(),
+  employeeId: text('employee_id').notNull().references(() => employeesTable.id),
+  loanType: text('loan_type').notNull(), // ANTICIPO_PRESTACIONES, PRESTAMO_PERSONAL, CAJA_AHORRO
+  totalAmount: real('total_amount').notNull(),
+  installmentAmount: real('installment_amount').notNull(),
+  remainingBalance: real('remaining_balance').notNull(),
+  startDate: text('start_date').notNull(),
+  status: text('status').notNull().default('APROBADO'),
+  installmentsPaid: integer('installments_paid').notNull().default(0),
+  details: text('details'),
+  createdAt: text('created_at').notNull(),
+});
+
+export const attendanceAuditLogsTable = sqliteTable('attendance_audit_logs', {
+  id: text('id').primaryKey(),
+  employeeId: text('employee_id').notNull().references(() => employeesTable.id),
+  attendanceDate: text('attendance_date').notNull(),
+  fieldChanged: text('field_changed').notNull(),
+  oldValue: text('old_value'),
+  newValue: text('new_value'),
+  changedBy: text('changed_by').notNull(),
+  reason: text('reason'),
+  createdAt: text('created_at').notNull(),
+});
+
+export const customFieldsTable = sqliteTable('custom_fields', {
+  id: text('id').primaryKey(),
+  code: text('code').notNull().unique(),
+  label: text('label').notNull(),
+  dataType: text('data_type').notNull(), // TEXT, NUMBER, DATE, SELECT, BOOLEAN
+  options: text('options'), // JSON array de strings
+  isRequired: integer('is_required', { mode: 'boolean' }).notNull().default(false),
+  section: text('section').notNull().default('DATOS_PERSONALES'),
+  createdAt: text('created_at').notNull(),
+});
+
+export const travelRecordsTable = sqliteTable('travel_records', {
+  id: text('id').primaryKey(),
+  employeeId: text('employee_id').notNull().references(() => employeesTable.id),
+  travelType: text('travel_type').notNull(), // LOCAL, NACIONAL, INTERNACIONAL
+  purpose: text('purpose').notNull(),
+  origin: text('origin').notNull(),
+  destination: text('destination').notNull(),
+  departureDate: text('departure_date').notNull(),
+  returnDate: text('return_date').notNull(),
+  advanceFundAmount: real('advance_fund_amount').notNull().default(0),
+  status: text('status').notNull().default('PENDIENTE'),
+  approvedBy: text('approved_by'),
+  createdAt: text('created_at').notNull(),
+});
+
+

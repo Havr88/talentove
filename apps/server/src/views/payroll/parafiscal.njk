@@ -1,0 +1,63 @@
+{% extends "layouts/base.njk" %}
+
+{% block content %}
+<div style="margin-bottom: 1.5rem;">
+  <a href="/nomina/{{ batch.id }}" style="color: var(--text-muted); font-size: 0.875rem; text-decoration: none;">
+    &larr; Volver al Lote de Nómina
+  </a>
+  <div style="display: flex; justify-content: space-between; align-items: flex-start; margin-top: 0.5rem;">
+    <div>
+      <h1 style="font-size: 1.5rem; font-weight: 700; color: var(--text-color);">
+        Archivos Parafiscales y Declaraciones de Ley (IVSS / BANAVIH / INCES)
+      </h1>
+      <p style="color: var(--text-muted); font-size: 0.875rem;">
+        Período: <strong>{{ batch.periodStart }}</strong> al <strong>{{ batch.periodEnd }}</strong> &bull; Total Trabajadores: <strong>{{ batch.totalWorkers }}</strong>
+      </p>
+    </div>
+  </div>
+</div>
+
+<div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 1.5rem;">
+  <!-- IVSS / TIUNA -->
+  <div class="card" style="background: white; border: 1px solid var(--border-color); border-radius: var(--radius-md); padding: 1.5rem;">
+    <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 1rem;">
+      <h3 style="font-weight: 700; font-size: 1.1rem; color: #0284c7; margin: 0;">IVSS / Sistema TIUNA</h3>
+      <span style="background: #e0f2fe; color: #0369a1; padding: 0.25rem 0.5rem; border-radius: 4px; font-weight: 700; font-size: 0.75rem;">Formato TXT</span>
+    </div>
+    <p style="font-size: 0.85rem; color: var(--text-muted); margin-bottom: 1.25rem; line-height: 1.4;">
+      Archivo oficial de nómina y movimientos de cotizantes para carga masiva en el portal TIUNA del Instituto Venezolano de los Seguros Sociales.
+    </p>
+    <a href="/nomina/{{ batch.id }}/parafiscales/ivss" class="btn btn-primary" style="display: inline-flex; width: 100%; justify-content: center;">
+      📥 Descargar TXT TIUNA (IVSS)
+    </a>
+  </div>
+
+  <!-- FAOV / BANAVIH -->
+  <div class="card" style="background: white; border: 1px solid var(--border-color); border-radius: var(--radius-md); padding: 1.5rem;">
+    <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 1rem;">
+      <h3 style="font-weight: 700; font-size: 1.1rem; color: #d97706; margin: 0;">FAOV / BANAVIH</h3>
+      <span style="background: #fef3c7; color: #92400e; padding: 0.25rem 0.5rem; border-radius: 4px; font-weight: 700; font-size: 0.75rem;">Delimitado por ;</span>
+    </div>
+    <p style="font-size: 0.85rem; color: var(--text-muted); margin-bottom: 1.25rem; line-height: 1.4;">
+      Archivo de aporte patronal (2%) y retención del trabajador (1%) para el Fondo de Ahorro Obligatorio para la Vivienda (BANAVIH en línea).
+    </p>
+    <a href="/nomina/{{ batch.id }}/parafiscales/faov" class="btn btn-primary" style="display: inline-flex; width: 100%; justify-content: center; background: #d97706; border-color: #d97706;">
+      📥 Descargar TXT FAOV (BANAVIH)
+    </a>
+  </div>
+
+  <!-- INCES -->
+  <div class="card" style="background: white; border: 1px solid var(--border-color); border-radius: var(--radius-md); padding: 1.5rem;">
+    <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 1rem;">
+      <h3 style="font-weight: 700; font-size: 1.1rem; color: #16a34a; margin: 0;">INCES (Tributo 2%)</h3>
+      <span style="background: #dcfce7; color: #15803d; padding: 0.25rem 0.5rem; border-radius: 4px; font-weight: 700; font-size: 0.75rem;">Informe Legal</span>
+    </div>
+    <p style="font-size: 0.85rem; color: var(--text-muted); margin-bottom: 1.25rem; line-height: 1.4;">
+      Liquidación de aportes patronales del 2% sobre el total devengado de sueldos y salarios normales conforme al Decreto Ley del INCES.
+    </p>
+    <a href="/nomina/{{ batch.id }}/parafiscales/inces" class="btn btn-primary" style="display: inline-flex; width: 100%; justify-content: center; background: #16a34a; border-color: #16a34a;">
+      📥 Descargar Resumen INCES
+    </a>
+  </div>
+</div>
+{% endblock %}

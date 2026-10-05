@@ -1,0 +1,371 @@
+<!DOCTYPE html>
+<html lang="es-VE">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Recibo de Pago — {{ worker.nombres }} {{ worker.apellidos }} ({{ worker.cedulaTipo }}-{{ worker.cedulaNumero }})</title>
+  <style>
+    :root {
+      --primary-color: {{ primaryColor | default("#0d47a1") }};
+      --text-dark: #0f172a;
+      --text-medium: #334155;
+      --text-light: #64748b;
+      --border-color: #cbd5e1;
+      --bg-light: #f8fafc;
+      --highlight-bg: #f1f5f9;
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    @page {
+      size: A4 portrait;
+      margin: 10mm;
+    }
+
+    body {
+      font-family: 'Inter', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+      color: var(--text-dark);
+      background: #ffffff;
+      padding: 2mm 5mm;
+      max-width: 190mm;
+      margin: 0 auto;
+      font-size: 11.5px;
+      line-height: 1.35;
+    }
+
+    .no-print {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      background: #eff6ff;
+      border: 1px solid #bfdbfe;
+      padding: 0.75rem 1rem;
+      border-radius: 6px;
+      margin-bottom: 12px;
+    }
+    .btn-print {
+      background: var(--primary-color);
+      color: white;
+      border: none;
+      padding: 0.5rem 1.25rem;
+      border-radius: 4px;
+      font-weight: 600;
+      font-size: 0.85rem;
+      cursor: pointer;
+    }
+    .btn-back {
+      color: #1e40af;
+      text-decoration: none;
+      font-weight: 600;
+      font-size: 0.85rem;
+    }
+
+    @media print {
+      .no-print { display: none !important; }
+      body { padding: 0; }
+    }
+
+    /* Membrete Oficial */
+    .header-box {
+      border-bottom: 2px solid var(--primary-color);
+      padding-bottom: 10px;
+      margin-bottom: 12px;
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-start;
+    }
+    .institution-name {
+      font-size: 15px;
+      font-weight: 800;
+      color: var(--primary-color);
+      text-transform: uppercase;
+      letter-spacing: -0.01em;
+    }
+    .institution-rif {
+      font-size: 11px;
+      color: var(--text-medium);
+      font-weight: 600;
+    }
+    .doc-title-badge {
+      text-align: right;
+    }
+    .doc-title {
+      font-size: 13px;
+      font-weight: 800;
+      text-transform: uppercase;
+      color: var(--text-dark);
+    }
+    .doc-period {
+      font-size: 11px;
+      color: var(--text-medium);
+      font-weight: 500;
+      margin-top: 2px;
+    }
+
+    /* Datos del Trabajador */
+    .worker-card {
+      background: var(--bg-light);
+      border: 1px solid var(--border-color);
+      border-radius: 4px;
+      padding: 8px 12px;
+      margin-bottom: 14px;
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 6px 12px;
+    }
+    .worker-field-label {
+      font-size: 9px;
+      text-transform: uppercase;
+      font-weight: 700;
+      color: var(--text-light);
+    }
+    .worker-field-value {
+      font-size: 11px;
+      font-weight: 600;
+      color: var(--text-dark);
+    }
+
+    /* Tabla de Conceptos Asignaciones vs Deducciones */
+    .payroll-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 12px;
+      margin-bottom: 14px;
+    }
+    .section-title {
+      font-size: 11px;
+      font-weight: 700;
+      text-transform: uppercase;
+      padding: 4px 6px;
+      background: var(--highlight-bg);
+      border-left: 3px solid var(--primary-color);
+      margin-bottom: 4px;
+    }
+    table.concept-table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 11px;
+    }
+    table.concept-table th {
+      border-bottom: 1px solid var(--border-color);
+      padding: 4px 6px;
+      text-align: left;
+      font-size: 9.5px;
+      color: var(--text-light);
+      text-transform: uppercase;
+    }
+    table.concept-table td {
+      padding: 4.5px 6px;
+      border-bottom: 1px dashed #e2e8f0;
+    }
+    table.concept-table td.amount {
+      text-align: right;
+      font-variant-numeric: tabular-nums;
+      font-weight: 600;
+    }
+    .subtotal-row td {
+      border-top: 1px solid var(--border-color);
+      border-bottom: none;
+      font-weight: 700;
+      padding-top: 6px;
+      font-size: 11.5px;
+    }
+
+    /* Resumen Neto Final */
+    .summary-box {
+      border: 1px solid var(--border-color);
+      background: var(--bg-light);
+      border-radius: 4px;
+      padding: 8px 14px;
+      margin-bottom: 18px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+    .neto-label {
+      font-size: 11.5px;
+      font-weight: 700;
+      text-transform: uppercase;
+    }
+    .neto-amount {
+      font-size: 17px;
+      font-weight: 800;
+      color: var(--primary-color);
+    }
+
+    /* Firmas Oficiales */
+    .signatures-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 40px;
+      margin-top: 30px;
+      margin-bottom: 16px;
+    }
+    .sign-box {
+      text-align: center;
+    }
+    .sign-line {
+      border-top: 1px solid var(--text-dark);
+      margin-bottom: 4px;
+    }
+    .sign-role {
+      font-size: 10px;
+      font-weight: 700;
+      text-transform: uppercase;
+    }
+    .sign-name {
+      font-size: 10px;
+      color: var(--text-medium);
+    }
+
+    .legal-footer {
+      font-size: 8.5px;
+      color: var(--text-light);
+      text-align: center;
+      border-top: 1px solid #e2e8f0;
+      padding-top: 6px;
+      line-height: 1.3;
+    }
+  </style>
+</head>
+<body>
+
+  <div class="no-print">
+    <div>
+      <strong>Vista previa del recibo oficial (A4)</strong>
+      <span style="font-size: 0.8rem; color: #475569; margin-left: 0.5rem;">Presione el botón o use Ctrl+P para imprimir / exportar en PDF</span>
+    </div>
+    <div style="display: flex; gap: 0.75rem; align-items: center;">
+      <a href="javascript:history.back()" class="btn-back">&larr; Volver</a>
+      <button class="btn-print" onclick="window.print()">Imprimir Recibo (PDF)</button>
+    </div>
+  </div>
+
+  <!-- Membrete Oficial -->
+  <div class="header-box">
+    <div>
+      <div class="institution-name">{{ institutionName | default("República Bolivariana de Venezuela") }}</div>
+      <div class="institution-rif">RIF: {{ institutionRif | default("G-20000000-0") }} &bull; Órgano / Ente Adscrito</div>
+    </div>
+    <div class="doc-title-badge">
+      <div class="doc-title">Recibo de Pago de Nómina</div>
+      <div class="doc-period">Período: {{ periodStart }} al {{ periodEnd }}</div>
+    </div>
+  </div>
+
+  <!-- Ficha del Trabajador -->
+  <div class="worker-card">
+    <div>
+      <div class="worker-field-label">Trabajador</div>
+      <div class="worker-field-value">{{ worker.nombres }} {{ worker.apellidos }}</div>
+    </div>
+    <div>
+      <div class="worker-field-label">Cédula de Identidad</div>
+      <div class="worker-field-value">{{ worker.cedulaTipo }}-{{ worker.cedulaNumero }}</div>
+    </div>
+    <div>
+      <div class="worker-field-label">Cargo Desempeñado</div>
+      <div class="worker-field-value">{{ worker.cargo | default("Analista") }}</div>
+    </div>
+    <div>
+      <div class="worker-field-label">Departamento / Área</div>
+      <div class="worker-field-value">{{ worker.departamento | default("Sede Principal") }}</div>
+    </div>
+    <div>
+      <div class="worker-field-label">Fecha de Ingreso</div>
+      <div class="worker-field-value">{{ worker.fechaIngreso }}</div>
+    </div>
+    <div>
+      <div class="worker-field-label">Cuenta Bancaria</div>
+      <div class="worker-field-value">{{ worker.cuentaBancaria | default("0102-****-****-****") }}</div>
+    </div>
+  </div>
+
+  <!-- Desglose Asignaciones y Deducciones -->
+  <div class="payroll-grid">
+    <!-- Asignaciones -->
+    <div>
+      <div class="section-title">Asignaciones (Haberes)</div>
+      <table class="concept-table">
+        <thead>
+          <tr>
+            <th>Concepto</th>
+            <th scope="col" style="text-align: right;">Monto (Bs.)</th>
+          </tr>
+        </thead>
+        <tbody>
+          {% for asig in asignaciones %}
+          <tr>
+            <td>{{ asig.concepto }}</td>
+            <td class="amount">{{ asig.monto }}</td>
+          </tr>
+          {% endfor %}
+          <tr class="subtotal-row">
+            <td>Total Asignaciones:</td>
+            <td class="amount" style="color: #16a34a;">Bs. {{ totalAsignaciones }}</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+
+    <!-- Deducciones -->
+    <div>
+      <div class="section-title">Deducciones (Retenciones)</div>
+      <table class="concept-table">
+        <thead>
+          <tr>
+            <th>Concepto</th>
+            <th scope="col" style="text-align: right;">Monto (Bs.)</th>
+          </tr>
+        </thead>
+        <tbody>
+          {% for ded in deducciones %}
+          <tr>
+            <td>{{ ded.concepto }}</td>
+            <td class="amount">{{ ded.monto }}</td>
+          </tr>
+          {% endfor %}
+          <tr class="subtotal-row">
+            <td>Total Deducciones:</td>
+            <td class="amount" style="color: #dc2626;">Bs. {{ totalDeducciones }}</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+  <!-- Resumen Neto -->
+  <div class="summary-box">
+    <div>
+      <div class="neto-label">Neto Efectivo a Cobrar:</div>
+      <div style="font-size: 9.5px; color: var(--text-light); margin-top: 1px;">Liquidación mediante transferencia bancaria</div>
+    </div>
+    <div class="neto-amount">Bs. {{ totalNeto }}</div>
+  </div>
+
+  <!-- Firmas -->
+  <div class="signatures-grid">
+    <div class="sign-box">
+      <div class="sign-line"></div>
+      <div class="sign-role">Talento Humano / Nómina</div>
+      <div class="sign-name">Procesado y Autorizado</div>
+    </div>
+    <div class="sign-box">
+      <div class="sign-line"></div>
+      <div class="sign-role">Firma del Trabajador</div>
+      <div class="sign-name">Conforme Art. 106 LOTTT</div>
+    </div>
+  </div>
+
+  <!-- Pie Legal -->
+  <div class="legal-footer">
+    Recibo emitido de conformidad con el Artículo 106 de la Ley Orgánica del Trabajo, los Trabajadores y las Trabajadoras (LOTTT).
+    Constancia de pago inmutable generada electrónicamente por el sistema institucional TalentoVe.
+  </div>
+
+</body>
+</html>

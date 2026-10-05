@@ -1,0 +1,104 @@
+{% extends "layouts/base.njk" %}
+
+{% block content %}
+<div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1.5rem;">
+  <div>
+    <h1 style="font-size: 1.5rem; font-weight: 700; color: var(--text-color);">Calendario Nacional y Decretos Especiales</h1>
+    <p style="color: var(--text-muted); font-size: 0.875rem;">
+      Feriados nacionales obligatorios (LOTTT art. 184) y días de júbilo o decretos especiales no laborables.
+    </p>
+  </div>
+</div>
+
+{% if message %}
+  <div class="alert alert-success" style="margin-bottom: 1rem; padding: 0.75rem 1rem; background: #ecfdf5; color: #065f46; border: 1px solid #a7f3d0; border-radius: var(--radius-md);">
+    {{ message }}
+  </div>
+{% endif %}
+
+<div style="display: grid; grid-template-columns: 2fr 1fr; gap: 1.5rem; align-items: start;">
+  <!-- Lista de Feriados -->
+  <div class="card" style="background: white; border: 1px solid var(--border-color); border-radius: var(--radius-lg); padding: 1.5rem; box-shadow: var(--shadow-sm);">
+    <h2 style="font-size: 1.1rem; font-weight: 600; margin-bottom: 1rem; color: var(--text-color);">
+      Días No Laborables Registrados
+    </h2>
+
+    <div style="overflow-x: auto;">
+      <table style="width: 100%; border-collapse: collapse; font-size: 0.875rem; text-align: left;">
+        <thead>
+          <tr style="border-bottom: 2px solid var(--border-color); color: var(--text-muted);">
+            <th scope="col" style="padding: 0.75rem;">Fecha</th>
+            <th scope="col" style="padding: 0.75rem;">Descripción</th>
+            <th scope="col" style="padding: 0.75rem;">Tipo</th>
+            <th scope="col" style="padding: 0.75rem; text-align: center;">Remunerado</th>
+          </tr>
+        </thead>
+        <tbody>
+          {% for h in holidays %}
+            <tr style="border-bottom: 1px solid var(--border-color);">
+              <td style="padding: 0.75rem; font-weight: 700; font-family: monospace; color: var(--text-color);">
+                {{ h.date }}
+              </td>
+              <td style="padding: 0.75rem; font-weight: 500;">
+                {{ h.name }}
+              </td>
+              <td style="padding: 0.75rem;">
+                {% if h.type == "NATIONAL" %}
+                  <span class="badge" style="padding: 0.2rem 0.5rem; border-radius: 4px; font-size: 0.75rem; background: #e0f2fe; color: #0369a1; font-weight: 600;">
+                    Feriado Nacional (LOTTT)
+                  </span>
+                {% else %}
+                  <span class="badge" style="padding: 0.2rem 0.5rem; border-radius: 4px; font-size: 0.75rem; background: #fef3c7; color: #92400e; font-weight: 600;">
+                    Decreto Especial
+                  </span>
+                {% endif %}
+              </td>
+              <td style="padding: 0.75rem; text-align: center;">
+                <span style="color: #16a34a; font-weight: 700;">✓ Sí</span>
+              </td>
+            </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+  <!-- Formulario Agregar Feriado o Decreto -->
+  <div class="card" style="background: white; border: 1px solid var(--border-color); border-radius: var(--radius-lg); padding: 1.5rem; box-shadow: var(--shadow-sm);">
+    <h3 style="font-size: 1rem; font-weight: 600; margin-bottom: 1rem; color: var(--text-color);">
+      Registrar Decreto o Feriado
+    </h3>
+
+    <form action="/feriados" method="POST">
+      {% if csrfToken %}<input type="hidden" name="_csrf" value="{{ csrfToken }}">{% endif %}
+
+      <div style="margin-bottom: 1rem;">
+        <label style="display: block; font-size: 0.8rem; font-weight: 600; margin-bottom: 0.25rem;">Fecha *</label>
+        <input type="date" name="date" required
+          style="width: 100%; padding: 0.5rem 0.75rem; border: 1px solid var(--border-color); border-radius: var(--radius-md); font-size: 0.875rem;">
+      </div>
+
+      <div style="margin-bottom: 1rem;">
+        <label style="display: block; font-size: 0.8rem; font-weight: 600; margin-bottom: 0.25rem;">Nombre / Motivo *</label>
+        <input type="text" name="name" placeholder="Ej. Decreto Presidencial N° 4.800" required
+          style="width: 100%; padding: 0.5rem 0.75rem; border: 1px solid var(--border-color); border-radius: var(--radius-md); font-size: 0.875rem;">
+      </div>
+
+      <div style="margin-bottom: 1.25rem;">
+        <label style="display: block; font-size: 0.8rem; font-weight: 600; margin-bottom: 0.25rem;">Tipo de Día *</label>
+        <select name="type" required
+          style="width: 100%; padding: 0.5rem 0.75rem; border: 1px solid var(--border-color); border-radius: var(--radius-md); font-size: 0.875rem; background: white;">
+          <option value="SPECIAL_DECREE" selected>Decreto Especial del Ejecutivo</option>
+          <option value="NATIONAL">Feriado Nacional Ordinario</option>
+          <option value="REGIONAL">Día de Júbilo Regional / Municipal</option>
+        </select>
+      </div>
+
+      <button type="submit" class="btn btn-primary"
+        style="width: 100%; background: var(--primary-color); color: white; border: none; padding: 0.6rem; border-radius: var(--radius-md); font-weight: 600; cursor: pointer;">
+        Guardar en Calendario
+      </button>
+    </form>
+  </div>
+</div>
+{% endblock %}

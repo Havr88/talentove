@@ -184,6 +184,81 @@ export async function initSqliteSchema(client: Client): Promise<void> {
       updated_at TEXT NOT NULL,
       UNIQUE(sheet_id, employee_id, date)
     );`,
+    `CREATE TABLE IF NOT EXISTS leaves (
+      id TEXT PRIMARY KEY,
+      employee_id TEXT NOT NULL REFERENCES employees(id),
+      leave_type TEXT NOT NULL,
+      start_date TEXT NOT NULL,
+      end_date TEXT NOT NULL,
+      return_date TEXT NOT NULL,
+      total_calendar_days INTEGER NOT NULL DEFAULT 1,
+      total_business_days INTEGER NOT NULL DEFAULT 1,
+      reason TEXT,
+      status TEXT NOT NULL DEFAULT 'PENDIENTE',
+      approved_by TEXT,
+      created_at TEXT NOT NULL
+    );`,
+    `CREATE TABLE IF NOT EXISTS overtime_requests (
+      id TEXT PRIMARY KEY,
+      employee_id TEXT NOT NULL REFERENCES employees(id),
+      date TEXT NOT NULL,
+      start_time TEXT NOT NULL,
+      end_time TEXT NOT NULL,
+      category TEXT NOT NULL,
+      hours REAL NOT NULL,
+      reason TEXT,
+      status TEXT NOT NULL DEFAULT 'PENDIENTE',
+      approved_by TEXT,
+      created_at TEXT NOT NULL
+    );`,
+    `CREATE TABLE IF NOT EXISTS employee_loans (
+      id TEXT PRIMARY KEY,
+      employee_id TEXT NOT NULL REFERENCES employees(id),
+      loan_type TEXT NOT NULL,
+      total_amount REAL NOT NULL,
+      installment_amount REAL NOT NULL,
+      remaining_balance REAL NOT NULL,
+      start_date TEXT NOT NULL,
+      status TEXT NOT NULL DEFAULT 'APROBADO',
+      installments_paid INTEGER NOT NULL DEFAULT 0,
+      details TEXT,
+      created_at TEXT NOT NULL
+    );`,
+    `CREATE TABLE IF NOT EXISTS attendance_audit_logs (
+      id TEXT PRIMARY KEY,
+      employee_id TEXT NOT NULL REFERENCES employees(id),
+      attendance_date TEXT NOT NULL,
+      field_changed TEXT NOT NULL,
+      old_value TEXT,
+      new_value TEXT,
+      changed_by TEXT NOT NULL,
+      reason TEXT,
+      created_at TEXT NOT NULL
+    );`,
+    `CREATE TABLE IF NOT EXISTS custom_fields (
+      id TEXT PRIMARY KEY,
+      code TEXT NOT NULL UNIQUE,
+      label TEXT NOT NULL,
+      data_type TEXT NOT NULL,
+      options TEXT,
+      is_required INTEGER NOT NULL DEFAULT 0,
+      section TEXT NOT NULL DEFAULT 'DATOS_PERSONALES',
+      created_at TEXT NOT NULL
+    );`,
+    `CREATE TABLE IF NOT EXISTS travel_records (
+      id TEXT PRIMARY KEY,
+      employee_id TEXT NOT NULL REFERENCES employees(id),
+      travel_type TEXT NOT NULL,
+      purpose TEXT NOT NULL,
+      origin TEXT NOT NULL,
+      destination TEXT NOT NULL,
+      departure_date TEXT NOT NULL,
+      return_date TEXT NOT NULL,
+      advance_fund_amount REAL NOT NULL DEFAULT 0,
+      status TEXT NOT NULL DEFAULT 'PENDIENTE',
+      approved_by TEXT,
+      created_at TEXT NOT NULL
+    );`,
   ];
 
   for (const statement of tables) {
