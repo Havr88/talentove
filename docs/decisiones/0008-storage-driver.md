@@ -114,3 +114,43 @@ documento sin que nada lo indique.
   autorización.
 - (−) El antivirus queda como control opcional; se documenta la limitación en vez de
   ocultarla.
+
+---
+
+## 8. Ruta de adaptación a múltiples backends y proveedores (2026-10-05)
+
+Confirmado por el sponsor como evolución futura. Nada de lo anterior cambia: la interfaz de §1
+es el contrato, y los puntos 2–7 (clave generada, descarga autenticada, MIME por contenido,
+metadatos en `files`, backup) son **independientes del backend**.
+
+### Drivers contemplados
+
+| Driver | Uso | Notas de implementación |
+|---|---|---|
+| `local` | Por defecto (auto-alojado) | Disco/volumen cifrado (`STORAGE_LOCAL_PATH`); claves con prefijo `ab/12/…`; escritura temporal + rename |
+| `s3` | S3-compatible | Cubre **MinIO** (self-hosted), AWS S3, Wasabi, Backblaze B2, Cloudflare R2, etc. con el mismo código: `S3_ENDPOINT`, `S3_BUCKET`, `S3_ACCESS_KEY`, `S3_SECRET_KEY` (ya esbozadas en `env.example`) |
+| Otros (WebDAV, etc.) | Solo bajo demanda real | No se diseñan por adelantado; mientras exista un S3-compatible, cubren el 99% de los casos |
+
+### Qué cambia y qué NO cambia al cambiar de backend
+
+**NO cambia** (vive en la aplicación): validación por magic bytes, tope de tamaño, autorización
+por documento en el endpoint de descarga, generación de la clave, metadatos y `sha256` en `files`.
+
+**Cambia**: dónde caen los bytes. La descarga puede (a) seguir **streaming a través de la app**
+(simple, mismo endpoint; recomendado) o (b) usar **URLs prefirmadas de vida corta** si el volumen
+de descargas lo amerita — en ese caso el endpoint autenticado **redirige** a la URL firmada y la
+expiración hace de límite de sesión secundario, nunca de control de acceso único.
+
+### Estado de implementación (nota honesta)
+
+El **demo** actual (adjuntos de dependientes y documentos probatorios) escribe directo a
+`STORAGE_LOCAL_PATH` dentro de las propias rutas — un atajo del modo demo. La adaptación es
+**extraer ese bloque a `createLocalStorageDriver(env)`** implementando la interfaz de §1 e
+inyectarlo (`STORAGE_DRIVER`), sin tocar las rutas ni la validación. Con eso, el driver `s3`
+es solo la segunda implementación. Tarea de M1a-producción junto con la tabla `files` real.
+
+### Migración de backend ya instalado
+
+Si una instalación cambia `local` → `s3`: exportar/importar los objetos por clave (las claves son
+opacas y estables, así que la migración es copiar objetos con su clave; los metadatos en `files`
+no cambian) + un comando `bin/storage-sync` con verificación por `sha256`.

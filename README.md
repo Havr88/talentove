@@ -37,6 +37,7 @@ Razones y alternativas descartadas en [`docs/decisiones/0001-stack-nucleo.md`](d
 | [`docs/analisis-patria.md`](docs/analisis-patria.md) | Sistema de diseño de referencia (patrones del portal Patria) |
 | [`docs/arquitectura.md`](docs/arquitectura.md) | Arquitectura técnica, estructura del repo, patrones |
 | [`docs/modelo-datos.md`](docs/modelo-datos.md) | Modelo de datos núcleo |
+| [`docs/analisis-nomina-legacy.md`](docs/analisis-nomina-legacy.md) | Estructura y conceptos de la nómina legacy del piloto |
 | [`docs/regionalizacion-venezuela.md`](docs/regionalizacion-venezuela.md) | Reglas y parámetros legales de Venezuela |
 | [`docs/modulos-y-hitos.md`](docs/modulos-y-hitos.md) | Especificación breve por módulo y criterios de aceptación |
 | [`docs/marca-blanca.md`](docs/marca-blanca.md) | Mecanismo de marca blanca y theming |
