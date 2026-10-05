@@ -2,7 +2,7 @@ packages:
   - "apps/*"
   - "packages/*"
 allowBuilds:
-  esbuild: set this to true or false
+  esbuild: true
 
 # pnpm 11: dependencias con permiso de ejecutar build scripts
 onlyBuiltDependencies:
