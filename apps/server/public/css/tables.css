@@ -107,3 +107,78 @@ th.dt-sortable::after {
 
 th[aria-sort="ascending"]::after { content: "▲"; opacity: 1; }
 th[aria-sort="descending"]::after { content: "▼"; opacity: 1; }
+
+
+/* ===== v2: paginación, exportación, densidad ===== */
+.dt-actions {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 0.4rem;
+}
+
+.dt-btn {
+  padding: 0.4rem 0.65rem;
+  border: 1px solid var(--border-color);
+  border-radius: var(--radius-md);
+  background: #fff;
+  color: var(--primary-color);
+  font-size: 0.78rem;
+  font-weight: 600;
+  cursor: pointer;
+  touch-action: manipulation;
+}
+
+.dt-btn:hover { background: var(--primary-subtle, #eef2ff); }
+
+.dt-size {
+  padding: 0.4rem 0.5rem;
+  border: 1px solid var(--border-color);
+  border-radius: var(--radius-md);
+  font-size: 0.78rem;
+  background: #fff;
+  color: var(--text-color);
+}
+
+.dt-pager {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.75rem;
+  margin-top: 0.6rem;
+}
+
+.dt-pager .dt-btn {
+  font-size: 1rem;
+  line-height: 1;
+  padding: 0.35rem 0.7rem;
+}
+
+.dt-pageinfo {
+  font-size: 0.78rem;
+  color: var(--text-muted);
+}
+
+/* densidad compacta */
+table.dt-compact tbody td {
+  padding-top: 0.25rem;
+  padding-bottom: 0.25rem;
+  font-size: 0.8rem;
+}
+
+/* encabezado pegajoso dentro del contenedor con scroll */
+.table-scroll {
+  max-height: 70vh;
+  overflow-y: auto;
+}
+
+.table-scroll thead th {
+  position: sticky;
+  top: 0;
+  background: #fafafa;
+  z-index: 5;
+}
+
+@media print {
+  .dt-bar, .dt-pager, .dt-cols-menu, .dt-btn, .dt-size { display: none !important; }
+}

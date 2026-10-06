@@ -90,6 +90,7 @@
       💼 Relación Contractual Activa
     </h3>
     {% if activeContract %}
+      <div class="table-scroll">
       <table style="width: 100%; border-collapse: collapse; font-size: 0.9rem;">
         <tr>
           <td style="padding: 0.4rem 0; color: var(--text-muted); width: 40%;">Cargo:</td>
@@ -122,6 +123,7 @@
           </td>
         </tr>
       </table>
+      </div>
     {% else %}
       <p style="color: var(--text-muted); font-size: 0.9rem;">No tiene contrato activo actualmente.</p>
     {% endif %}
@@ -164,7 +166,7 @@
               {% if esRequerido %}
                 <span style="padding: 0.1rem 0.45rem; border-radius: 4px; font-size: 0.72rem; background: #ffebee; color: #c62828;">Obligatorio</span>
               {% else %}
-                <span style="padding: 0.1rem 0.45rem; border-radius: 4px; font-size: 0.72rem; background: #eceff1; color: #546e7a;">Opcional</span>
+                <span style="padding: 0.1rem 0.45rem; border-radius: 4px; font-size: 0.72rem; background: #e2e8f0; color: #334155;">Opcional</span>
               {% endif %}
             </td>
             <td style="padding: 0.45rem 0.75rem;">
@@ -182,7 +184,7 @@
                   </div>
                 {% endfor %}
               {% elif esRequerido %}
-                <span style="padding: 0.1rem 0.45rem; border-radius: 4px; font-size: 0.72rem; background: #fff3e0; color: #e65100;">⚠ Falta (obligatorio)</span>
+                <span style="padding: 0.1rem 0.45rem; border-radius: 4px; font-size: 0.72rem; background: #ffedd5; color: #9a3412;">⚠ Falta (obligatorio)</span>
               {% else %}
                 <span style="color: var(--text-muted); font-size: 0.75rem;">Sin adjuntar</span>
               {% endif %}
@@ -266,7 +268,7 @@
   <!-- Formulario desplegable para agregar dependiente -->
   <div id="form-carga" style="display: none; background: #f5f7fa; padding: 1.25rem; border-radius: 6px; margin-bottom: 1rem; border: 1px solid var(--border-color);">
     <h4 style="font-size: 0.95rem; margin-bottom: 0.75rem; color: var(--primary-color);">Registrar Nueva Carga Familiar</h4>
-    <form action="/trabajadores/{{ employee.id }}/cargas" method="POST" style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 0.75rem;">
+    <form action="/trabajadores/{{ employee.id }}/cargas" method="POST" class="form-guard" style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 0.75rem;">
       <input type="hidden" name="_csrf" value="{{ csrfToken }}">
       <div>
         <label style="font-size: 0.8rem; font-weight: 600;">Nombres *</label>
@@ -343,7 +345,7 @@
                   <a href="/documentos/{{ doc.id }}/ver" target="_blank" style="font-size: 0.75rem; color: #1565c0; text-decoration: none;">({{ doc.size }})</a>
                 {% endfor %}
               {% else %}
-                <span style="display: inline-block; margin: 0.15rem 0.3rem 0.15rem 0; padding: 0.1rem 0.45rem; border-radius: 4px; font-size: 0.75rem; background: #fff3e0; color: #e65100;">⚠ Falta: {{ req }}</span>
+                <span style="display: inline-block; margin: 0.15rem 0.3rem 0.15rem 0; padding: 0.1rem 0.45rem; border-radius: 4px; font-size: 0.75rem; background: #ffedd5; color: #9a3412;">⚠ Falta: {{ req }}</span>
               {% endif %}
             {% endfor %}
             <details style="display: inline-block; margin-left: 0.4rem;">

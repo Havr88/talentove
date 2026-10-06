@@ -812,9 +812,49 @@
       background: var(--primary-dark); color: white; padding: 0.6rem 1rem; border-radius: 0 0 6px 0;
     }
     .skip-link:focus { left: 0; }
+
+    /* Indicador de carga HTMX (global) */
+    .htmx-indicator { opacity: 0; transition: opacity 200ms ease; }
+    .htmx-request .htmx-indicator, .htmx-request.htmx-indicator { opacity: 1; }
+
+    /* Impresión: solo el contenido institucional */
+    @media print {
+      header.navbar, aside.sidebar, aside.rail, .dt-bar, .dt-cols-menu,
+      .btn, button, form, .no-print, #invio-toast, .skip-link { display: none !important; }
+      .app-layout { display: block; }
+      main.content { overflow: visible; padding: 0; }
+      .card, .card-panel { box-shadow: none; border: 1px solid #ddd; break-inside: avoid; }
+      body { background: white; }
+      footer { position: static; }
+    }
   </style>
   <link rel="stylesheet" href="/css/tables.css">
   <script src="https://unpkg.com/htmx.org@2.0.4" integrity="sha384-HGfztofotfshcF7+8n44JQL2oJmReNpAssUSEmWfmErMMrrvOOaz+fZcOi56EDa6" crossorigin="anonymous"></script>
+<script>
+  // Accesibilidad: aria-expanded sincronizado en todos los <details>
+  document.addEventListener('toggle', function (e) {
+    var d = e.target;
+    if (d.tagName === 'DETAILS') d.setAttribute('aria-expanded', d.open ? 'true' : 'false');
+  }, true);
+  // Accesibilidad: enfocar mensajes de error del servidor
+  document.addEventListener('DOMContentLoaded', function () {
+    var err = document.querySelector('.alert-error');
+    if (err) { err.setAttribute('tabindex', '-1'); err.focus(); }
+  });
+  // Aviso al salir con cambios sin guardar
+  window.addEventListener('beforeunload', function (e) {
+    var dirty = document.querySelector('form.form-guard[data-dirty="1"]');
+    if (dirty) { e.preventDefault(); e.returnValue = ''; }
+  });
+  document.addEventListener('input', function (e) {
+    var f = e.target.closest('form.form-guard');
+    if (f) f.dataset.dirty = '1';
+  });
+  document.addEventListener('submit', function (e) {
+    var f = e.target.closest('form.form-guard');
+    if (f) delete f.dataset.dirty;
+  }, true);
+</script>
 </head>
 <body>
   <a class="skip-link" href="#contenido">Saltar al contenido</a>
