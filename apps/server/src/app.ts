@@ -324,9 +324,28 @@ export function createApp(repos: Repositories, env: Env): Express {
           e.apellidos.toLowerCase().includes(query),
       );
     }
+
+    // Roster con contrato activo: condición laboral, cargo y unidad para la tabla filtrable
+    const positions = await repos.positions.list();
+    const posName = new Map(positions.map((p) => [p.id, p.name]));
+    const units = await repos.orgUnits.list();
+    const unitName = new Map(units.map((u) => [u.id, u.name]));
+    const roster = [];
+    for (const e of employees) {
+      const contract = await repos.contracts.findActiveByEmployeeId(e.id);
+      roster.push({
+        employee: e,
+        condicionLaboral: contract?.condicionLaboral ?? '—',
+        cargo: contract?.positionId ? posName.get(contract.positionId) ?? '—' : '—',
+        unidad: contract?.orgUnitId ? unitName.get(contract.orgUnitId) ?? '—' : '—',
+        salario: contract ? `${contract.currency} ${contract.salarioBase}` : '—',
+      });
+    }
+
     res.render('workers/list.njk', {
       pageTitle: 'Trabajadores — TalentoVe',
       employees,
+      roster,
       query,
     });
   });

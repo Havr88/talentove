@@ -1,0 +1,109 @@
+/* tables.css — estilos del enhancer de tablas (coherente con los tokens del base.njk) */
+
+.dt-bar {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+  margin-bottom: 0.75rem;
+}
+
+.dt-search {
+  flex: 1 1 220px;
+  max-width: 340px;
+  padding: 0.45rem 0.85rem;
+  border: 1px solid var(--border-color);
+  border-radius: var(--radius-md);
+  font-size: 0.875rem;
+  color: var(--text-color);
+  background: #fff;
+}
+
+.dt-search:focus {
+  outline: none;
+  border-color: var(--primary-light);
+  box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.15);
+}
+
+.dt-colfilter {
+  max-width: 220px;
+  padding: 0.4rem 0.6rem;
+  border: 1px solid var(--border-color);
+  border-radius: var(--radius-md);
+  font-size: 0.8rem;
+  color: var(--text-color);
+  background: #fff;
+}
+
+.dt-count {
+  margin-left: auto;
+  font-size: 0.78rem;
+  color: var(--text-muted);
+  white-space: nowrap;
+}
+
+/* menú de columnas */
+.dt-cols {
+  position: relative;
+}
+
+.dt-cols > summary {
+  cursor: pointer;
+  list-style: none;
+  padding: 0.4rem 0.75rem;
+  border: 1px solid var(--border-color);
+  border-radius: var(--radius-md);
+  font-size: 0.8rem;
+  font-weight: 600;
+  color: var(--primary-color);
+  background: #fff;
+  user-select: none;
+}
+
+.dt-cols > summary::-webkit-details-marker { display: none; }
+.dt-cols > summary::before { content: "▦ "; }
+
+.dt-cols-menu {
+  position: absolute;
+  right: 0;
+  top: calc(100% + 4px);
+  z-index: 60;
+  min-width: 210px;
+  max-height: 280px;
+  overflow: auto;
+  background: #fff;
+  border: 1px solid var(--border-color);
+  border-radius: var(--radius-md);
+  box-shadow: var(--shadow-md);
+  padding: 0.5rem 0.75rem;
+}
+
+.dt-cols-menu label {
+  display: flex;
+  align-items: center;
+  gap: 0.45rem;
+  padding: 0.25rem 0;
+  font-size: 0.8rem;
+  color: var(--text-color);
+  cursor: pointer;
+}
+
+/* orden por columna */
+th.dt-sortable {
+  cursor: pointer;
+  user-select: none;
+}
+
+th.dt-sortable:hover {
+  background: rgba(37, 99, 235, 0.06);
+}
+
+th.dt-sortable::after {
+  content: "↕";
+  opacity: 0.35;
+  margin-left: 0.3rem;
+  font-size: 0.75em;
+}
+
+th[aria-sort="ascending"]::after { content: "▲"; opacity: 1; }
+th[aria-sort="descending"]::after { content: "▼"; opacity: 1; }

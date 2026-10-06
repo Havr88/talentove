@@ -45,27 +45,32 @@
       </form>
     </div>
 
-    <table class="data-table">
+    <table class="data-table data-enhance">
       <thead>
         <tr>
-          <th scope="col" style="width: 130px;">Cédula (V/E)</th>
+          <th scope="col" style="width: 120px;">Cédula (V/E)</th>
           <th>Trabajador</th>
-          <th>Estado Civil</th>
-          <th>Contacto</th>
-          <th scope="col" style="width: 130px; text-align: center;">Estatus</th>
-          <th scope="col" style="text-align: right; width: 150px;">Acciones</th>
+          <th data-filter="true" style="width: 110px;">Estatus</th>
+          <th data-filter="true" style="width: 170px;">Condición Laboral</th>
+          <th>Cargo</th>
+          <th>Unidad / Departamento</th>
+          <th data-filter="true" style="width: 110px;">Estado Civil</th>
+          <th style="width: 170px;">Contacto</th>
+          <th style="width: 120px; text-align: right;">Salario</th>
+          <th class="no-sort" scope="col" style="text-align: right; width: 140px;">Acciones</th>
         </tr>
       </thead>
       <tbody>
-        {% if employees.length === 0 %}
+        {% if roster.length === 0 %}
           <tr>
-            <td colspan="6" style="padding: 3.5rem; text-align: center; color: var(--text-muted);">
+            <td colspan="10" style="padding: 3.5rem; text-align: center; color: var(--text-muted);">
               <div style="font-size: 2rem; margin-bottom: 0.5rem;">🔍</div>
               <p style="font-weight: 500;">No hay trabajadores registrados aún. Usa "Nuevo Trabajador" o la "Carga Masiva".</p>
             </td>
           </tr>
         {% endif %}
-        {% for emp in employees %}
+        {% for r in roster %}
+        {% set emp = r.employee %}
           <tr>
             <td style="font-weight: 700; color: var(--primary-color); white-space: nowrap;">
               {{ emp.nativeId }}
@@ -81,13 +86,7 @@
                 </div>
               </div>
             </td>
-            <td style="text-transform: capitalize; color: var(--text-muted);">
-              {{ emp.estadoCivil }}
-            </td>
-            <td style="color: var(--text-muted); font-size: 0.85rem;">
-              {{ emp.correo | default(emp.telefono | default("—")) }}
-            </td>
-            <td style="text-align: center;">
+            <td style="text-align: center;" data-value="{{ emp.status }}">
               {% if emp.status == "activo" %}
                 <span class="badge badge-success"><span class="badge-dot"></span> Activo</span>
               {% elif emp.status == "suspendido" %}
@@ -96,6 +95,16 @@
                 <span class="badge badge-neutral"><span class="badge-dot"></span> {{ emp.status }}</span>
               {% endif %}
             </td>
+            <td data-value="{{ r.condicionLaboral }}" style="font-size: 0.82rem;">{{ r.condicionLaboral }}</td>
+            <td style="font-size: 0.85rem;">{{ r.cargo }}</td>
+            <td style="font-size: 0.85rem; color: var(--text-muted);">{{ r.unidad }}</td>
+            <td data-value="{{ emp.estadoCivil }}" style="text-transform: capitalize; color: var(--text-muted);">
+              {{ emp.estadoCivil }}
+            </td>
+            <td style="color: var(--text-muted); font-size: 0.85rem;">
+              {{ emp.correo | default(emp.telefono | default("—")) }}
+            </td>
+            <td style="text-align: right; font-weight: 600; white-space: nowrap;">{{ r.salario }}</td>
             <td style="text-align: right;">
               <a href="/trabajadores/{{ emp.id }}" class="btn btn-outline btn-sm" style="font-weight: 600;">
                 Expediente &rarr;
